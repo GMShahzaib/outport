@@ -23,6 +23,6 @@ export interface Endpoint {
 export interface APIDocumentation {
   title: string;
   version: string;
-  basePath: string;
-  endpoints: Endpoint[];
+  basePath: string
 }
+

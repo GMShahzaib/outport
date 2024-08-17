@@ -1,4 +1,4 @@
-import { APIDocumentation } from './schema';
+import { APIDocumentation, Endpoint } from './schema';
 
 export class SchemaParser {
   private schema: APIDocumentation;
@@ -12,3 +12,5 @@ export class SchemaParser {
     return JSON.stringify(this.schema, null, 2); // For now, just returning a formatted JSON string
   }
 }
+
+export interface SchemaApi { name: string, endpoints: Endpoint[] }
