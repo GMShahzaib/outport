@@ -18,7 +18,7 @@ export class DocumentationGenerator {
     return htmlContent
   }
 
-  public addEndpoint(name: string, endpoints: Endpoint[]) {
+  public use(name: string, endpoints: Endpoint[]) {
     this.apis.push({ name, endpoints })
   }
 
