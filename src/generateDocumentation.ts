@@ -2,6 +2,7 @@ import { SchemaApi, SchemaParser } from './parser.js';
 import { APIDocumentation, Endpoint, Parameter, Response } from './schema.js';
 import uidGenerator from './utils/uidGenerator.js';
 import Style from './styles/main.js';
+import { HttpClient } from './services/HttpClient/index.js';
 
 export class DocumentationGenerator {
   private parser: SchemaParser;
@@ -15,6 +16,13 @@ export class DocumentationGenerator {
   public generate(): string {
     const parsedData = JSON.parse(this.parser.parse());
     return this.buildHTML(parsedData);
+  }
+
+  public async testHttpClient(url:string){ // test function
+    const client = new HttpClient();
+
+        const getResponse = await client.get(url);
+        return getResponse
   }
 
   public use(name: string, endpoints: Endpoint[]): void {
