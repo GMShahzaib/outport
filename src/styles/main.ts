@@ -101,7 +101,7 @@ main {
   font-size: 14px;
   text-transform: uppercase;
   color: white;
-  width: 60px;
+  width: 80px;
   text-align: center;
   display: inline-block;
 }

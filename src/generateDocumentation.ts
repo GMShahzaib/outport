@@ -89,8 +89,8 @@ export class DocumentationGenerator {
     return `
       <div class="collapsible" onclick="toggleContent('${endpointId}')">
         <div class="flex clickable ptb-5">
-          <span class="http-method ${endpoint.method.toLowerCase()}">${endpoint.method}</span>
-          <span class="endpoint-path">${endpoint.path}</span>
+          <div class="http-method ${endpoint.method.toLowerCase()}">${endpoint.method}</div>
+          <div class="endpoint-path">${endpoint.path}</div>
           <div class="endpoint-summary">${endpoint.summary}</div>
         </div>
         <div id="${endpointId}" class="endpoint">
