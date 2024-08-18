@@ -8,7 +8,6 @@ export interface Parameter {
 export interface Response {
   status: number;
   description: string;
-  schema?: any; // Define this according to your needs
 }
 
 export interface Endpoint {
@@ -23,6 +22,5 @@ export interface Endpoint {
 export interface APIDocumentation {
   title: string;
   version: string;
-  basePath: string
+  basePath: string;
 }
-
