@@ -17,18 +17,61 @@ body {
 }
 
 header {
-  background-color: #343a40;
-  color: white;
-  padding: 20px 0px;
-  text-align: center;
-  width: 100%;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background-color: #343a40; /* Dark background similar to the example */
+  color: white; /* White text for contrast */
+  padding: 20px; /* Padding to space out the content */
+  width: 100%; /* Full width */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* Subtle shadow for depth */
 }
 
 header h1 {
   margin: 0;
-  font-size: 2.2em;
+  font-size: 1.8em; /* Adjusted font size to match the example */
+  font-weight: bold;
 }
+
+header p {
+  margin: 5px 0; /* Space between paragraphs */
+  font-size: 0.9em; /* Smaller font size for descriptions */
+}
+
+.version {
+  display: inline-block;
+  background-color: #e7e7e7; /* Light gray background for version tag */
+  color: #343a40; /* Dark text color */
+  border-radius: 5px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  font-size: 0.85em; /* Smaller font size */
+}
+
+.base-path {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+header .brand{
+  display: flex;
+  align-items: center;
+}
+header .brand .logo {
+  height: auto; 
+  max-width: 50px;
+}
+header .brand .name {
+}
+.header-content{
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+header .title-container {
+  margin-top: 30px
+}
+header .base-url-container {
+  margin-top: 30px
+}
+
 
 main {
   margin: 30px auto;

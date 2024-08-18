@@ -22,7 +22,7 @@ export class DocumentationGenerator {
   }
 
   private buildHTML(data: APIDocumentation): string {
-    const { title, version, basePath } = data;
+    const { title, version, basePath, description } = data;
 
     return `
       <!DOCTYPE html>
@@ -37,7 +37,7 @@ export class DocumentationGenerator {
           </style>
       </head>
       <body>
-          ${this.buildHeader(title, version, basePath)}
+          ${this.buildHeader(title, version, basePath, description)}
           <main>
               ${this.buildApiSections()}
           </main>
@@ -52,12 +52,22 @@ export class DocumentationGenerator {
     `;
   }
 
-  private buildHeader(title: string, version: string, basePath: string): string {
+  private buildHeader(title: string, version: string, basePath: string, description: string): string {
     return `
       <header>
-          <h1>${title} Documentation</h1>
-          <p>Version: ${version}</p>
-          <p>Base Path: ${basePath}</p>
+        <div class="header-content">
+          <div class="brand">
+              <img src="https://static.vecteezy.com/system/resources/thumbnails/024/553/534/small/lion-head-logo-mascot-wildlife-animal-illustration-generative-ai-png.png" alt="Logo" class="logo">
+              <h3 class="name">outport</h3>
+          </div>
+          <div class="title-container">
+            <h1>${title} <span class="version">v${version}</span></h1>
+            <p>${description}</p>
+          </div>
+          <div class="base-url-container">
+            <p class="base-path">Base Path: ${basePath}</p>
+          </div>
+        </div>
       </header>
     `;
   }

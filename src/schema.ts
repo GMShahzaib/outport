@@ -23,4 +23,5 @@ export interface APIDocumentation {
   title: string;
   version: string;
   basePath: string;
+  description: string;
 }
