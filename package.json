@@ -5,14 +5,18 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc"
+    "build": "tsc && npm run copy-html",
+    "copy-html": "copyfiles -u 1 src/public/*.html dist/"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^22.1.0",
+    "copyfiles": "^2.4.1",
+    "express": "^4.19.2",
     "typescript": "^5.5.4"
   }
 }

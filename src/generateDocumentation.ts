@@ -1,12 +1,16 @@
+import express from 'express'
+
 import { SchemaApi, SchemaParser } from './parser.js';
 import { APIDocumentation, Endpoint, Parameter, Response } from './schema.js';
 import uidGenerator from './utils/uidGenerator.js';
 import Style from './styles/main.js';
 import { HttpClient } from './services/HttpClient/index.js';
+import { getAbsoluteFSPath } from './public/absolute-path.js';
 
 export class DocumentationGenerator {
   private parser: SchemaParser;
   private apis: SchemaApi[];
+
 
   constructor(schema: APIDocumentation) {
     this.parser = new SchemaParser(schema);
@@ -18,15 +22,19 @@ export class DocumentationGenerator {
     return this.buildHTML(parsedData);
   }
 
-  public async testHttpClient(url:string){ // test function
+  public async testHttpClient(url: string) { // test function
     const client = new HttpClient();
 
-        const getResponse = await client.get(url);
-        return getResponse
+    const getResponse = await client.get(url);
+    return getResponse
   }
 
   public use(name: string, endpoints: Endpoint[]): void {
     this.apis.push({ name, endpoints });
+  }
+
+  public serve(): express.Handler {
+    return express.static(getAbsoluteFSPath());
   }
 
   private buildHTML(data: APIDocumentation): string {
