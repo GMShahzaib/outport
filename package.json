@@ -1,12 +1,12 @@
 {
   "name": "outport",
   "version": "1.0.1",
-  "main": "dist/generateDocumentation.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && npm run copy-html",
-    "copy-html": "copyfiles -u 1 src/public/*.html dist/"
+    "copy-html": "copyfiles -u 1 src/public/*.html src/public/*.css src/public/*.js  dist/"
   },
   "keywords": [],
   "author": "",
