@@ -83,7 +83,21 @@ class Outport {
             <div class="endpoint-summary">\${endpoint.summary}</div>
           </div>
           <div id="\${endpointId}" class="endpoint">
-          <button onclick="testApi({endpoint:'\${endpoint.path}'})">Test api</button>
+          <div class="parameters-section">
+              <div class="parameters-title">
+                  <span>Parameters</span>
+                  <div class="underline"></div>
+              </div>
+              <button class="test-btn" onclick="toggleContent('\${endpointId}_executeBtn')">Try it</button>
+          </div>
+          <div id="\${endpointId}_executeBtn" class="execute-btn-wrapper">
+            <button class="execute-button" onclick="testApi({endpoint:'\${endpoint.path}'},'\${endpointId}')">Execute</button>
+          </div>
+          <div id="\${endpointId}_statusCode"></div>
+          <pre id="\${endpointId}_curl"></pre>
+          <pre id="\${endpointId}_respBody"></pre>
+          <pre id="\${endpointId}_respHeaders"></pre>
+
             \${endpoint.description ? buildDescription(endpoint.description) : ""}
             \${endpoint.parameters ? buildParameters(endpoint.parameters) : ""}
             \${endpoint.responses ? buildResponses(endpoint.responses) : ""}
@@ -142,7 +156,7 @@ class Outport {
 `
 
 
-  private stringify(obj: {apis:SchemaApi[],values:APIDocumentation}) {
+  private stringify(obj: { apis: SchemaApi[], values: APIDocumentation }) {
     return 'const options = ' + JSON.stringify(obj) + ';'
   }
 
@@ -153,7 +167,7 @@ class Outport {
       res.sendStatus(404)
     } else if (url.endsWith('/outport-des-init.js')) {
       res.set('Content-Type', 'application/javascript')
-      res.send(this.outportTPLString.replace('<% apiOptions %>', this.stringify({apis:this.apis,values:this.values})))
+      res.send(this.outportTPLString.replace('<% apiOptions %>', this.stringify({ apis: this.apis, values: this.values })))
     } else {
       next()
     }

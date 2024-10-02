@@ -222,3 +222,63 @@ main {
 .ptb-5 {
   padding: 5px 0px;
 }
+
+.execute-btn-wrapper{
+  display: none;
+}
+
+/* Container for the Parameters section */
+.parameters-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #e0e0e0; /* Optional line to separate */
+  margin-bottom: 10px;
+}
+
+/* Styling for the "Parameters" text */
+.parameters-title {
+  display: flex;
+  flex-direction: column;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Underline effect below "Parameters" */
+.underline {
+  height: 2px;
+  background-color: #00c853; /* Adjust color to your preference */
+  width: 100%;
+  margin-top: 2px;
+}
+
+
+.test-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.test-btn{
+  border: 2px solid greenyellow;
+  border-radius: 5px;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+.execute-button {
+  background-color: #007bff; /* or any color similar to the blue button */
+  width: 100%;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.execute-button:hover {
+  background-color: #0056b3;
+}

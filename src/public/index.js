@@ -11,7 +11,7 @@ function getSelectedBaseUrl() {
 
 
 // Main function to send API request
-async function testApi({ endpoint, method = 'GET', headers = {}, body = null, timeout = 5000 }) {
+async function testApi({ endpoint, method = 'GET', headers = {}, body = null, timeout = 5000 }, respDestination) {
     try {
         const baseUrl = getSelectedBaseUrl()
         // Construct the full URL
@@ -31,29 +31,29 @@ async function testApi({ endpoint, method = 'GET', headers = {}, body = null, ti
 
         // Set a timeout for the fetch request
         const response = await fetchWithTimeout(fullUrl, options, timeout);
-        const respHeaders = Object.fromEntries(response.headers.entries());
+        const respHeaders = JSON.stringify(Object.fromEntries(response.headers.entries()), undefined, 2);
 
         // Parse the response
         const data = await parseResponse(response);
-
-        // Check for non-OK status codes and throw errors if necessary
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
 
         // Construct the equivalent CURL command
         const curlCommand = constructCurlCommand(method, fullUrl, headers, body);
 
         // Return both the response data and headers along with the curl command
-        return {
-            status: response.status,
-            data,
-            headers: respHeaders,
-            curl: curlCommand
-        };
+        const statusCodeEle = document.getElementById(`${respDestination}_statusCode`)
+        statusCodeEle.innerHTML = response.status
+
+        const curlEle = document.getElementById(`${respDestination}_curl`)
+        curlEle.innerHTML = `<pre>${curlCommand}</pre>`
+
+        const respHeaderEle = document.getElementById(`${respDestination}_respHeaders`)
+        respHeaderEle.textContent = respHeaders
+
+        const respBodyEle = document.getElementById(`${respDestination}_respBody`)
+        respBodyEle.textContent = data
+
     } catch (error) {
-        console.error('Error fetching data:', error);
-        throw error; // Rethrow the error after logging it
+        console.error('Error:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
     }
 }
 
@@ -82,7 +82,8 @@ async function parseResponse(response) {
     let data;
 
     if (contentType && contentType.includes('application/json')) {
-        data = await response.json(); // JSON Response
+        const respData = await response.json(); // JSON Response
+        data = JSON.stringify(respData, undefined, 2)
     } else if (contentType && contentType.includes('text/html')) {
         data = await response.text(); // HTML Response
     } else if (contentType && contentType.includes('application/xml')) {
@@ -112,19 +113,3 @@ async function fetchWithTimeout(url, options, timeout) {
         clearTimeout(id);
     }
 }
-
-
-// Example usage of the testApi function
-(async () => {
-    const result = await testApi({
-        endpoint: '/test',
-        method: 'GET',
-        headers: {},
-        body: {}
-    });
-
-    console.log("Response Status Code:", result.status)
-    console.log('Response Data:', result.data);
-    console.log('Response Headers:', result.headers);
-    console.log('Equivalent CURL Command:', result.curl);
-})();
