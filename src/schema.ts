@@ -22,6 +22,6 @@ export interface Endpoint {
 export interface APIDocumentation {
   title: string;
   version: string;
-  basePath: string;
+  servers: string[];
   description: string;
 }

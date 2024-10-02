@@ -1,18 +1,18 @@
 import express, { NextFunction, Request } from 'express'
 
-import { SchemaApi, SchemaParser } from './parser.js';
 import { APIDocumentation, Endpoint } from './schema.js';
 import { getAbsoluteFSPath } from './public/absolute-path.js';
 
+export interface SchemaApi { name: string, endpoints: Endpoint[] }
+
 class Outport {
-  private parser: SchemaParser;
+  private values: APIDocumentation;
   private apis: SchemaApi[];
 
 
-  constructor(schema: APIDocumentation) {
-    this.parser = new SchemaParser(schema);
+  constructor(values: APIDocumentation) {
+    this.values = values;
     this.apis = [];
-
     this.swaggerInitFn = this.swaggerInitFn.bind(this);
   }
 
@@ -27,9 +27,35 @@ class Outport {
     // it will be replaced by "const options = []"
     <% apiOptions %>
 
+
+    function addBaseUrlOptions(urls) {
+        const selectElement = document.getElementById('baseUrlSelector');
+
+        // Clear existing options if necessary
+        selectElement.innerHTML = '';
+
+        // Loop through the array of URLs and create an <option> element for each
+        urls.forEach(url => {
+            const option = document.createElement('option');
+            option.value = url;  // Set the value for the option
+            option.text = url;   // Set the visible text
+            selectElement.appendChild(option);  // Append the option to the select element
+        });
+    }
+
+    addBaseUrlOptions(options.values.servers)
+
+    const title = document.getElementById("title");
+    const version = document.getElementById("version");
+    const description = document.getElementById("description");
+    title.innerHTML = options.values.title;
+    version.innerHTML = 'v'+options.values.version;
+    description.innerHTML = options.values.description;
+
+
     const outportUI = document.getElementById("outport-ui");
 
-    outportUI.innerHTML = options.map(({ name, endpoints }) => buildApiSection(name, endpoints)).join('');
+    outportUI.innerHTML = options.apis.map(({ name, endpoints }) => buildApiSection(name, endpoints)).join('');
 
     function buildApiSection(name, endpoints) {
       const categoryId = uidGenerator();
@@ -50,13 +76,14 @@ class Outport {
     function buildEndpointSection(endpoint) {
       const endpointId = uidGenerator();
       return \`
-        <div class="collapsible" onclick="toggleContent('\${endpointId}')">
-          <div class="flex clickable ptb-5">
+        <div class="collapsible">
+          <div class="flex clickable ptb-5" onclick="toggleContent('\${endpointId}')">
             <div class="http-method \${endpoint.method.toLowerCase()}">\${endpoint.method}</div>
             <div class="endpoint-path">\${endpoint.path}</div>
             <div class="endpoint-summary">\${endpoint.summary}</div>
           </div>
           <div id="\${endpointId}" class="endpoint">
+          <button onclick="testApi({endpoint:'\${endpoint.path}'})">Test api</button>
             \${endpoint.description ? buildDescription(endpoint.description) : ""}
             \${endpoint.parameters ? buildParameters(endpoint.parameters) : ""}
             \${endpoint.responses ? buildResponses(endpoint.responses) : ""}
@@ -64,6 +91,7 @@ class Outport {
         </div>
       \`;
     }
+
 
     function uidGenerator() {
       return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -114,19 +142,18 @@ class Outport {
 `
 
 
-  private stringify(obj: SchemaApi[]) {
+  private stringify(obj: {apis:SchemaApi[],values:APIDocumentation}) {
     return 'const options = ' + JSON.stringify(obj) + ';'
   }
 
   private swaggerInitFn(req: Request, res: any, next: NextFunction) {
     const url = req.url && req.url.split('?')[0]
-    console.log(url)
 
     if (url.endsWith('/absolute-path.js')) {
       res.sendStatus(404)
     } else if (url.endsWith('/outport-des-init.js')) {
       res.set('Content-Type', 'application/javascript')
-      res.send(this.outportTPLString.replace('<% apiOptions %>', this.stringify(this.apis)))
+      res.send(this.outportTPLString.replace('<% apiOptions %>', this.stringify({apis:this.apis,values:this.values})))
     } else {
       next()
     }
