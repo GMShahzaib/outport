@@ -8,10 +8,31 @@ function getSelectedBaseUrl() {
     const selectElement = document.getElementById('baseUrlSelector');
     return selectElement.value;
 }
+// Show the toast
+function showToast(message) {
+    const toastText = document.getElementById('toast-text');
+    toastText.innerHTML = message
+    document.getElementById('toast').classList.add('show-toast');
+
+    // Hide the toast automatically after 8 seconds
+    setTimeout(hideToast, 8000);
+}
+
+// Hide the toast
+function hideToast() {
+    const toastText = document.getElementById('toast-text');
+    toastText.innerHTML = ""
+    document.getElementById('toast').classList.remove('show-toast');
+}
 
 
 // Main function to send API request
 async function testApi({ endpoint, method = 'GET', headers = {}, body = null, timeout = 5000 }, respDestination) {
+    document.getElementById(`${respDestination}_statusCode_wrapper`).style.display = "none";
+    document.getElementById(`${respDestination}_curl_wrapper`).style.display = "none";
+    document.getElementById(`${respDestination}_respHeaders_wrapper`).style.display = "none";
+    document.getElementById(`${respDestination}_respBody_wrapper`).style.display = "none";
+
     try {
         const baseUrl = getSelectedBaseUrl()
         // Construct the full URL
@@ -42,18 +63,23 @@ async function testApi({ endpoint, method = 'GET', headers = {}, body = null, ti
         // Return both the response data and headers along with the curl command
         const statusCodeEle = document.getElementById(`${respDestination}_statusCode`)
         statusCodeEle.innerHTML = response.status
+        document.getElementById(`${respDestination}_statusCode_wrapper`).style.display = "block";
 
         const curlEle = document.getElementById(`${respDestination}_curl`)
         curlEle.innerHTML = `<pre>${curlCommand}</pre>`
+        document.getElementById(`${respDestination}_curl_wrapper`).style.display = "block";
 
         const respHeaderEle = document.getElementById(`${respDestination}_respHeaders`)
         respHeaderEle.textContent = respHeaders
+        document.getElementById(`${respDestination}_respHeaders_wrapper`).style.display = "block";
 
         const respBodyEle = document.getElementById(`${respDestination}_respBody`)
         respBodyEle.textContent = data
+        document.getElementById(`${respDestination}_respBody_wrapper`).style.display = "block";
 
     } catch (error) {
-        console.error('Error:', JSON.stringify(error, Object.getOwnPropertyNames(error)));
+        showToast(error.message)
+        console.log(error)
     }
 }
 
@@ -108,7 +134,9 @@ async function fetchWithTimeout(url, options, timeout) {
         if (error.name === 'AbortError') {
             throw new Error('Request timed out');
         }
-        throw error; // Rethrow other fetch-related errors
+        showToast(error.message)
+        console.log(error)
+        throw error
     } finally {
         clearTimeout(id);
     }

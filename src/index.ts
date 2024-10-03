@@ -17,7 +17,12 @@ class Outport {
   }
 
   public use(name: string, endpoints: Endpoint[]): void {
-    this.apis.push({ name, endpoints });
+    const obj = this.apis.find(item=>item.name==name)
+    if(obj){
+      obj.endpoints = [...obj.endpoints,...endpoints]
+    }else{
+      this.apis.push({ name, endpoints });
+    }
   }
 
   private outportTPLString = `
@@ -93,10 +98,26 @@ class Outport {
           <div id="\${endpointId}_executeBtn" class="execute-btn-wrapper">
             <button class="execute-button" onclick="testApi({endpoint:'\${endpoint.path}'},'\${endpointId}')">Execute</button>
           </div>
-          <div id="\${endpointId}_statusCode"></div>
-          <pre id="\${endpointId}_curl"></pre>
-          <pre id="\${endpointId}_respBody"></pre>
-          <pre id="\${endpointId}_respHeaders"></pre>
+          
+            <div id="\${endpointId}_statusCode_wrapper" class="statusCode displayNon">
+                <h3>Status Code</h3>
+                <div id="\${endpointId}_statusCode"></div>
+            </div>
+
+            <div id="\${endpointId}_curl_wrapper" class="curl displayNon">
+                <h3>cURL Command</h3>
+                <pre id="\${endpointId}_curl"></pre>
+            </div>
+
+            <div id="\${endpointId}_respBody_wrapper" class="respBody displayNon">
+                <h3>Response Body</h3>
+                <pre id="\${endpointId}_respBody"></pre>
+            </div>
+
+            <div id="\${endpointId}_respHeaders_wrapper" class="respHeaders displayNon">
+                <h3>Response Headers</h3>
+                <pre id="\${endpointId}_respHeaders"></pre>
+            </div>
 
             \${endpoint.description ? buildDescription(endpoint.description) : ""}
             \${endpoint.parameters ? buildParameters(endpoint.parameters) : ""}
