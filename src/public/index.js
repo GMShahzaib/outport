@@ -1,143 +1,168 @@
 // Toggle content visibility
-function toggleContent(id) {
+const toggleContent = (id) => {
     const content = document.getElementById(id);
     content.style.display = content.style.display === 'block' ? 'none' : 'block';
-}
+};
 
-function getSelectedBaseUrl() {
-    const selectElement = document.getElementById('baseUrlSelector');
-    return selectElement.value;
-}
-// Show the toast
-function showToast(message) {
-    const toastText = document.getElementById('toast-text');
-    toastText.innerHTML = message
-    document.getElementById('toast').classList.add('show-toast');
+// Get selected base URL
+const getSelectedBaseUrl = () => document.getElementById('baseUrlSelector').value;
 
-    // Hide the toast automatically after 8 seconds
-    setTimeout(hideToast, 8000);
-}
+// Show toast message
+const showToast = (message) => {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-text').innerHTML = message;
+    toast.classList.add('show-toast');
+    setTimeout(hideToast, 8000); // Hide toast after 8 seconds
+};
 
-// Hide the toast
-function hideToast() {
-    const toastText = document.getElementById('toast-text');
-    toastText.innerHTML = ""
-    document.getElementById('toast').classList.remove('show-toast');
-}
+// Hide toast message
+const hideToast = () => {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-text').innerHTML = "";
+    toast.classList.remove('show-toast');
+};
+
+// Validate if string is JSON
+const isValidJson = (str) => {
+    try {
+        JSON.parse(str);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
+// Setup typing timer for JSON formatting
+let typingTimer;
+const doneTypingInterval = 2500;
+
+const setupFormatJsonInterval = (id) => {
+    const ele = document.getElementById(id);
+    clearTimeout(typingTimer);
+    if (ele.value) typingTimer = setTimeout(() => formatJson(ele), doneTypingInterval);
+};
+
+// Format JSON
+const formatJson = (ele) => {
+    if (isValidJson(ele.value)) {
+        const formatted = JSON.stringify(JSON.parse(ele.value), null, 2);
+        ele.value = formatted;
+    }
+};
+
+// Format JSON
+const getQueryParameters = (endpointId) => {
+    const paramBody = document.getElementById(`${endpointId}_param_body`);
+
+    return Array.from(paramBody.getElementsByTagName("tr"))
+        .map(tr => {
+            const key = tr.getElementsByTagName('td')[0].firstElementChild.value;
+            const value = tr.getElementsByTagName('td')[1].firstElementChild.value;
+            return `${key}=${value}`;
+        })
+        .join('&');
+};
 
 
 // Main function to send API request
-async function testApi({ endpoint, method = 'GET', headers = {}, body = null, timeout = 5000 }, respDestination) {
-    document.getElementById(`${respDestination}_statusCode_wrapper`).style.display = "none";
-    document.getElementById(`${respDestination}_curl_wrapper`).style.display = "none";
-    document.getElementById(`${respDestination}_respHeaders_wrapper`).style.display = "none";
-    document.getElementById(`${respDestination}_respBody_wrapper`).style.display = "none";
+const testApi = async (endpointId, path, method = 'GET', headers = {}, timeout = 5000) => {
+    const body = document.getElementById(`${endpointId}_input_body`).value;
+
+    if (body && !isValidJson(body)) {
+        document.getElementById(`${endpointId}_input_body`).classList.add("body-input-error");
+        return;
+    }
+    document.getElementById(`${endpointId}_input_body`).classList.remove("body-input-error");
+
+    let params = getQueryParameters(endpointId)
+
+    const completePath = `${path}${params ? `?${params}` : ''}`;
+    const parsedBody = body ? JSON.parse(body) : undefined;
+
+    console.log({ path: completePath, method, headers, body: parsedBody, timeout });
+
+    hideElements(endpointId);
 
     try {
-        const baseUrl = getSelectedBaseUrl()
-        // Construct the full URL
-        const fullUrl = `${baseUrl}${endpoint}`;
+        const baseUrl = getSelectedBaseUrl();
+        const fullUrl = `${baseUrl}${completePath}`;
+        const options = buildFetchOptions(method, headers, parsedBody);
 
-        // Prepare options for fetch
-        const options = {
-            method: method.toUpperCase(),
-            headers: headers
-        };
-
-        // Add body if it's a POST or PUT request
-        if (body && (method.toUpperCase() === 'POST' || method.toUpperCase() === 'PUT')) {
-            options.body = JSON.stringify(body);
-            options.headers['Content-Type'] = 'application/json'; // Ensure JSON content type
-        }
-
-        // Set a timeout for the fetch request
         const response = await fetchWithTimeout(fullUrl, options, timeout);
-        const respHeaders = JSON.stringify(Object.fromEntries(response.headers.entries()), undefined, 2);
-
-        // Parse the response
+        const respHeaders = JSON.stringify(Object.fromEntries(response.headers.entries()), null, 2);
         const data = await parseResponse(response);
+        const curlCommand = constructCurlCommand(method, fullUrl, headers, parsedBody);
 
-        // Construct the equivalent CURL command
-        const curlCommand = constructCurlCommand(method, fullUrl, headers, body);
-
-        // Return both the response data and headers along with the curl command
-        const statusCodeEle = document.getElementById(`${respDestination}_statusCode`)
-        statusCodeEle.innerHTML = response.status
-        document.getElementById(`${respDestination}_statusCode_wrapper`).style.display = "block";
-
-        const curlEle = document.getElementById(`${respDestination}_curl`)
-        curlEle.innerHTML = `<pre>${curlCommand}</pre>`
-        document.getElementById(`${respDestination}_curl_wrapper`).style.display = "block";
-
-        const respHeaderEle = document.getElementById(`${respDestination}_respHeaders`)
-        respHeaderEle.textContent = respHeaders
-        document.getElementById(`${respDestination}_respHeaders_wrapper`).style.display = "block";
-
-        const respBodyEle = document.getElementById(`${respDestination}_respBody`)
-        respBodyEle.textContent = data
-        document.getElementById(`${respDestination}_respBody_wrapper`).style.display = "block";
-
+        updateUIWithResponse(endpointId, response.status, curlCommand, respHeaders, data);
     } catch (error) {
-        showToast(error.message)
-        console.log(error)
+        showToast(error.message);
+        console.error(error);
     }
-}
+};
 
-// Helper function to construct a CURL command from the request details
-function constructCurlCommand(method, url, headers, body) {
+// Hide response elements
+const hideElements = (endpointId) => {
+    ['statusCode', 'curl', 'respHeaders', 'respBody'].forEach(key => {
+        document.getElementById(`${endpointId}_${key}_wrapper`).style.display = 'none';
+    });
+};
+
+// Build fetch options
+const buildFetchOptions = (method, headers, body) => {
+    const options = { method: method.toUpperCase(), headers };
+    if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
+        options.body = JSON.stringify(body);
+        options.headers['Content-Type'] = 'application/json';
+    }
+    return options;
+};
+
+// Update UI with response
+const updateUIWithResponse = (endpointId, status, curlCommand, headers, data) => {
+    document.getElementById(`${endpointId}_statusCode`).innerHTML = status;
+    document.getElementById(`${endpointId}_curl`).innerHTML = `<pre>${curlCommand}</pre>`;
+    document.getElementById(`${endpointId}_respHeaders`).textContent = headers;
+    document.getElementById(`${endpointId}_respBody`).textContent = data;
+
+    ['statusCode', 'curl', 'respHeaders', 'respBody'].forEach(key => {
+        document.getElementById(`${endpointId}_${key}_wrapper`).style.display = 'block';
+    });
+};
+
+// Construct CURL command
+const constructCurlCommand = (method, url, headers, body) => {
     let curl = `curl -X ${method.toUpperCase()} '${url}'`;
-
-    // Add headers to curl command
-    if (headers && typeof headers === 'object') {
-        for (const [key, value] of Object.entries(headers)) {
-            curl += ` -H '${key}: ${value}'`;
-        }
-    }
-
-    // Add body to curl command
-    if (body && (method.toUpperCase() === 'POST' || method.toUpperCase() === 'PUT')) {
-        curl += ` -d '${JSON.stringify(body)}'`;
-    }
-
+    Object.entries(headers).forEach(([key, value]) => {
+        curl += ` -H '${key}: ${value}'`;
+    });
+    if (body) curl += ` -d '${JSON.stringify(body)}'`;
     return curl;
-}
+};
 
-// Helper function to handle different content types
-async function parseResponse(response) {
+// Parse API response based on content type
+const parseResponse = async (response) => {
     const contentType = response.headers.get('content-type');
-    let data;
+    if (contentType.includes('application/json')) return JSON.stringify(await response.json(), null, 2);
+    return await response.text();
+};
 
-    if (contentType && contentType.includes('application/json')) {
-        const respData = await response.json(); // JSON Response
-        data = JSON.stringify(respData, undefined, 2)
-    } else if (contentType && contentType.includes('text/html')) {
-        data = await response.text(); // HTML Response
-    } else if (contentType && contentType.includes('application/xml')) {
-        data = await response.text(); // XML Response as text
-    } else {
-        data = await response.text(); // Default fallback to text
-    }
-
-    return data;
-}
-
-// Helper function to implement timeout for fetch requests
-async function fetchWithTimeout(url, options, timeout) {
+// Fetch with timeout
+const fetchWithTimeout = (url, options, timeout) => {
     const controller = new AbortController();
-    const id = setTimeout(() => controller.abort(), timeout);
+    const timer = setTimeout(() => controller.abort(), timeout);
     options.signal = controller.signal;
 
-    try {
-        const response = await fetch(url, options);
-        return response;
-    } catch (error) {
-        if (error.name === 'AbortError') {
-            throw new Error('Request timed out');
-        }
-        showToast(error.message)
-        console.log(error)
-        throw error
-    } finally {
-        clearTimeout(id);
-    }
-}
+    return fetch(url, options).finally(() => clearTimeout(timer));
+};
+
+// Show selected tab content
+const showTab = (endpointId, tabName) => {
+    const wrapper = document.getElementById(`${endpointId}_header_warper`);
+    const content = document.getElementById(`${endpointId}_header_content`);
+
+    Array.from(wrapper.getElementsByTagName('div')).forEach(tab => tab.classList.remove('active'));
+    Array.from(content.getElementsByTagName('div')).forEach(tab => tab.classList.remove('active'));
+
+    document.getElementById(`${endpointId}_${tabName}_tab`).classList.add('active');
+    document.getElementById(`${endpointId}_${tabName}_content`).classList.add('active');
+};

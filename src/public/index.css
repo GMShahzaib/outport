@@ -41,13 +41,15 @@ header p {
   font-size: 0.9em;
   /* Smaller font size for descriptions */
 }
+
 .title-wrapper {
   display: flex;
   align-items: center;
 }
 
 .title-wrapper h1 {
-  margin-right: 10px; /* Space between the title and the version */
+  margin-right: 10px;
+  /* Space between the title and the version */
 }
 
 .version {
@@ -223,49 +225,70 @@ main {
   padding: 5px 0px;
 }
 
-.execute-btn-wrapper{
+.execute-btn-wrapper {
   display: none;
 }
 
-/* Container for the Parameters section */
-.parameters-section {
+/* Container for the header section */
+.header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  border-bottom: 1px solid #c9ab04; /* Optional line to separate */
-  margin-bottom: 10px;
 }
 
-/* Styling for the "Parameters" text */
-.parameters-title {
+/* Styling for the "header" text */
+.header-warper {
   display: flex;
-  flex-direction: column;
-  font-size: 18px;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.tab {
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
   font-weight: bold;
+  font-size: 18px;
 }
 
-/* Underline effect below "Parameters" */
-.underline {
-  height: 2px;
-  background-color: #c9ab04; /* Adjust color to your preference */
+.tab.active {
+  border-bottom: 2px solid #c9ab04;
+}
+
+.tab-content {
+  display: none;
+  margin-top: 5px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.body-input {
   width: 100%;
-  margin-top: 2px;
+  border-color: #c9ab04;
+  resize: vertical;
 }
 
+.body-input-error {
+  border-color: red;
+  border-radius: 5px;
+}
 
 .test-btn:hover {
   background-color: #e0e0e0;
 }
 
-.test-btn{
+.test-btn {
   border: 2px solid #c9ab04;
   border-radius: 5px;
   padding: 5px 15px;
   cursor: pointer;
 }
+
 .execute-button {
-  background-color: #c9ab04; /* or any color similar to the blue button */
+  background-color: #c9ab04;
+  /* or any color similar to the blue button */
   width: 100%;
   border: none;
   color: white;
@@ -286,7 +309,10 @@ main {
 
 /* response design */
 /* General styling for container and sections */
-.statusCode, .curl, .respBody, .respHeaders {
+.statusCode,
+.curl,
+.respBody,
+.respHeaders {
   font-family: 'Courier New', Courier, monospace;
   background-color: #f4f4f9;
   border-radius: 8px;
@@ -299,25 +325,31 @@ main {
 /* Specific section styling */
 .statusCode {
   font-size: 20px;
-  color: #2a9d8f; /* Greenish for status codes */
+  color: #2a9d8f;
+  /* Greenish for status codes */
   font-weight: bold;
   border-left: 5px solid #c9ab04;
   padding-left: 10px;
 }
 
 .curl {
-  background-color: #264653; /* Dark blue background for curl command */
+  background-color: #264653;
+  /* Dark blue background for curl command */
   color: #ffffff;
   font-size: 16px;
-  border-left: 5px solid #c9ab04; /* Orange side bar */
+  border-left: 5px solid #c9ab04;
+  /* Orange side bar */
   padding-left: 10px;
 }
 
-.respBody, .respHeaders {
-  background-color: #264653; /* Light yellow for response body and headers */
+.respBody,
+.respHeaders {
+  background-color: #264653;
+  /* Light yellow for response body and headers */
   color: #ffffff;
   font-size: 14px;
-  border-left: 5px solid #c9ab04; /* Light orange side bar */
+  border-left: 5px solid #c9ab04;
+  /* Light orange side bar */
   padding-left: 10px;
 }
 
@@ -329,34 +361,49 @@ pre {
 }
 
 /* Optional: Adding subtle shadow for better appearance */
-.statusCode, .curl, .respBody, .respHeaders {
+.statusCode,
+.curl,
+.respBody,
+.respHeaders {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.displayNon{
+.displayNon {
   display: none;
 }
 
 /* Headings styling */
-.statusCode h3, .curl h3, .respBody h3, .respHeaders h3 {
+.statusCode h3,
+.curl h3,
+.respBody h3,
+.respHeaders h3 {
   font-size: 18px;
   margin-bottom: 10px;
-  color: #c9ab04; /* Darker heading color */
+  color: #c9ab04;
+  /* Darker heading color */
 }
 
 
 /* Ensure responsiveness */
 @media (max-width: 768px) {
-  .statusCode, .curl, .respBody, .respHeaders {
-      font-size: 12px;
-      padding: 10px;
+
+  .statusCode,
+  .curl,
+  .respBody,
+  .respHeaders {
+    font-size: 12px;
+    padding: 10px;
   }
 }
 
 /* Ensure responsiveness for headings */
 @media (max-width: 768px) {
-  .statusCode h3, .curl h3, .respBody h3, .respHeaders h3 {
-      font-size: 16px;
+
+  .statusCode h3,
+  .curl h3,
+  .respBody h3,
+  .respHeaders h3 {
+    font-size: 16px;
   }
 }
 
@@ -364,38 +411,72 @@ pre {
 /* toast css */
 
 
-    /* Container for the toast message */
-    .toast-container {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      min-width: 300px;
-      max-width: 700px;
-      background-color: #c9ab04;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-      opacity: 0;
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      z-index: 9999;
-    }
+/* Container for the toast message */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 300px;
+  max-width: 700px;
+  background-color: #c9ab04;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+}
 
-    /* Show the toast */
-    .show-toast {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+/* Show the toast */
+.show-toast {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
 
-    /* Close button */
-    .toast-close {
-      position: absolute;
-      top: 8px;
-      right: 12px;
-      background: none;
-      border: none;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+/* Close button */
+.toast-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+
+.query-params {
+  width: 100%;
+}
+
+.header-cell {
+  padding-left: 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.data-cell {
+  font-weight: 600;
+  font-size: 12px;
+  text-align: left;
+  color: #aaa
+}
+
+.param-cell-input {
+  width: 100%;
+  padding-left: 10px;
+  outline: none;
+  border: none;
+}
+
+.query-params,
+.header-cell,
+.data-cell {
+  border: 1px solid #c9ab04;
+  border-collapse: collapse;
+}
