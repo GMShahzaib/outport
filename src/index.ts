@@ -88,23 +88,23 @@ class Outport {
               <div class="endpoint-summary">\${endpoint.summary}</div>
             </div>
             <div id="\${endpointId}" class="endpoint">
-              <div class="header-section">
-                <div id="\${endpointId}_header_warper" class="header-warper">
-                  <div id="\${endpointId}_parameters_tab" class="tab active" onclick="showTab('\${endpointId}','parameters')">
+              <div class="request-header-section">
+                <div id="\${endpointId}_request_header_tabs" class="tabs">
+                  <div id="\${endpointId}_request_parameters_tab" class="tab active" onclick="showTab('\${endpointId}','request_header','request_parameters')">
                     <span>Parameters</span>
                   </div>
-                  <div id="\${endpointId}_body_tab" class="tab \${endpoint.method == 'get' ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','body')">
+                  <div id="\${endpointId}_request_body_tab" class="tab \${endpoint.method == 'get' ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_body')">
                     <span>Body</span>
                   </div>
                 </div>
                 <button class="test-btn" onclick="toggleContent('\${endpointId}_executeBtn')">Try it</button>
               </div>
-              <div id="\${endpointId}_header_content" class="header-content">
-                <div id="\${endpointId}_body_content" class="tab-content">
+              <div id="\${endpointId}_request_header_content" class="header-content">
+                <div id="\${endpointId}_request_body_content" class="tab-content">
                   <textarea class="body-input" id="\${endpointId}_input_body" onKeyUp="setupFormateJsonInterval('\${endpointId}_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>\${endpoint.body ? JSON.stringify(endpoint.body, undefined, 2) : ""}</textarea>
                 </div>
 
-                <div id="\${endpointId}_parameters_content" class="tab-content active">
+                <div id="\${endpointId}_request_parameters_content" class="tab-content active">
                   \${buildParameters(endpointId, endpoint.parameters)}
                 </div>
               </div>
@@ -112,26 +112,49 @@ class Outport {
                 <button class="execute-button" onclick="testApi('\${endpointId}', '\${endpoint.path}', '\${endpoint.method}')">Execute</button>
               </div>
 
-              <div id="\${endpointId}_statusCode_wrapper" class="statusCode displayNon">
-                <h3>Status Code</h3>
-                <div id="\${endpointId}_statusCode"></div>
-              </div>
+              <div id="\${endpointId}_response" class="response displayNon">
+                <div id="\${endpointId}_response_header_tabs" class="response-header-section">
+                  <div class="tabs">
+                    <div id="\${endpointId}_response_body_tab" class="tab active" onclick="showTab('\${endpointId}','response_header','response_body')">
+                      <span>Body</span>
+                    </div>
+                    <div id="\${endpointId}_response_cookie_tab" class="tab" onclick="showTab('\${endpointId}','response_header','response_cookie')">
+                      <span>Cookies</span>
+                    </div>
+                    <div id="\${endpointId}_response_headers_tab" class="tab" onclick="showTab('\${endpointId}','response_header','response_headers')">
+                      <span>Headers</span>
+                    </div>
+                    <div id="\${endpointId}_response_curl_tab" class="tab" onclick="showTab('\${endpointId}','response_header','response_curl')">
+                      <span>cURL</span>
+                    </div>
+                  </div>
+                  <div class="response-status-code">
+                    status code :
+                    <span id="\${endpointId}_statusCode" class="status-code"></span>
+                  </div>
+                </div>
 
-              <div id="\${endpointId}_curl_wrapper" class="curl displayNon">
-                <h3>cURL Command</h3>
-                <pre id="\${endpointId}_curl"></pre>
+                <div id="\${endpointId}_response_header_content" class="header-content">
+                  <div id="\${endpointId}_response_body_content" class="tab-content active">
+                      <div id="\${endpointId}_respBody_wrapper" class="respBody">
+                        <pre id="\${endpointId}_respBody"></pre>
+                      </div>
+                  </div>
+                  <div id="\${endpointId}_response_cookie_content" class="tab-content">
+                  </div>
+                  <div id="\${endpointId}_response_headers_content" class="tab-content response-headers">
+                    \${buildResponseHeaders(endpointId)}
+                  </div>
+                  <div id="\${endpointId}_response_curl_content" class="tab-content">
+                    <div id="\${endpointId}_curl_wrapper" class="curl">
+                      <pre id="\${endpointId}_curl"></pre>
+                    </div>
+                  </div>
+                </div>
               </div>
+              
 
-              <div id="\${endpointId}_respBody_wrapper" class="respBody displayNon">
-                <h3>Response Body</h3>
-                <pre id="\${endpointId}_respBody"></pre>
-              </div>
-
-              <div id="\${endpointId}_respHeaders_wrapper" class="respHeaders displayNon">
-                <h3>Response Headers</h3>
-                <pre id="\${endpointId}_respHeaders"></pre>
-              </div>
-
+              
               \${endpoint.description ? buildDescription(endpoint.description) : ""}
               \${endpoint.responses ? buildResponses(endpoint.responses) : ""}
             </div>
@@ -153,7 +176,7 @@ class Outport {
 
       function buildParameters(endpointId, parameters) {
         return \`
-            <table class="query-params">
+            <table class="table">
               <thead>
                 <tr>
                   <th class="header-cell">Key</th>
@@ -167,6 +190,22 @@ class Outport {
             </table>
         \`;
       }
+
+      function buildResponseHeaders(endpointId) {
+        return \`
+            <table class="table whiteBorder">
+              <thead>
+                <tr>
+                  <th class="header-cell whiteBorder">Key</th>
+                  <th class="header-cell whiteBorder">Value</th>
+                </tr>
+              </thead>
+              <tbody id="\${endpointId}_response_headers">
+              </tbody>
+            </table>
+        \`;
+      }
+
 
       function buildParameterSection(param) {
         return \`

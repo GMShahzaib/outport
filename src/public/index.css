@@ -230,14 +230,15 @@ main {
 }
 
 /* Container for the header section */
-.header-section {
+.request-header-section, .response-header-section {
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
 
 /* Styling for the "header" text */
-.header-warper {
+.tabs {
   display: flex;
   flex-direction: row;
   justify-content: left;
@@ -309,10 +310,9 @@ main {
 
 /* response design */
 /* General styling for container and sections */
-.statusCode,
 .curl,
 .respBody,
-.respHeaders {
+.response-headers {
   font-family: 'Courier New', Courier, monospace;
   background-color: #f4f4f9;
   border-radius: 8px;
@@ -320,16 +320,6 @@ main {
   margin: 10px 0;
   color: #333;
   font-size: 14px;
-}
-
-/* Specific section styling */
-.statusCode {
-  font-size: 20px;
-  color: #2a9d8f;
-  /* Greenish for status codes */
-  font-weight: bold;
-  border-left: 5px solid #c9ab04;
-  padding-left: 10px;
 }
 
 .curl {
@@ -343,6 +333,7 @@ main {
 }
 
 .respBody,
+.response-headers,
 .respHeaders {
   background-color: #264653;
   /* Light yellow for response body and headers */
@@ -361,10 +352,10 @@ pre {
 }
 
 /* Optional: Adding subtle shadow for better appearance */
-.statusCode,
 .curl,
 .respBody,
-.respHeaders {
+.response-headers
+ {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -372,41 +363,22 @@ pre {
   display: none;
 }
 
-/* Headings styling */
-.statusCode h3,
-.curl h3,
-.respBody h3,
-.respHeaders h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #c9ab04;
-  /* Darker heading color */
-}
-
-
 /* Ensure responsiveness */
 @media (max-width: 768px) {
-
-  .statusCode,
   .curl,
   .respBody,
-  .respHeaders {
+  .response-headers {
     font-size: 12px;
     padding: 10px;
   }
 }
 
-/* Ensure responsiveness for headings */
-@media (max-width: 768px) {
-
-  .statusCode h3,
-  .curl h3,
-  .respBody h3,
-  .respHeaders h3 {
-    font-size: 16px;
-  }
+.response-status-code{
+  border: 1px solid #c9ab04;
+  border-radius: 5px;
+  padding: 5px 10px 5px 10px;
+  font-size: 12px;
 }
-
 
 /* toast css */
 
@@ -449,7 +421,7 @@ pre {
 
 
 
-.query-params {
+.table {
   width: 100%;
 }
 
@@ -457,14 +429,24 @@ pre {
   padding-left: 10px;
   text-align: left;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 16px;
 }
 
 .data-cell {
   font-weight: 600;
   font-size: 12px;
   text-align: left;
-  color: #aaa
+}
+
+.response{
+  background-color: #e2e6ea;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.response-header-key, .response-header-value {
+  margin-left: 10px;
+  color: #aaa;
 }
 
 .param-cell-input {
@@ -474,9 +456,13 @@ pre {
   border: none;
 }
 
-.query-params,
+.table,
 .header-cell,
 .data-cell {
   border: 1px solid #c9ab04;
   border-collapse: collapse;
+}
+
+.whiteBorder{
+  border: 1px solid #fff !important;  
 }
