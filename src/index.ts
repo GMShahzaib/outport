@@ -87,7 +87,9 @@ class Outport {
               <div class="endpoint-path">\${endpoint.path}</div>
               <div class="endpoint-summary">\${endpoint.summary}</div>
             </div>
+            
             <div id="\${endpointId}" class="endpoint">
+              \${buildAddressParams(endpointId, endpoint.path)}
               <div class="request-header-section">
                 <div id="\${endpointId}_request_header_tabs" class="tabs">
                   <div id="\${endpointId}_request_parameters_tab" class="tab active" onclick="showTab('\${endpointId}','request_header','request_parameters')">
@@ -103,9 +105,8 @@ class Outport {
                 <div id="\${endpointId}_request_body_content" class="tab-content">
                   <textarea class="body-input" id="\${endpointId}_input_body" onKeyUp="setupFormateJsonInterval('\${endpointId}_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>\${endpoint.body ? JSON.stringify(endpoint.body, undefined, 2) : ""}</textarea>
                 </div>
-
                 <div id="\${endpointId}_request_parameters_content" class="tab-content active">
-                  \${buildParameters(endpointId, endpoint.parameters)}
+                  \${buildQueryParameters(endpointId, endpoint.parameters)}
                 </div>
               </div>
               <div id="\${endpointId}_executeBtn" class="execute-btn-wrapper">
@@ -174,7 +175,32 @@ class Outport {
         return \`<p><strong>Description:</strong> \${description}</p>\`;
       }
 
-      function buildParameters(endpointId, parameters) {
+      function buildAddressParams(endpointId, url) {
+        const variables = extractVariablesFromUrl(url)
+
+        return \`
+              <div id="\${endpointId}_address_params">
+              \${variables.map(name=>{
+                return \`<div class="request-url-params-layout">
+                          <div class="url-param-cell-input">\${name}: </div>
+                          <div class="url-param-cell-input" ><input id="\${endpointId}_\${name}_value" class="url-param-input" placeholder="value" name="value"></input></div>
+                        </div>\`
+                }).join('')}
+              </div>
+        \`;
+      }
+        
+      function extractVariablesFromUrl(urlTemplate) {
+          const regex = /{(\\w+)}/g;
+          let matches, variables = [];
+
+          while ((matches = regex.exec(urlTemplate)) !== null) {
+              variables.push(matches[1]);
+          }
+
+          return variables;
+      }
+      function buildQueryParameters(endpointId, parameters) {
         return \`
             <table class="table">
               <thead>
@@ -184,7 +210,7 @@ class Outport {
                   <th class="header-cell">Description</th>
                 </tr>
               </thead>
-              <tbody id="\${endpointId}_param_body">
+              <tbody id="\${endpointId}_query_params_body">
               \${parameters.map(param => buildParameterSection(param)).join('')}
               </tbody>
             </table>

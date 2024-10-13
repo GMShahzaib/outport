@@ -56,8 +56,34 @@ const formatJson = (ele: HTMLTextAreaElement): void => {
 };
 
 // Get query parameters
+const getAddressWithParameters = (endpointId: string, path: string): string => {
+    let pathWithParams = path
+
+    const variables = extractVariablesFromUrl(path)
+
+    variables.forEach((key: string) => {
+        const value = (document.getElementById(`${endpointId}_${key}_value`) as HTMLInputElement).value;
+        pathWithParams = pathWithParams.replace(`{${key}}`, value)
+    })
+
+    return pathWithParams
+};
+
+function extractVariablesFromUrl(urlTemplate: string) {
+    const regex = /{(\w+)}/g;
+    let matches, variables = [];
+
+    while ((matches = regex.exec(urlTemplate)) !== null) {
+        variables.push(matches[1]);
+    }
+
+    return variables;
+}
+
+
+// Get query parameters
 const getQueryParameters = (endpointId: string): string => {
-    const paramBody = document.getElementById(`${endpointId}_param_body`) as HTMLElement;
+    const paramBody = document.getElementById(`${endpointId}_query_params_body`) as HTMLElement;
 
     return Array.from(paramBody.getElementsByTagName("tr"))
         .map(tr => {
@@ -86,7 +112,9 @@ const testApi = async (
 
     let params = getQueryParameters(endpointId);
 
-    const completePath = `${path}${params ? `?${params}` : ''}`;
+    const pathWithParams = getAddressWithParameters(endpointId, path)
+
+    const completePath = `${pathWithParams}${params ? `?${params}` : ''}`;
     const parsedBody = body ? JSON.parse(body) : undefined;
 
     console.log({ path: completePath, method, headers, body: parsedBody, timeout });
@@ -100,6 +128,7 @@ const testApi = async (
         const options = buildFetchOptions(method, headers, parsedBody);
 
         const response = await fetchWithTimeout(fullUrl, options, timeout);
+
         const respHeaders = Object.fromEntries(response.headers.entries());
         const data = await parseResponse(response);
         const curlCommand = constructCurlCommand(method, fullUrl, headers, parsedBody);
@@ -119,7 +148,7 @@ const buildFetchOptions = (
     headers: Record<string, string>,
     body?: Record<string, unknown>
 ): RequestInit => {
-    const options: RequestInit = { method: method.toUpperCase(), headers: { ...headers } };
+    const options: RequestInit = { method: method.toUpperCase(), headers: { ...headers }};
     if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
         options.body = JSON.stringify(body);
         options.headers = { ...options.headers, 'Content-Type': 'application/json' };
@@ -188,7 +217,7 @@ const showTab = (endpointId: string, wrapper: string, tabName: string): void => 
     const content = document.getElementById(`${endpointId}_${wrapper}_content`) as HTMLElement;
 
     Array.from(wrapperEle.getElementsByTagName('div')).forEach(tab => tab && tab.classList.remove('active'));
-    Array.from(content.getElementsByTagName('div')).forEach(tab => tab &&tab.classList.remove('active'));
+    Array.from(content.getElementsByTagName('div')).forEach(tab => tab && tab.classList.remove('active'));
 
     (document.getElementById(`${endpointId}_${tabName}_tab`) as HTMLElement).classList.add('active');
     (document.getElementById(`${endpointId}_${tabName}_content`) as HTMLElement).classList.add('active');
