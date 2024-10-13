@@ -1,9 +1,6 @@
-**Outport**:
-
-```markdown
 # Outport
 
-Outport is an API testing and documentation library, similar to Swagger, that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.
+Outport is an API testing and documentation library, that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.
 
 ## Features
 
@@ -30,7 +27,6 @@ To use **Outport** in your project, follow the steps below:
 First, import **Outport** and initialize it with your desired configuration. Below is an example of how to set up **Outport** in an Express app.
 
 ```javascript
-import app from './app';
 import Outport from 'outport';
 
 const outport = new Outport({
