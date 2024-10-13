@@ -48,7 +48,8 @@ const outport = new Outport({
             description: "Used for global session identification across requests",
         }
     ],
-    description: `Outport is an API testing and documentation library, that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.`,
+    description: `Outport is an API testing and documentation library, that helps you document, test, and visualize your API endpoints.
+    It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.`,
 });
 ```
 
