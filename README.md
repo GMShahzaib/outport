@@ -30,18 +30,25 @@ First, import **Outport** and initialize it with your desired configuration. Bel
 import Outport from 'outport';
 
 const outport = new Outport({
-    title: 'Test API B',
+    title: 'User Management APIs',
     version: '1.0.0',
-    servers: ['http://localhost:8081', 'https://www.dummybaseurl2.dummy/api'],
+    servers: [
+        'http://localhost:8081', 
+        'https://api.example.com/v1'
+    ],
     headers: [
+        {
+            key: "x-api-key",
+            value: "YOUR_API_KEY_HERE",
+            description: "API key required to authenticate requests",
+        },
         {
             key: "x-globe-header",
             value: "AJFLJL23J43908F09A8SD09",
-            description: "This is a globe header description",
+            description: "Used for global session identification across requests",
         }
     ],
-    description: `Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s...`,
+    description: `Outport is an API testing and documentation library, that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.`,
 });
 ```
 
@@ -50,30 +57,44 @@ const outport = new Outport({
 You can define your API endpoints by using the `outport.use()` method, passing an array of route objects. Below is an example of defining GET and POST routes:
 
 ```javascript
-outport.use("Apis title", [
+outport.use("Users", [
     {
-        path: '/test-get',
+        path: '/users',
         method: 'get',
-        summary: "It's a testing GET API.",
+        summary: "Fetches a list of users.",
         headers: [
-            { key: "header1", value: "50", description: "This is header 1 description" },
-            { key: "header2", value: "50", description: "This is header 2 description" }
+            { key: "Authorization", value: "Bearer <token>", description: "JWT token for authorization" },
+            { key: "Accept", value: "application/json", description: "Indicates that the client expects a JSON response" }
         ],
         parameters: [
-            { key: "param1", value: "50", description: "This is param1 description" },
-            { key: "param2", value: "50", description: "This is param2 description" }
+            { key: "page", value: "1", description: "Page number for pagination" },
+            { key: "limit", value: "20", description: "Number of users per page" }
         ],
-        responses: [],
+        responses: [
+            { code: 200, description: "Success - returns a list of users" },
+            { code: 401, description: "Unauthorized - invalid or missing token" },
+            { code: 500, description: "Internal server error" }
+        ],
     },
     {
-        path: '/test-post',
+        path: '/users',
         method: 'post',
-        summary: "It's a testing POST API.",
-        body: { hello: 50 },
-        parameters: [
-            { key: "hello", value: "50", description: "This is description" }
+        summary: "Creates a new user.",
+        headers: [
+            { key: "Authorization", value: "Bearer <token>", description: "JWT token for authorization" },
+            { key: "Content-Type", value: "application/json", description: "Indicates the request body is in JSON format" }
         ],
-        responses: [],
+        body: {
+            name: "John Doe",
+            email: "john.doe@example.com",
+            password: "password123"
+        },
+        parameters: [],
+        responses: [
+            { code: 201, description: "User created successfully" },
+            { code: 400, description: "Bad request - missing or invalid parameters" },
+            { code: 401, description: "Unauthorized - invalid or missing token" }
+        ],
     }
 ]);
 ```
@@ -137,8 +158,3 @@ app.listen(3000, () => {
 ### 4. Accessing the Documentation
 
 Run your Express app and navigate to `/docs` to see the interactive documentation of your API.
-
-## License
-
-This project is licensed under the MIT License.
-```
