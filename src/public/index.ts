@@ -55,6 +55,32 @@ const formatJson = (ele: HTMLTextAreaElement): void => {
     }
 };
 
+// Get request header
+const getRequestHeaders = (endpointId: string): { [key: string]: string } => {
+    const headers: { [key: string]: string } = {}
+
+    const request_headers = document.getElementById(`${endpointId}_request_headers_body`) as HTMLElement;
+    const global_request_headers = document.getElementById(`${endpointId}_global_request_headers_body`) as HTMLElement;
+
+    if(request_headers){
+        Array.from(request_headers.getElementsByTagName("tr")).forEach(tr => {
+            const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
+            const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
+            headers[key] = value
+        });
+    }
+    if(global_request_headers){
+        Array.from(global_request_headers.getElementsByTagName("tr")).forEach(tr => {
+            const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
+            const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
+            headers[key] = value
+        });     
+    }
+    
+
+    return headers
+};
+
 // Get query parameters
 const getAddressWithParameters = (endpointId: string, path: string): string => {
     let pathWithParams = path
@@ -95,11 +121,10 @@ const getQueryParameters = (endpointId: string): string => {
 };
 
 // Main function to send API request
-const testApi = async (
+const execute = async (
     endpointId: string,
     path: string,
     method: string = 'GET',
-    headers: Record<string, string> = {},
     timeout: number = 5000
 ): Promise<void> => {
     const body = (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).value;
@@ -113,6 +138,7 @@ const testApi = async (
     let params = getQueryParameters(endpointId);
 
     const pathWithParams = getAddressWithParameters(endpointId, path)
+    const headers = getRequestHeaders(endpointId)
 
     const completePath = `${pathWithParams}${params ? `?${params}` : ''}`;
     const parsedBody = body ? JSON.parse(body) : undefined;
@@ -148,7 +174,7 @@ const buildFetchOptions = (
     headers: Record<string, string>,
     body?: Record<string, unknown>
 ): RequestInit => {
-    const options: RequestInit = { method: method.toUpperCase(), headers: { ...headers }};
+    const options: RequestInit = { method: method.toUpperCase(), headers: { ...headers } };
     if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
         options.body = JSON.stringify(body);
         options.headers = { ...options.headers, 'Content-Type': 'application/json' };

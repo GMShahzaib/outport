@@ -80,6 +80,8 @@ class Outport {
 
       function buildEndpointSection(endpoint) {
         const endpointId = uidGenerator();
+        const global_headers = options.values.headers || []
+
         return \`
           <div class="collapsible">
             <div class="flex clickable ptb-5" onclick="toggleContent('\${endpointId}')">
@@ -90,27 +92,41 @@ class Outport {
             
             <div id="\${endpointId}" class="endpoint">
               \${buildAddressParams(endpointId, endpoint.path)}
-              <div class="request-header-section">
-                <div id="\${endpointId}_request_header_tabs" class="tabs">
-                  <div id="\${endpointId}_request_parameters_tab" class="tab active" onclick="showTab('\${endpointId}','request_header','request_parameters')">
-                    <span>Parameters</span>
+              <div class="endpoint_header">
+                <div class="request-header-section">
+                  <div id="\${endpointId}_request_header_tabs" class="tabs">
+                    <div id="\${endpointId}_request_parameters_tab" class="tab active" onclick="showTab('\${endpointId}','request_header','request_parameters')">
+                      <span>Parameters</span>
+                    </div>
+                    <div id="\${endpointId}_request_headers_tab" class="tab \${!(global_headers.length>0 || (endpoint.headers && endpoint.headers.length>0)) ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_headers')">
+                      <span>Headers</span>
+                    </div>
+                    <div id="\${endpointId}_request_body_tab" class="tab \${endpoint.method == 'get' ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_body')">
+                      <span>Body</span>
+                    </div>
                   </div>
-                  <div id="\${endpointId}_request_body_tab" class="tab \${endpoint.method == 'get' ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_body')">
-                    <span>Body</span>
+                  <button class="test-btn" onclick="toggleContent('\${endpointId}_executeBtn')">Try it</button>
+                </div>
+                <div id="\${endpointId}_request_header_content" class="header-content">
+                  <div id="\${endpointId}_request_body_content" class="tab-content">
+                    <textarea class="body-input" id="\${endpointId}_input_body" onKeyUp="setupFormateJsonInterval('\${endpointId}_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>\${endpoint.body ? JSON.stringify(endpoint.body, undefined, 2) : ""}</textarea>
+                  </div>
+                  <div id="\${endpointId}_request_headers_content" class="tab-content">
+                    \${(endpoint.headers && endpoint.headers.length>0)?buildRequestHeaders(endpointId, endpoint.headers):""}
+                    <div class="mt-1">
+                      <h6>Global Headers :</h6>
+                      <div class="mt-1">
+                        \${global_headers.length>0?buildGlobalRequestHeaders(endpointId, global_headers):""}
+                      </div>
+                    </div>
+                  </div>
+                  <div id="\${endpointId}_request_parameters_content" class="tab-content active">
+                    \${buildQueryParameters(endpointId, endpoint.parameters)}
                   </div>
                 </div>
-                <button class="test-btn" onclick="toggleContent('\${endpointId}_executeBtn')">Try it</button>
-              </div>
-              <div id="\${endpointId}_request_header_content" class="header-content">
-                <div id="\${endpointId}_request_body_content" class="tab-content">
-                  <textarea class="body-input" id="\${endpointId}_input_body" onKeyUp="setupFormateJsonInterval('\${endpointId}_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>\${endpoint.body ? JSON.stringify(endpoint.body, undefined, 2) : ""}</textarea>
+                <div id="\${endpointId}_executeBtn" class="execute-btn-wrapper">
+                  <button class="execute-button" onclick="execute('\${endpointId}', '\${endpoint.path}', '\${endpoint.method}')">Execute</button>
                 </div>
-                <div id="\${endpointId}_request_parameters_content" class="tab-content active">
-                  \${buildQueryParameters(endpointId, endpoint.parameters)}
-                </div>
-              </div>
-              <div id="\${endpointId}_executeBtn" class="execute-btn-wrapper">
-                <button class="execute-button" onclick="testApi('\${endpointId}', '\${endpoint.path}', '\${endpoint.method}')">Execute</button>
               </div>
 
               <div id="\${endpointId}_response" class="response displayNon">
@@ -118,9 +134,6 @@ class Outport {
                   <div class="tabs">
                     <div id="\${endpointId}_response_body_tab" class="tab active" onclick="showTab('\${endpointId}','response_header','response_body')">
                       <span>Body</span>
-                    </div>
-                    <div id="\${endpointId}_response_cookie_tab" class="tab" onclick="showTab('\${endpointId}','response_header','response_cookie')">
-                      <span>Cookies</span>
                     </div>
                     <div id="\${endpointId}_response_headers_tab" class="tab" onclick="showTab('\${endpointId}','response_header','response_headers')">
                       <span>Headers</span>
@@ -140,8 +153,6 @@ class Outport {
                       <div id="\${endpointId}_respBody_wrapper" class="respBody">
                         <pre id="\${endpointId}_respBody"></pre>
                       </div>
-                  </div>
-                  <div id="\${endpointId}_response_cookie_content" class="tab-content">
                   </div>
                   <div id="\${endpointId}_response_headers_content" class="tab-content response-headers">
                     \${buildResponseHeaders(endpointId)}
@@ -200,6 +211,39 @@ class Outport {
 
           return variables;
       }
+      function buildRequestHeaders(endpointId,headers=[]) {
+        return \`
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="header-cell">Key</th>
+                  <th class="header-cell">Value</th>
+                  <th class="header-cell">Description</th>
+                </tr>
+              </thead>
+              <tbody id="\${endpointId}_request_headers_body">
+                  \${headers.map(header => buildRequestHeader(header)).join('')}
+              </tbody>
+            </table>
+        \`;
+      }
+      function buildGlobalRequestHeaders(endpointId,headers=[]) {
+        return \`
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="header-cell">Key</th>
+                  <th class="header-cell">Value</th>
+                  <th class="header-cell">Description</th>
+                </tr>
+              </thead>
+              <tbody id="\${endpointId}_global_request_headers_body">
+                  \${headers.map(header => buildRequestHeader(header)).join('')}
+              </tbody>
+            </table>
+        \`;
+      }
+
       function buildQueryParameters(endpointId, parameters) {
         return \`
             <table class="table">
@@ -232,6 +276,15 @@ class Outport {
         \`;
       }
 
+      function buildRequestHeader(header) {
+        return \`
+          <tr class="data-row">
+            <td class="data-cell"><input class="param-cell-input" disabled placeholder="key" name="key" value="\${header.key}"></input></td>
+            <td class="data-cell"><input class="param-cell-input" placeholder="value" name="value" value="\${header.value}"></input></td>
+            <td class="data-cell"><input class="param-cell-input" disabled placeholder="description" value="\${header.description}"></input></td>
+          </tr>
+        \`;
+      }
 
       function buildParameterSection(param) {
         return \`

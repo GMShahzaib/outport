@@ -6,6 +6,11 @@
   box-sizing: border-box;
 }
 
+.mt-1 {
+  margin-top: 5px;
+}
+
+
 body {
   font-family: 'Roboto', sans-serif;
   background-color: #f8f9fa;
@@ -230,7 +235,8 @@ main {
 }
 
 /* Container for the header section */
-.request-header-section, .response-header-section {
+.request-header-section,
+.response-header-section {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -298,7 +304,7 @@ main {
   text-decoration: none;
   display: inline-block;
   font-size: 16px;
-  margin: 4px 2px;
+  margin: 5px 0px 5px 0px;
   cursor: pointer;
   border-radius: 4px;
 }
@@ -322,12 +328,13 @@ main {
   font-size: 14px;
 }
 
-.request-url-params-layout{
+.request-url-params-layout {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
 }
-.url-param-cell-input{
+
+.url-param-cell-input {
   min-width: 60px;
   margin-top: 5px;
 }
@@ -364,8 +371,7 @@ pre {
 /* Optional: Adding subtle shadow for better appearance */
 .curl,
 .respBody,
-.response-headers
- {
+.response-headers {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
@@ -375,6 +381,7 @@ pre {
 
 /* Ensure responsiveness */
 @media (max-width: 768px) {
+
   .curl,
   .respBody,
   .response-headers {
@@ -383,7 +390,7 @@ pre {
   }
 }
 
-.response-status-code{
+.response-status-code {
   border: 1px solid #c9ab04;
   border-radius: 5px;
   padding: 5px 10px 5px 10px;
@@ -448,18 +455,21 @@ pre {
   text-align: left;
 }
 
-.response{
+.response,
+.endpoint_header {
   background-color: #e2e6ea;
   padding: 10px;
   border-radius: 5px;
+  margin-top: 5px;
 }
 
-.response-header-key, .response-header-value {
+.response-header-key,
+.response-header-value {
   margin-left: 10px;
   color: #aaa;
 }
 
-.url-param-input{
+.url-param-input {
   outline-color: #c9ab04;
   border: 1px solid #c9ab04;
   padding: 5px;
@@ -479,6 +489,6 @@ pre {
   border-collapse: collapse;
 }
 
-.whiteBorder{
-  border: 1px solid #fff !important;  
+.whiteBorder {
+  border: 1px solid #fff !important;
 }

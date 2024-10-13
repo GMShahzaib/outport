@@ -4,6 +4,12 @@ export interface Parameter {
   required: boolean;
   description?: string;
 }
+export interface Header {
+  name: string;
+  type: string;
+  required: boolean;
+  description?: string;
+}
 
 export interface Response {
   status: number;
@@ -15,6 +21,7 @@ export interface Endpoint {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   summary: string;
   description?: string;
+  headers?: Header[];
   parameters?: Parameter[];
   responses: Response[];
 }
@@ -23,5 +30,6 @@ export interface APIDocumentation {
   title: string;
   version: string;
   servers: string[];
+  headers: Header[]
   description: string;
 }
