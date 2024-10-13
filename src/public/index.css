@@ -273,8 +273,10 @@ main {
 
 .body-input {
   width: 100%;
-  border-color: #c9ab04;
   resize: vertical;
+  padding: 10px;
+  border-color: #c9ab04;
+  outline-color: #c9ab04;
 }
 
 .body-input-error {

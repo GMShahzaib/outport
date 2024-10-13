@@ -41,7 +41,7 @@ const isValidJson = (str: string): boolean => {
 let typingTimer: number;
 const doneTypingInterval = 2500;
 
-const setupFormatJsonInterval = (id: string): void => {
+const setupFormateJsonInterval = (id: string): void => {
     const ele = document.getElementById(id) as HTMLTextAreaElement;
     clearTimeout(typingTimer);
     if (ele.value) typingTimer = window.setTimeout(() => formatJson(ele), doneTypingInterval);
