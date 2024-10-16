@@ -23,12 +23,27 @@
                 </div>
                 <p id="description"></p>
             </div>
-            <div class="base-url-container">
-                <p class="base-path">Base Path:</p>
-                <select id="baseUrlSelector" class="base-url-selector">
-                </select>
+            <div class="flex-box">
+                <div class="base-url-container">
+                    <p class="base-path">Base Path:</p>
+                    <select id="baseUrlSelector" class="base-url-selector">
+                    </select>
+                </div>
+                <div>
+                    <button class="headers-button" onclick="showModal()">Headers</button>
+                </div>
             </div>
-
+        </div>
+        <!-- The Modal -->
+        <div id="myModal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="flex-box">
+                    <h3>Global Headers</h3>
+                    <span class="close" onclick="hideModal()">&times;</span>
+                </div>
+                <div id="globalHeaders" class="globe-headers-container"></div>
+            </div>
         </div>
     </header>
 

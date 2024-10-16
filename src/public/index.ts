@@ -10,6 +10,16 @@ const getSelectedBaseUrl = (): string => {
     return selector.value;
 };
 
+const showModal = () => {
+    const modal = document.getElementById("myModal") as HTMLElement;
+    modal.style.display = "block";
+}
+
+const hideModal = () => {
+    const modal = document.getElementById("myModal") as HTMLElement;
+    modal.style.display = "none";
+}
+
 // Show toast message
 const showToast = (message: string): void => {
     const toast = document.getElementById('toast') as HTMLElement;
@@ -60,23 +70,22 @@ const getRequestHeaders = (endpointId: string): { [key: string]: string } => {
     const headers: { [key: string]: string } = {}
 
     const request_headers = document.getElementById(`${endpointId}_request_headers_body`) as HTMLElement;
-    const global_request_headers = document.getElementById(`${endpointId}_global_request_headers_body`) as HTMLElement;
+    const inputs = document.querySelectorAll<HTMLInputElement>('input[data-key]');
 
-    if(request_headers){
+    // Loop through the selected inputs and extract their values
+    inputs.forEach(input => {
+        const key = input.getAttribute('data-key') || ''; // Get the data-key attribute
+        const value = input.value; // Get the value of the input
+        headers[key] = value
+    });
+
+    if (request_headers) {
         Array.from(request_headers.getElementsByTagName("tr")).forEach(tr => {
             const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
             const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
             headers[key] = value
         });
     }
-    if(global_request_headers){
-        Array.from(global_request_headers.getElementsByTagName("tr")).forEach(tr => {
-            const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
-            const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
-            headers[key] = value
-        });     
-    }
-    
 
     return headers
 };

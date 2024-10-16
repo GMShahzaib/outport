@@ -50,13 +50,15 @@ class Outport {
 
       addBaseUrlOptions(options.values.servers);
       
-
       const title = document.getElementById("title");
       const version = document.getElementById("version");
       const description = document.getElementById("description");
+      const globalHeaders = document.getElementById("globalHeaders");
       title.innerHTML = options.values.title;
       version.innerHTML = 'v'+options.values.version;
       description.innerHTML = options.values.description;
+
+      globalHeaders.innerHTML = buildGlobalHeaders(options.values.headers)
 
       const outportUI = document.getElementById("outport-ui");
 
@@ -98,7 +100,7 @@ class Outport {
                     <div id="\${endpointId}_request_parameters_tab" class="tab active" onclick="showTab('\${endpointId}','request_header','request_parameters')">
                       <span>Parameters</span>
                     </div>
-                    <div id="\${endpointId}_request_headers_tab" class="tab \${!(global_headers.length>0 || (endpoint.headers && endpoint.headers.length>0)) ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_headers')">
+                    <div id="\${endpointId}_request_headers_tab" class="tab \${!(endpoint.headers && endpoint.headers.length>0) ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_headers')">
                       <span>Headers</span>
                     </div>
                     <div id="\${endpointId}_request_body_tab" class="tab \${endpoint.method == 'get' ? 'displayNon' : ''}" onclick="showTab('\${endpointId}','request_header','request_body')">
@@ -112,13 +114,7 @@ class Outport {
                     <textarea class="body-input" id="\${endpointId}_input_body" onKeyUp="setupFormateJsonInterval('\${endpointId}_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>\${endpoint.body ? JSON.stringify(endpoint.body, undefined, 2) : ""}</textarea>
                   </div>
                   <div id="\${endpointId}_request_headers_content" class="tab-content">
-                    \${(endpoint.headers && endpoint.headers.length>0)?buildRequestHeaders(endpointId, endpoint.headers):""}
-                    <div class="mt-1">
-                      <h6>Global Headers :</h6>
-                      <div class="mt-1">
-                        \${global_headers.length>0?buildGlobalRequestHeaders(endpointId, global_headers):""}
-                      </div>
-                    </div>
+                    \${buildRequestHeaders(endpointId, endpoint.headers)}
                   </div>
                   <div id="\${endpointId}_request_parameters_content" class="tab-content active">
                     \${buildQueryParameters(endpointId, endpoint.parameters)}
@@ -198,7 +194,24 @@ class Outport {
                         </div>\`
                 }).join('')}
               </div>
-        \`;
+              \`;
+      }
+      function buildGlobalHeaders(headers) {
+        return \`
+              <div>
+              \${headers.map(({key,value,description})=>{
+                return \`
+                          <div class="globe-header-container">
+                              <span class="header-key">\${key}:</span>
+                              <div class="header-details">
+                                <input id="\${key}_value" data-key="\${key}" type="text" class="input-field" value="\${value}">
+                                <p class="header-description">\${description}</p>
+                              </div>
+                          </div>
+                        \`
+                }).join('')}
+              </div>
+              \`;
       }
         
       function extractVariablesFromUrl(urlTemplate) {
@@ -222,22 +235,6 @@ class Outport {
                 </tr>
               </thead>
               <tbody id="\${endpointId}_request_headers_body">
-                  \${headers.map(header => buildRequestHeader(header)).join('')}
-              </tbody>
-            </table>
-        \`;
-      }
-      function buildGlobalRequestHeaders(endpointId,headers=[]) {
-        return \`
-            <table class="table">
-              <thead>
-                <tr>
-                  <th class="header-cell">Key</th>
-                  <th class="header-cell">Value</th>
-                  <th class="header-cell">Description</th>
-                </tr>
-              </thead>
-              <tbody id="\${endpointId}_global_request_headers_body">
                   \${headers.map(header => buildRequestHeader(header)).join('')}
               </tbody>
             </table>
