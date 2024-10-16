@@ -35,9 +35,10 @@
             </div>
         </div>
         <!-- The Modal -->
-        <div id="myModal" class="modal">
+        <div id="myModal" class="modal" onclick="hideModal()">
             <!-- Modal content -->
-            <div class="modal-content">
+             
+            <div class="modal-content" onclick="event.stopPropagation()">
                 <div class="flex-box">
                     <h3>Global Headers</h3>
                     <span class="close" onclick="hideModal()">&times;</span>
