@@ -6,35 +6,38 @@ const toggleContent = (id: string): void => {
 
 // Get selected base URL
 const getSelectedBaseUrl = (): string => {
-    const selector = document.getElementById('baseUrlSelector') as HTMLSelectElement;
-    return selector.value;
+    return (document.getElementById('baseUrlSelector') as HTMLSelectElement).value;
 };
 
-const showModal = () => {
-    const modal = document.getElementById("myModal") as HTMLElement;
-    modal.style.display = "block";
+const showModal = (): void => {
+    setModalVisibility("myModal", true);
 }
 
-const hideModal = () => {
-    const modal = document.getElementById("myModal") as HTMLElement;
-    modal.style.display = "none";
+const hideModal = (): void => {
+    setModalVisibility("myModal", false);
+}
+
+const setModalVisibility = (modalId: string, isVisible: boolean): void => {
+    const modal = document.getElementById(modalId) as HTMLElement;
+    modal.style.display = isVisible ? "block" : "none";
 }
 
 // Show toast message
 const showToast = (message: string): void => {
-    const toast = document.getElementById('toast') as HTMLElement;
-    const toastText = document.getElementById('toast-text') as HTMLElement;
-    toastText.innerHTML = message;
-    toast.classList.add('show-toast');
+    updateToast(message, true);
     setTimeout(hideToast, 8000); // Hide toast after 8 seconds
 };
 
 // Hide toast message
 const hideToast = (): void => {
+    updateToast("", false);
+};
+
+const updateToast = (message: string, show: boolean): void => {
     const toast = document.getElementById('toast') as HTMLElement;
     const toastText = document.getElementById('toast-text') as HTMLElement;
-    toastText.innerHTML = "";
-    toast.classList.remove('show-toast');
+    toastText.innerHTML = message;
+    toast.classList.toggle('show-toast', show);
 };
 
 // Validate if string is JSON
@@ -60,66 +63,56 @@ const setupFormateJsonInterval = (id: string): void => {
 // Format JSON
 const formatJson = (ele: HTMLTextAreaElement): void => {
     if (isValidJson(ele.value)) {
-        const formatted = JSON.stringify(JSON.parse(ele.value), null, 2);
-        ele.value = formatted;
+        ele.value = JSON.stringify(JSON.parse(ele.value), null, 2);
     }
 };
 
 // Get request header
 const getRequestHeaders = (endpointId: string): { [key: string]: string } => {
-    const headers: { [key: string]: string } = {}
+    const headers: { [key: string]: string } = {};
 
-    const request_headers = document.getElementById(`${endpointId}_request_headers_body`) as HTMLElement;
+    const requestHeaders = document.getElementById(`${endpointId}_request_headers_body`) as HTMLElement;
     const inputs = document.querySelectorAll<HTMLInputElement>('input[data-key]');
 
-    // Loop through the selected inputs and extract their values
     inputs.forEach(input => {
-        const key = input.getAttribute('data-key') || ''; // Get the data-key attribute
-        const value = input.value; // Get the value of the input
-        headers[key] = value
+        const key = input.getAttribute('data-key') || '';
+        headers[key] = input.value;
     });
 
-    if (request_headers) {
-        Array.from(request_headers.getElementsByTagName("tr")).forEach(tr => {
+    if (requestHeaders) {
+        Array.from(requestHeaders.getElementsByTagName("tr")).forEach(tr => {
             const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
             const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
-            headers[key] = value
+            headers[key] = value;
         });
     }
 
-    return headers
+    return headers;
 };
 
 // Get query parameters
 const getAddressWithParameters = (endpointId: string, path: string): string => {
-    let pathWithParams = path
-
-    const variables = extractVariablesFromUrl(path)
-
+    const variables = extractVariablesFromUrl(path);
     variables.forEach((key: string) => {
         const value = (document.getElementById(`${endpointId}_${key}_value`) as HTMLInputElement).value;
-        pathWithParams = pathWithParams.replace(`{${key}}`, value)
-    })
-
-    return pathWithParams
+        path = path.replace(`{${key}}`, value);
+    });
+    return path;
 };
 
-function extractVariablesFromUrl(urlTemplate: string) {
+function extractVariablesFromUrl(urlTemplate: string): string[] {
     const regex = /{(\w+)}/g;
-    let matches, variables = [];
-
-    while ((matches = regex.exec(urlTemplate)) !== null) {
-        variables.push(matches[1]);
+    const variables: string[] = [];
+    let match;
+    while ((match = regex.exec(urlTemplate)) !== null) {
+        variables.push(match[1]);
     }
-
     return variables;
 }
-
 
 // Get query parameters
 const getQueryParameters = (endpointId: string): string => {
     const paramBody = document.getElementById(`${endpointId}_query_params_body`) as HTMLElement;
-
     return Array.from(paramBody.getElementsByTagName("tr"))
         .map(tr => {
             const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
@@ -139,23 +132,19 @@ const execute = async (
     const body = (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).value;
 
     if (body && !isValidJson(body)) {
-        (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
+        showErrorOnBody(endpointId);
         return;
     }
-    (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
+    removeErrorOnBody(endpointId);
 
-    let params = getQueryParameters(endpointId);
-
-    const pathWithParams = getAddressWithParameters(endpointId, path)
-    const headers = getRequestHeaders(endpointId)
-
+    const params = getQueryParameters(endpointId);
+    const pathWithParams = getAddressWithParameters(endpointId, path);
+    const headers = getRequestHeaders(endpointId);
     const completePath = `${pathWithParams}${params ? `?${params}` : ''}`;
     const parsedBody = body ? JSON.parse(body) : undefined;
 
     console.log({ path: completePath, method, headers, body: parsedBody, timeout });
-
-    document.getElementById(`${endpointId}_response`)?.classList.add("displayNon")
-
+    document.getElementById(`${endpointId}_response`)?.classList.add("displayNon");
 
     try {
         const baseUrl = getSelectedBaseUrl();
@@ -163,7 +152,6 @@ const execute = async (
         const options = buildFetchOptions(method, headers, parsedBody);
 
         const response = await fetchWithTimeout(fullUrl, options, timeout);
-
         const respHeaders = Object.fromEntries(response.headers.entries());
         const data = await parseResponse(response);
         const curlCommand = constructCurlCommand(method, fullUrl, headers, parsedBody);
@@ -175,6 +163,14 @@ const execute = async (
             console.error(error);
         }
     }
+};
+
+const showErrorOnBody = (endpointId: string): void => {
+    (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
+};
+
+const removeErrorOnBody = (endpointId: string): void => {
+    (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
 };
 
 // Build fetch options
@@ -199,18 +195,26 @@ const updateUIWithResponse = (
     headers: { [key: string]: string },
     data: string
 ): void => {
-    (document.getElementById(`${endpointId}_statusCode`) as HTMLElement).innerHTML = String(status);
-    (document.getElementById(`${endpointId}_curl`) as HTMLElement).innerHTML = `<pre>${curlCommand}</pre>`;
-    (document.getElementById(`${endpointId}_response_headers`) as HTMLElement).innerHTML = Object.keys(headers).map(key => `
+    updateElement(`${endpointId}_statusCode`, String(status));
+    updateElement(`${endpointId}_curl`, `<pre>${curlCommand}</pre>`);
+    updateTable(`${endpointId}_response_headers`, headers);
+    updateElement(`${endpointId}_respBody`, data);
+
+    document.getElementById(`${endpointId}_response`)?.classList.remove("displayNon");
+};
+
+const updateElement = (id: string, content: string): void => {
+    (document.getElementById(id) as HTMLElement).innerHTML = content;
+};
+
+const updateTable = (id: string, headers: { [key: string]: string }): void => {
+    const rows = Object.keys(headers).map(key => `
         <tr class="data-row">
           <td class="data-cell whiteBorder"><span class="response-header-key">${key}</span></td>
           <td class="data-cell whiteBorder"><span class="response-header-value">${headers[key]}</span></td>
         </tr>
-        `).join('');
-    (document.getElementById(`${endpointId}_respBody`) as HTMLElement).textContent = data;
-
-
-    document.getElementById(`${endpointId}_response`)?.classList.remove("displayNon")
+    `).join('');
+    updateElement(id, rows);
 };
 
 // Construct CURL command
@@ -231,10 +235,9 @@ const constructCurlCommand = (
 // Parse API response based on content type
 const parseResponse = async (response: Response): Promise<string> => {
     const contentType = response.headers.get('content-type');
-    if (contentType && contentType.includes('application/json')) {
-        return JSON.stringify(await response.json(), null, 2);
-    }
-    return await response.text();
+    return contentType && contentType.includes('application/json')
+        ? JSON.stringify(await response.json(), null, 2)
+        : await response.text();
 };
 
 // Fetch with timeout
@@ -247,13 +250,17 @@ const fetchWithTimeout = (url: string, options: RequestInit, timeout: number): P
 };
 
 // Show selected tab content
-const showTab = (endpointId: string,wrapper:string, tabName: string): void => {
+const showTab = (endpointId: string, wrapper: string, tabName: string): void => {
     const wrapperEle = document.getElementById(`${endpointId}_${wrapper}_tabs`) as HTMLElement;
     const content = document.getElementById(`${endpointId}_${wrapper}_content`) as HTMLElement;
 
-    Array.from(wrapperEle.children).forEach((element) => element && element.classList.remove('active'));
-    Array.from(content.children).forEach((element) => element && element.classList.remove('active'));
+    toggleActiveTab(wrapperEle, content, `${endpointId}_${tabName}`);
+};
 
-    (document.getElementById(`${endpointId}_${tabName}_tab`) as HTMLElement).classList.add('active');
-    (document.getElementById(`${endpointId}_${tabName}_content`) as HTMLElement).classList.add('active');
+const toggleActiveTab = (wrapperEle: HTMLElement, content: HTMLElement, activeTabId: string): void => {
+    Array.from(wrapperEle.children).forEach(child => child.classList.remove('active'));
+    Array.from(content.children).forEach(child => child.classList.remove('active'));
+
+    document.getElementById(`${activeTabId}_tab`)?.classList.add('active');
+    document.getElementById(`${activeTabId}_content`)?.classList.add('active');
 };
