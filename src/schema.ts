@@ -1,16 +1,20 @@
 export interface Parameter {
-  name: string;
-  type: string;
+  key: string;
+  value: string;
   required: boolean;
   description?: string;
 }
 export interface Header {
-  name: string;
-  type: string;
-  required: boolean;
+  key: string;
+  value: string;
   description?: string;
 }
-
+export interface BodyData {
+  key: string,
+  value?: string | number,
+  description?: string;
+  type: "text" | 'file'
+}
 export interface Response {
   status: number;
   description: string;
@@ -21,6 +25,7 @@ export interface Endpoint {
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   summary: string;
   description?: string;
+  body?: { type: 'json' | 'form', data: BodyData[] },
   headers?: Header[];
   parameters?: Parameter[];
   responses: Response[];

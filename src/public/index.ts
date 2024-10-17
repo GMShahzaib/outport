@@ -247,12 +247,12 @@ const fetchWithTimeout = (url: string, options: RequestInit, timeout: number): P
 };
 
 // Show selected tab content
-const showTab = (endpointId: string, wrapper: string, tabName: string): void => {
+const showTab = (endpointId: string,wrapper:string, tabName: string): void => {
     const wrapperEle = document.getElementById(`${endpointId}_${wrapper}_tabs`) as HTMLElement;
     const content = document.getElementById(`${endpointId}_${wrapper}_content`) as HTMLElement;
 
-    Array.from(wrapperEle.getElementsByTagName('div')).forEach(tab => tab && tab.classList.remove('active'));
-    Array.from(content.getElementsByTagName('div')).forEach(tab => tab && tab.classList.remove('active'));
+    Array.from(wrapperEle.children).forEach((element) => element && element.classList.remove('active'));
+    Array.from(content.children).forEach((element) => element && element.classList.remove('active'));
 
     (document.getElementById(`${endpointId}_${tabName}_tab`) as HTMLElement).classList.add('active');
     (document.getElementById(`${endpointId}_${tabName}_content`) as HTMLElement).classList.add('active');

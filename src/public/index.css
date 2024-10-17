@@ -296,8 +296,17 @@ main {
   display: block;
 }
 
+
+.request-content{
+  background-color: #f4f4f9;
+  padding: 10px;
+  border-radius: 15px;
+  margin-top: 10px;
+}
+
 .body-input {
   width: 100%;
+  background-color: #f4f4f9;
   resize: vertical;
   padding: 10px;
   border-color: #c9ab04;
