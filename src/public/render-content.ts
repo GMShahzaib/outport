@@ -1,6 +1,6 @@
 // @ts-ignore
 import options from './outport-des-init.js';
-import { APIDocumentation, Endpoint, Header, Parameter, Response } from '../schema.js';
+import { APIDocumentation, BodyData, Endpoint, Header, Parameter, Response } from '../schema.js';
 import { SchemaApi } from '../index.js';
 
 window.onload = function () {
@@ -62,8 +62,7 @@ function buildApiSection(name: string, endpoints: Endpoint[]): string {
 
 function buildEndpointSection(endpoint: Endpoint): string {
   const endpointId = uidGenerator();
-  const requestBody = extractRequestBody(endpoint);
-  
+
   return `
     <div class="collapsible">
       <div class="flex clickable ptb-5" onclick="toggleContent('${endpointId}')">
@@ -73,14 +72,14 @@ function buildEndpointSection(endpoint: Endpoint): string {
       </div>
       <div id="${endpointId}" class="endpoint">
         ${buildAddressParams(endpointId, endpoint.path)}
-        ${buildRequestSection(endpointId, endpoint, requestBody)}
+        ${buildRequestSection(endpointId, endpoint)}
         ${buildResponseSection(endpointId, endpoint)}
       </div>
     </div>
   `;
 }
 
-function buildRequestSection(endpointId: string, endpoint: Endpoint, requestBody: Record<string, string>): string {
+function buildRequestSection(endpointId: string, endpoint: Endpoint): string {
   return `
     <div class="endpoint_header">
       <div class="request-header-section">
@@ -88,7 +87,7 @@ function buildRequestSection(endpointId: string, endpoint: Endpoint, requestBody
         <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn')">Try it</button>
       </div>
       <div id="${endpointId}_request_header_content" class="request-content">
-        ${buildRequestBodyContent(endpointId, endpoint, requestBody)}
+        ${endpoint.body ? buildRequestBodyContent(endpointId, endpoint.body):""}
         ${buildRequestHeaders(endpointId, endpoint.headers)}
         ${buildRequestParameters(endpointId, endpoint.parameters)}
       </div>
@@ -135,23 +134,39 @@ function buildRequestTabs(endpointId: string, endpoint: Endpoint): string {
   `;
 }
 
-function buildRequestBodyContent(endpointId: string, endpoint: Endpoint, requestBody: Record<string, string>): string {
-  const bodyType = endpoint.body?.type;
+function buildRequestBodyContent(endpointId: string, body: { type: 'json' | 'form', data: BodyData[] }): string {
+  const bodyType = body?.type;
   const isJson = bodyType === 'json';
-  const isForm = bodyType === 'form';
 
-  return `
+  if (isJson) {
+    const requestBody = extractRequestBody(body);
+
+    return `
+      <div id="${endpointId}_request_body_content" class="tab-content">
+      <div>
+       <select disabled id="${endpointId}_body_type_selector" value="json">
+          <option value="json">json</option>
+       </select>
+      </div>
+      <div>
+          <textarea class="body-input" id="${endpointId}_json_input_body" onKeyUp="setupFormateJsonInterval('${endpointId}_json_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>${JSON.stringify(requestBody, undefined, 2)}</textarea>
+      </div>
+      </div>
+    `;
+  } else {
+    return `
     <div id="${endpointId}_request_body_content" class="tab-content">
-      <div id="${endpointId}_json_content" class="tab-content ${isJson && 'active'}">
-        <textarea class="body-input" id="${endpointId}_input_body" onKeyUp="setupFormateJsonInterval('${endpointId}_input_body')" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>${JSON.stringify(requestBody, undefined, 2)}</textarea>
+      <div>
+       <select disabled id="${endpointId}_body_type_selector" value="form">
+          <option value="form">form</option>
+       </select>
       </div>
-      <div id="${endpointId}_form_content" class="tab-content ${isForm && 'active'}">
-        <div class="body-form">
-          ${endpoint.body?.data?.map(buildFormDataField).join('')}
-        </div>
-      </div>
+        <form id="${endpointId}_form_input_body" class="body-form">
+          ${body?.data?.map(buildFormDataField).join('')}
+        </form>
     </div>
   `;
+  }
 }
 
 function buildResponseTabs(endpointId: string): string {
@@ -180,19 +195,19 @@ function buildResponseBodyContent(endpointId: string): string {
   `;
 }
 
-function extractRequestBody(endpoint: Endpoint): Record<string, string> {
-  return (endpoint.body?.data || []).reduce((acc: Record<string, string>, { key, value }) => {
+function extractRequestBody(body: { type: 'json' | 'form', data: BodyData[] }): Record<string, string> {
+  return (body?.data || []).reduce((acc: Record<string, string>, { key, value }) => {
     acc[key] = value as string;
     return acc;
   }, {});
 }
 
-function buildFormDataField(data: { key: string; type: string }): string {
+function buildFormDataField(data: { key: string; value?: string | number, type: string }): string {
   return `
-    <div>
-      <h6>${data.key}:</h6>
-      <input type="${data.type}" id="file-upload">
-    </div>
+  <div>
+    <label class="body-form-title" for="${data.key}">${data.key}:</label>
+    <input type="${data.type}"  name="${data.key}" value="${data.value || ""}" accept="image/*" >
+  </div>
   `;
 }
 
@@ -200,11 +215,11 @@ function buildGlobalHeaders(headers: Header[]): string {
   return `
     <div>
       ${headers
-        .map(({ key, value, description }) => `
+      .map(({ key, value, description }) => `
           <div class="globe-header-container">
             <span class="header-key">${key}:</span>
             <div class="header-details">
-              <input id="${key}_value" data-key="${key}" type="text" class="input-field" value="${value}">
+              <input id="${key}_value" header-data-key="${key}" type="text" class="input-field" value="${value}">
               <p class="header-description">${description}</p>
             </div>
           </div>
@@ -218,8 +233,8 @@ function buildAddressParams(endpointId: string, url: string): string {
   return `
     <div id="${endpointId}_address_params">
       ${variables
-        .map((name) => `
-          <div class="request-url-params-layout">
+      .map((name) => `
+          <div class="flex-row-start">
             <div class="url-param-cell-input">${name}: </div>
             <div class="url-param-cell-input"><input id="${endpointId}_${name}_value" class="url-param-input" placeholder="value" name="value"></input></div>
           </div>

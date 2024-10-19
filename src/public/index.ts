@@ -72,10 +72,10 @@ const getRequestHeaders = (endpointId: string): { [key: string]: string } => {
     const headers: { [key: string]: string } = {};
 
     const requestHeaders = document.getElementById(`${endpointId}_request_headers_body`) as HTMLElement;
-    const inputs = document.querySelectorAll<HTMLInputElement>('input[data-key]');
+    const inputs = document.querySelectorAll<HTMLInputElement>('input[header-data-key]');
 
     inputs.forEach(input => {
-        const key = input.getAttribute('data-key') || '';
+        const key = input.getAttribute('header-data-key') || '';
         headers[key] = input.value;
     });
 
@@ -129,32 +129,46 @@ const execute = async (
     method: string = 'GET',
     timeout: number = 5000
 ): Promise<void> => {
-    const body = (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).value;
 
-    if (body && !isValidJson(body)) {
-        showErrorOnBody(endpointId);
-        return;
-    }
-    removeErrorOnBody(endpointId);
-
+    let requestBody;
     const params = getQueryParameters(endpointId);
     const pathWithParams = getAddressWithParameters(endpointId, path);
     const headers = getRequestHeaders(endpointId);
     const completePath = `${pathWithParams}${params ? `?${params}` : ''}`;
-    const parsedBody = body ? JSON.parse(body) : undefined;
 
-    console.log({ path: completePath, method, headers, body: parsedBody, timeout });
+
+    if (method !== "GET") {
+
+        const value = (document.getElementById(`${endpointId}_body_type_selector`) as HTMLSelectElement).value
+
+        const isJson = value == "json"
+        if (isJson) {
+            const body = (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).value;
+            if (body && !isValidJson(body)) {
+                showErrorOnBody(endpointId);
+                return;
+            }
+            requestBody = body && JSON.stringify(JSON.parse(body));
+            removeErrorOnBody(endpointId);
+        } else {
+            const formData = document.getElementById(`${endpointId}_form_input_body`) as HTMLFormElement
+            requestBody = new FormData(formData)
+        }
+    }
+
+    console.log({ path: completePath, method, headers, body: requestBody, timeout });
+
     document.getElementById(`${endpointId}_response`)?.classList.add("displayNon");
 
     try {
         const baseUrl = getSelectedBaseUrl();
         const fullUrl = `${baseUrl}${completePath}`;
-        const options = buildFetchOptions(method, headers, parsedBody);
+        const options = buildFetchOptions(method, headers, requestBody);
 
         const response = await fetchWithTimeout(fullUrl, options, timeout);
         const respHeaders = Object.fromEntries(response.headers.entries());
         const data = await parseResponse(response);
-        const curlCommand = constructCurlCommand(method, fullUrl, headers, parsedBody);
+        const curlCommand = constructCurlCommand(method, fullUrl, headers, requestBody);
 
         updateUIWithResponse(endpointId, response.status, curlCommand, respHeaders, data);
     } catch (error: unknown) {
@@ -166,23 +180,23 @@ const execute = async (
 };
 
 const showErrorOnBody = (endpointId: string): void => {
-    (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
+    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
 };
 
 const removeErrorOnBody = (endpointId: string): void => {
-    (document.getElementById(`${endpointId}_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
+    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
 };
 
 // Build fetch options
 const buildFetchOptions = (
     method: string,
     headers: Record<string, string>,
-    body?: Record<string, unknown>
+    body?: string | FormData
 ): RequestInit => {
     const options: RequestInit = { method: method.toUpperCase(), headers: { ...headers } };
     if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
-        options.body = JSON.stringify(body);
-        options.headers = { ...options.headers, 'Content-Type': 'application/json' };
+        options.body = body;
+        options.headers = { ...options.headers };
     }
     return options;
 };
@@ -217,18 +231,32 @@ const updateTable = (id: string, headers: { [key: string]: string }): void => {
     updateElement(id, rows);
 };
 
-// Construct CURL command
 const constructCurlCommand = (
     method: string,
     url: string,
     headers: Record<string, string>,
-    body?: Record<string, unknown>
+    body?: string | FormData
 ): string => {
     let curl = `curl -X ${method.toUpperCase()} '${url}'`;
+
+    // Add headers
     Object.entries(headers).forEach(([key, value]) => {
         curl += ` -H '${key}: ${value}'`;
     });
-    if (body) curl += ` -d '${JSON.stringify(body)}'`;
+
+    // Add body (JSON or FormData)
+    if (body) {
+        if (body instanceof FormData) {
+            // If body is FormData, append each key-value pair
+            body.forEach((value, key) => {
+                curl += ` -F '${key}=${value}'`;
+            });
+        } else {
+            // If body is a regular JSON object, use it as a string
+            curl += ` -d '${body}'`;
+        }
+    }
+
     return curl;
 };
 

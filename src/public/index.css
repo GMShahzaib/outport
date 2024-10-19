@@ -305,12 +305,22 @@ main {
 }
 
 .body-input {
+  margin-top: 10px;
   width: 100%;
   background-color: #f4f4f9;
   resize: vertical;
   padding: 10px;
   border-color: #c9ab04;
   outline-color: #c9ab04;
+}
+
+.body-form{
+  margin-top: 10px;
+}
+
+.body-form-title{
+  display: inline-block;
+  min-width: 100px;
 }
 
 .body-input-error {
@@ -364,7 +374,7 @@ main {
   font-size: 14px;
 }
 
-.request-url-params-layout {
+.flex-row-start {
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
