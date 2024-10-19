@@ -74,6 +74,8 @@ function buildEndpointSection(endpoint: Endpoint): string {
         ${buildAddressParams(endpointId, endpoint.path)}
         ${buildRequestSection(endpointId, endpoint)}
         ${buildResponseSection(endpointId, endpoint)}
+        ${endpoint.responses ? buildResponses(endpoint.responses) : ''}
+
       </div>
     </div>
   `;
@@ -110,10 +112,8 @@ function buildResponseSection(endpointId: string, endpoint: Endpoint): string {
       <div id="${endpointId}_response_header_content" class="header-content">
         ${buildResponseBodyContent(endpointId)}
         ${buildResponseHeaders(endpointId)}
-        ${buildResponseCurlContent(endpointId)}
       </div>
       ${endpoint.description ? buildDescription(endpoint.description) : ''}
-      ${endpoint.responses ? buildResponses(endpoint.responses) : ''}
     </div>
   `;
 }
@@ -177,9 +177,6 @@ function buildResponseTabs(endpointId: string): string {
       </div>
       <div id="${endpointId}_response_headers_tab" class="tab" onclick="showTab('${endpointId}','response_header','response_headers')">
         <span>Headers</span>
-      </div>
-      <div id="${endpointId}_response_curl_tab" class="tab" onclick="showTab('${endpointId}','response_header','response_curl')">
-        <span>cURL</span>
       </div>
     </div>
   `;
@@ -313,16 +310,6 @@ function buildResponseHeaders(endpointId: string): string {
           </thead>
           <tbody id="${endpointId}_response_headers"></tbody>
         </table>
-    </div>
-  `;
-}
-
-function buildResponseCurlContent(endpointId: string): string {
-  return `
-    <div id="${endpointId}_response_curl_content" class="tab-content">
-      <div id="${endpointId}_curl_wrapper" class="curl">
-        <pre id="${endpointId}_curl"></pre>
-      </div>
     </div>
   `;
 }

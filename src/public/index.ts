@@ -168,9 +168,8 @@ const execute = async (
         const response = await fetchWithTimeout(fullUrl, options, timeout);
         const respHeaders = Object.fromEntries(response.headers.entries());
         const data = await parseResponse(response);
-        const curlCommand = constructCurlCommand(method, fullUrl, headers, requestBody);
 
-        updateUIWithResponse(endpointId, response.status, curlCommand, respHeaders, data);
+        updateUIWithResponse(endpointId, response.status, respHeaders, data);
     } catch (error: unknown) {
         if (error instanceof Error) {
             showToast(error.message);
@@ -205,12 +204,10 @@ const buildFetchOptions = (
 const updateUIWithResponse = (
     endpointId: string,
     status: number,
-    curlCommand: string,
     headers: { [key: string]: string },
     data: string
 ): void => {
     updateElement(`${endpointId}_statusCode`, String(status));
-    updateElement(`${endpointId}_curl`, `<pre>${curlCommand}</pre>`);
     updateTable(`${endpointId}_response_headers`, headers);
     updateElement(`${endpointId}_respBody`, data);
 
@@ -229,35 +226,6 @@ const updateTable = (id: string, headers: { [key: string]: string }): void => {
         </tr>
     `).join('');
     updateElement(id, rows);
-};
-
-const constructCurlCommand = (
-    method: string,
-    url: string,
-    headers: Record<string, string>,
-    body?: string | FormData
-): string => {
-    let curl = `curl -X ${method.toUpperCase()} '${url}'`;
-
-    // Add headers
-    Object.entries(headers).forEach(([key, value]) => {
-        curl += ` -H '${key}: ${value}'`;
-    });
-
-    // Add body (JSON or FormData)
-    if (body) {
-        if (body instanceof FormData) {
-            // If body is FormData, append each key-value pair
-            body.forEach((value, key) => {
-                curl += ` -F '${key}=${value}'`;
-            });
-        } else {
-            // If body is a regular JSON object, use it as a string
-            curl += ` -d '${body}'`;
-        }
-    }
-
-    return curl;
 };
 
 // Parse API response based on content type

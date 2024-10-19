@@ -362,7 +362,6 @@ main {
 
 /* response design */
 /* General styling for container and sections */
-.curl,
 .respBody,
 .response-headers {
   font-family: 'Courier New', Courier, monospace;
@@ -385,16 +384,6 @@ main {
   margin-top: 5px;
 }
 
-.curl {
-  background-color: #264653;
-  /* Dark blue background for curl command */
-  color: #ffffff;
-  font-size: 16px;
-  border-left: 5px solid #c9ab04;
-  /* Orange side bar */
-  padding-left: 10px;
-}
-
 .respBody,
 .response-headers,
 .respHeaders {
@@ -415,7 +404,6 @@ pre {
 }
 
 /* Optional: Adding subtle shadow for better appearance */
-.curl,
 .respBody,
 .response-headers {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -427,8 +415,6 @@ pre {
 
 /* Ensure responsiveness */
 @media (max-width: 768px) {
-
-  .curl,
   .respBody,
   .response-headers {
     font-size: 12px;
