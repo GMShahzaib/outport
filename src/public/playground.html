@@ -13,17 +13,13 @@
         <div class="header-content">
             <div class="flex-box">
                 <div class="brand">
-                    <img src="https://static.vecteezy.com/system/resources/thumbnails/024/553/534/small/lion-head-logo-mascot-wildlife-animal-illustration-generative-ai-png.png"
-                        alt="Logo" class="logo">
+                    <img src="https://static.vecteezy.com/system/resources/thumbnails/024/553/534/small/lion-head-logo-mascot-wildlife-animal-illustration-generative-ai-png.png" alt="Logo" class="logo">
                     <h3 class="name">outport</h3>
                 </div>
-
-                <div>
-                    <a class="primary-button" href="javascript:window.history.back();">
-                        <span class="arrow-icon">&#9664;</span>
-                        <span class="arrow-text">Go Back</span>
-                    </a>
-                </div>
+                <a class="primary-button" href="javascript:window.history.back();">
+                    <span class="arrow-icon">&#9664;</span>
+                    <span class="arrow-text">Go Back</span>
+                </a>
             </div>
         </div>
     </header>
@@ -38,29 +34,21 @@
                         <option value="patch">PATCH</option>
                         <option value="delete">DELETE</option>
                     </select>
-                    <input class="playground-url-input" type="text" id="url-input"
-                        placeholder="Enter URL or paste text">
+                    <input class="playground-url-input" type="text" id="url-input" placeholder="Enter URL or paste text">
                 </div>
                 <button class="primary-button" type="submit">Send</button>
             </div>
+
             <div class="dull-card">
                 <div class="tabs" id="playground_request_header_tabs">
-                    <div id="playground_request_parameters_tab" class="tab active"
-                        onclick="showTab('playground','request_header','request_parameters')">
-                        <span>Parameters</span>
-                    </div>
-                    <div id="playground_request_headers_tab" class="tab"
-                        onclick="showTab('playground','request_header','request_headers')">
-                        <span>Headers</span>
-                    </div>
-                    <div id="playground_request_body_tab" class="tab"
-                        onclick="showTab('playground','request_header','request_body')">
-                        <span>Body</span>
-                    </div>
+                    <div id="playground_request_parameters_tab" class="tab active" onclick="showTab('playground', 'request_header', 'request_parameters')">Parameters</div>
+                    <div id="playground_request_headers_tab" class="tab" onclick="showTab('playground', 'request_header', 'request_headers')">Headers</div>
+                    <div id="playground_request_body_tab" class="tab" onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
                 </div>
+                
                 <div id="playground_request_header_content" class="request-content">
                     <div id="playground_request_parameters_content" class="tab-content active">
-                        <table class="table">
+                        <table class="table" id="parametersTable">
                             <thead>
                                 <tr>
                                     <th class="header-cell">Key</th>
@@ -69,25 +57,21 @@
                             </thead>
                             <tbody>
                                 <tr class="data-row">
-                                    <td class="data-cell">
-                                        <input class="param-cell-input border-background-non" placeholder="key"
-                                            name="key"></input>
-                                    </td>
+                                    <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="key" name="key"></td>
                                     <td class="data-cell">
                                         <div class="flex-box">
-                                            <input class="param-cell-input border-background-non" placeholder="value"
-                                                name="value"></input>
-                                            <h6 class="delete-text-btn">delete</h6>
+                                            <input class="param-cell-input border-background-non" placeholder="value" name="value">
+                                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <h6 class="add-more-text-btn">Add more...</h6>
+                        <h6 class="add-more-text-btn" onclick="addRow('parametersTable')">Add more...</h6>
                     </div>
 
                     <div id="playground_request_headers_content" class="tab-content">
-                        <table class="table">
+                        <table class="table" id="headersTable">
                             <thead>
                                 <tr>
                                     <th class="header-cell">Key</th>
@@ -96,22 +80,17 @@
                             </thead>
                             <tbody>
                                 <tr class="data-row">
-                                    <td class="data-cell">
-                                        <input class="param-cell-input border-background-non" placeholder="key"
-                                            name="key"></input>
-                                    </td>
+                                    <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="key" name="key"></td>
                                     <td class="data-cell">
                                         <div class="flex-box">
-                                            <input class="param-cell-input border-background-non" placeholder="value"
-                                                name="value"></input>
-                                            <h6 class="delete-text-btn">delete</h6>
-                                            <div id="${endpointId}_response" class="dull-card displayNon">
-                                            </div>
+                                            <input class="param-cell-input border-background-non" placeholder="value" name="value">
+                                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <h6 class="add-more-text-btn">Add more...</h6>
+                        <h6 class="add-more-text-btn" onclick="addRow('headersTable')">Add more...</h6>
                     </div>
 
                     <div id="playground_request_body_content" class="tab-content">
@@ -122,12 +101,10 @@
                             </select>
                         </div>
                         <div id="request_body_json">
-                            <textarea id="playground_json_input_body"
-                                onKeyUp="setupFormateJsonInterval('playground_json_input_body')" class="body-input"
-                                rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>{}</textarea>
+                            <textarea id="playground_json_input_body" onKeyUp="setupFormateJsonInterval('playground_json_input_body')" class="body-input" rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>{}</textarea>
                         </div>
-                        <div id="request_body_form" class="mt-2">
-                            <table class="table">
+                        <div id="request_body_form" class="mt-2" style="display: none;">
+                            <table class="table" id="bodyTable">
                                 <thead>
                                     <tr>
                                         <th class="header-cell">Key</th>
@@ -138,10 +115,8 @@
                                     <tr class="data-row">
                                         <td class="data-cell">
                                             <div class="flex-box">
-                                                <input class="param-cell-input border-background-non" placeholder="key"
-                                                    name="key"></input>
-                                                <select class="border-background-non"
-                                                    onchange="changeBodyFormInputType(this)">
+                                                <input class="param-cell-input border-background-non" placeholder="key" name="key">
+                                                <select class="border-background-non" onchange="changeBodyFormInputType(this)">
                                                     <option value="text">TEXT</option>
                                                     <option value="file">FILE</option>
                                                 </select>
@@ -149,69 +124,92 @@
                                         </td>
                                         <td class="data-cell">
                                             <div class="flex-box">
-                                                <input type="text" class="param-cell-input border-background-non"
-                                                    placeholder="value" accept="image/*">
-                                                <h6 class="delete-text-btn">delete</h6>
+                                                <input type="text" class="param-cell-input border-background-non" placeholder="value" accept="image/*">
+                                                <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
                                             </div>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <h6 class="add-more-text-btn">Add more...</h6>
+                            <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="dull-card">
                 <h3>Response</h3>
                 <div class="response-content">
                     <div class="playground-response-section-message">
                         Enter the URL and click Send to get Response
                     </div>
-
                 </div>
-
             </div>
         </section>
     </main>
 
     <script src="./index.js"></script>
-
     <script>
-        // Get references to the elements
+        // Element references
         const selectElement = document.getElementById('playground_request_body_type');
         const jsonDiv = document.getElementById('request_body_json');
         const formDiv = document.getElementById('request_body_form');
+
+        // Initial setup
         jsonDiv.style.display = 'block';
-        formDiv.style.display = 'none';
 
-        // Event listener for the select element
+        // Change request body type
         selectElement.addEventListener('change', function () {
-            const selectedValue = selectElement.value;
-
-            // Show/hide request body based on the selected value
-            if (selectedValue === 'json') {
-                jsonDiv.style.display = 'block';
-                formDiv.style.display = 'none';
-            } else if (selectedValue === 'form') {
-                jsonDiv.style.display = 'none';
-                formDiv.style.display = 'block';
-            }
+            const isJson = selectElement.value === 'json';
+            jsonDiv.style.display = isJson ? 'block' : 'none';
+            formDiv.style.display = isJson ? 'none' : 'block';
         });
 
         function changeBodyFormInputType(selectElement) {
-            // Get the parent <td> of the select element
-            const parentTd = selectElement.closest('td');
+            const inputField = selectElement.closest('td').nextElementSibling.querySelector('input');
+            inputField.type = selectElement.value;
+        }
 
-            // Get the next sibling <td>
-            const nextTd = parentTd.nextElementSibling;
+        function addRow(tableId) {
+            const tableBody = document.querySelector(`#${tableId} tbody`);
+            const newRow = document.createElement('tr');
+            newRow.classList.add('data-row');
+            newRow.innerHTML = `
+                <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="key" name="key"></td>
+                <td class="data-cell">
+                    <div class="flex-box">
+                        <input class="param-cell-input border-background-non" placeholder="value" name="value">
+                        <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                    </div>
+                </td>`;
+            tableBody.appendChild(newRow);
+        }
 
-            // Find the input inside the next sibling <td>
-            const inputField = nextTd.querySelector('input');
+        function addReqBodyRow() {
+            const tableBody = document.querySelector(`#bodyTable tbody`);
+            const newRow = document.createElement('tr');
+            newRow.classList.add('data-row');
+            newRow.innerHTML = `
+                <td class="data-cell">
+                    <div class="flex-box">
+                        <input class="param-cell-input border-background-non" placeholder="key" name="key">
+                        <select class="border-background-non" onchange="changeBodyFormInputType(this)">
+                            <option value="text">TEXT</option>
+                            <option value="file">FILE</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="data-cell">
+                    <div class="flex-box">
+                        <input type="text" class="param-cell-input border-background-non" placeholder="value" accept="image/*">
+                        <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                    </div>
+                </td>`;
+            tableBody.appendChild(newRow);
+        }
 
-            // Set the input type based on the selected option
-            const selectedValue = selectElement.value;
-            inputField.type = selectedValue;
+        function deleteRow(element) {
+            element.closest('tr').remove();
         }
     </script>
 </body>
