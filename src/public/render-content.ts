@@ -83,7 +83,7 @@ function buildEndpointSection(endpoint: Endpoint): string {
 
 function buildRequestSection(endpointId: string, endpoint: Endpoint): string {
   return `
-    <div class="endpoint_header">
+    <div class="dull-card">
       <div class="request-header-section">
         ${buildRequestTabs(endpointId, endpoint)}
         <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn')">Try it</button>
@@ -102,7 +102,7 @@ function buildRequestSection(endpointId: string, endpoint: Endpoint): string {
 
 function buildResponseSection(endpointId: string, endpoint: Endpoint): string {
   return `
-    <div id="${endpointId}_response" class="response displayNon">
+    <div id="${endpointId}_response" class="dull-card displayNon">
       <div class="response-header-section">
         ${buildResponseTabs(endpointId)}
         <div class="response-status-code">
@@ -144,7 +144,7 @@ function buildRequestBodyContent(endpointId: string, body: { type: 'json' | 'for
     return `
       <div id="${endpointId}_request_body_content" class="tab-content">
       <div>
-       <select disabled id="${endpointId}_body_type_selector" value="json">
+       <select disabled id="${endpointId}_body_type_selector" class="body-type-select" value="json">
           <option value="json">json</option>
        </select>
       </div>
@@ -157,13 +157,15 @@ function buildRequestBodyContent(endpointId: string, body: { type: 'json' | 'for
     return `
     <div id="${endpointId}_request_body_content" class="tab-content">
       <div>
-       <select disabled id="${endpointId}_body_type_selector" value="form">
+       <select disabled id="${endpointId}_body_type_selector" class="body-type-select" value="form">
           <option value="form">form</option>
        </select>
       </div>
+      <div>
         <form id="${endpointId}_form_input_body" class="body-form">
           ${body?.data?.map(buildFormDataField).join('')}
         </form>
+      </div>
     </div>
   `;
   }
@@ -263,7 +265,7 @@ function buildRequestHeader(header: Header): string {
   return `
     <tr class="data-row">
       <td class="data-cell"><input class="param-cell-input" disabled placeholder="key" name="key" value="${header.key}"></input></td>
-      <td class="data-cell"><input class="param-cell-input" placeholder="value" name="value" value="${header.value}"></input></td>
+      <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="value" name="value" value="${header.value}"></input></td>
       <td class="data-cell"><input class="param-cell-input" disabled placeholder="description" value="${header.description}"></input></td>
     </tr>
   `;
@@ -292,7 +294,7 @@ function buildParameterSection(param: Parameter): string {
   return `
     <tr class="data-row">
       <td class="data-cell"><input class="param-cell-input" disabled placeholder="key" name="key" value="${param.key}"></input></td>
-      <td class="data-cell"><input class="param-cell-input" placeholder="value" name="value" value="${param.value}"></input></td>
+      <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="value" name="value" value="${param.value}"></input></td>
       <td class="data-cell"><input class="param-cell-input" disabled placeholder="description" value="${param.description}"></input></td>
     </tr>
   `;
@@ -319,7 +321,7 @@ function buildResponses(responses: Response[]): string {
     <h4>Responses:</h4>
     <div>
       ${responses.map((response) => `
-        <div class="response">
+        <div class="dull-card">
           <strong>${response.status}</strong> - ${response.description}
         </div>
       `).join('')}
