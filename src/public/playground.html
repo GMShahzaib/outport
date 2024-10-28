@@ -28,15 +28,15 @@
         <section>
             <div class="playground-url-container">
                 <div class="playground-endpoint">
-                    <select class="playground-method-selector">
+                    <select id="playground-method-selector" class="playground-method-selector">
                         <option value="get">GET</option>
                         <option value="post">POST</option>
                         <option value="patch">PATCH</option>
                         <option value="delete">DELETE</option>
                     </select>
-                    <input class="playground-url-input" type="text" id="url-input" placeholder="Enter URL or paste text">
+                    <input class="playground-url-input" type="text" id="playground-url-input" placeholder="Enter URL or paste text">
                 </div>
-                <button class="primary-button" type="submit">Send</button>
+                <button class="primary-button" onclick="testApi()">Send</button>
             </div>
 
             <div class="dull-card">
@@ -45,7 +45,7 @@
                     <div id="playground_request_headers_tab" class="tab" onclick="showTab('playground', 'request_header', 'request_headers')">Headers</div>
                     <div id="playground_request_body_tab" class="tab" onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
                 </div>
-                
+
                 <div id="playground_request_header_content" class="request-content">
                     <div id="playground_request_parameters_content" class="tab-content active">
                         <table class="table" id="parametersTable">
@@ -67,7 +67,7 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <h6 class="add-more-text-btn" onclick="addRow('parametersTable')">Add more...</h6>
+                        <h6 class="add-more-text-btn" onclick="addRowWithQueryParamListeners()">Add more...</h6>
                     </div>
 
                     <div id="playground_request_headers_content" class="tab-content">
@@ -154,20 +154,29 @@
         const selectElement = document.getElementById('playground_request_body_type');
         const jsonDiv = document.getElementById('request_body_json');
         const formDiv = document.getElementById('request_body_form');
+        const parametersTable = document.getElementById("parametersTable");
+        const urlInput = document.getElementById("playground-url-input");
 
         // Initial setup
         jsonDiv.style.display = 'block';
 
         // Change request body type
-        selectElement.addEventListener('change', function () {
+        selectElement.addEventListener('change', toggleRequestBodyType);
+
+        function toggleRequestBodyType() {
             const isJson = selectElement.value === 'json';
             jsonDiv.style.display = isJson ? 'block' : 'none';
             formDiv.style.display = isJson ? 'none' : 'block';
-        });
+        }
 
         function changeBodyFormInputType(selectElement) {
             const inputField = selectElement.closest('td').nextElementSibling.querySelector('input');
             inputField.type = selectElement.value;
+        }
+
+        function addRowWithQueryParamListeners() {
+            addRow("parametersTable");
+            initializeRealTimeURLUpdate();
         }
 
         function addRow(tableId) {
@@ -210,7 +219,80 @@
 
         function deleteRow(element) {
             element.closest('tr').remove();
+            updateURL();
         }
+
+        function testApi() {
+            const url = urlInput.value;
+            const method = document.getElementById("playground-method-selector").value;
+            execute('playground', url, method);
+        }
+
+        function initializeRealTimeURLUpdate() {
+            initializeInputListeners(parametersTable);
+        }
+
+        function initializeInputListeners(parametersTable) {
+            const keyInputs = parametersTable.querySelectorAll('input[name="key"]');
+            const valueInputs = parametersTable.querySelectorAll('input[name="value"]');
+
+            keyInputs.forEach(input => input.addEventListener("input", updateURL));
+            valueInputs.forEach(input => input.addEventListener("input", updateURL));
+        }
+
+        function updateURL() {
+            let baseUrl = urlInput.getAttribute("data-base-url") || urlInput.value.split("?")[0];
+            urlInput.setAttribute("data-base-url", baseUrl);  // Store the original base URL
+
+            const queryParams = [];
+            const rows = parametersTable.querySelectorAll("tr.data-row");
+
+            rows.forEach(row => {
+                const key = row.querySelector('input[name="key"]').value;
+                const value = row.querySelector('input[name="value"]').value;
+                if (key && value) {
+                    queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+                }
+            });
+
+            const queryString = queryParams.length > 0 ? `?${queryParams.join("&")}` : "";
+            urlInput.value = baseUrl + queryString;
+        }
+
+        // Add event listener to URL input to sync the table in real-time
+        urlInput.addEventListener("input", syncTableWithURL);
+
+        // Synchronize the parameters table with the current URL input
+        function syncTableWithURL() {
+            const url = new URL(urlInput.value, window.location.origin);
+            const params = new URLSearchParams(url.search);
+
+            // Clear existing rows in the parameters table
+            parametersTable.querySelector("tbody").innerHTML = "";
+
+            // Populate table with parameters from the URL
+            params.forEach((value, key) => {
+                const newRow = parametersTable.querySelector("tbody").insertRow();
+                newRow.classList.add("data-row");
+                newRow.innerHTML = `
+                    <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="key" value="${decodeURIComponent(key)}" name="key"></td>
+                    <td class="data-cell">
+                        <div class="flex-box">
+                            <input class="param-cell-input border-background-non" placeholder="value" value="${decodeURIComponent(value)}" name="value">
+                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                        </div>
+                    </td>`;
+            });
+
+            if (params.size === 0) {
+                addRowWithQueryParamListeners();
+            }
+
+            // Reinitialize listeners for the new inputs
+            initializeInputListeners(parametersTable);
+        }
+
+        initializeRealTimeURLUpdate();
     </script>
 </body>
 
