@@ -192,10 +192,9 @@ const buildFetchOptions = (
     headers: Record<string, string>,
     body?: string | FormData
 ): RequestInit => {
-    const options: RequestInit = { method: method.toUpperCase(), headers: { ...headers } };
+    const options: RequestInit = { method: method.toUpperCase(), headers };
     if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
         options.body = body;
-        options.headers = { ...options.headers };
     }
     return options;
 };
