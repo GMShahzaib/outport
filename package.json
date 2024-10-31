@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc && npm run copy-html",
-    "copy-html": "copyfiles -u 1 src/public/*.html src/public/*.css src/public/*.js  dist/"
+    "copy-html": "copyfiles -u 1 \"src/public/**/*.html\" \"src/public/**/*.css\" dist/"
   },
   "keywords": [],
   "author": "",
