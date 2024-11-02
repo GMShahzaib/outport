@@ -95,8 +95,14 @@ async function sendRequest(): Promise<void> {
     let body;
     if (method != "get") body = getBody()
 
-    const response = await testApi({ path: url, method, headers, body });
-    console.log(response)
+    const { success, errorMessage, data, headers: respHeaders, status } = await testApi({ path: url, method, headers, body });
+
+    if (!success) {
+        showToast(errorMessage || "Something went wrong!");
+    }
+
+    console.log(data, respHeaders, status)
+
 }
 
 function getBody() {
