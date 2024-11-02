@@ -119,31 +119,3 @@ const execute = async (
         console.error(error);
     }
 };
-
-// Update UI with response
-const updateUIWithResponse = (
-    endpointId: string,
-    status: number,
-    headers: { [key: string]: string },
-    data: string
-): void => {
-    updateElement(`${endpointId}_statusCode`, String(status));
-    updateTable(`${endpointId}_response_headers`, headers);
-    updateElement(`${endpointId}_respBody`, data);
-
-    document.getElementById(`${endpointId}_response`)?.classList.remove("displayNon");
-};
-
-const updateElement = (id: string, content: string): void => {
-    (document.getElementById(id) as HTMLElement).innerHTML = content;
-};
-
-const updateTable = (id: string, headers: { [key: string]: string }): void => {
-    const rows = Object.keys(headers).map(key => `
-        <tr class="data-row">
-          <td class="data-cell whiteBorder"><span class="response-header-key">${key}</span></td>
-          <td class="data-cell whiteBorder"><span class="response-header-value">${headers[key]}</span></td>
-        </tr>
-    `).join('');
-    updateElement(id, rows);
-};

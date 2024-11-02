@@ -438,7 +438,7 @@ pre {
 }
 
 .displayNon {
-  display: none;
+  display: none !important;
 }
 
 /* Ensure responsiveness */

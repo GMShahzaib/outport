@@ -123,33 +123,33 @@
                                             <th class="header-cell">Value</th>
                                         </tr>
                                     </thead>
-                                        <tbody>
-                                            <tr class="data-row">
-                                                <td class="data-cell">
-                                                    <div class="flex-box">
-                                                        <input class="param-cell-input border-background-non"
-                                                            placeholder="key" onchange="updateFormValueKey(this)">
-                                                        <select class="border-background-non"
-                                                            onchange="changeBodyFormInputType(this)">
-                                                            <option value="text">TEXT</option>
-                                                            <option value="file">FILE</option>
-                                                        </select>
-                                                    </div>
-                                                </td>
-                                                <td class="data-cell">
-                                                    <div class="flex-box">
-                                                        <input type="text"
-                                                            class="param-cell-input border-background-non value-input"
-                                                            placeholder="value" accept="image/*">
-                                                        <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
-                                </div>
-                            </form>
+                                    <tbody>
+                                        <tr class="data-row">
+                                            <td class="data-cell">
+                                                <div class="flex-box">
+                                                    <input class="param-cell-input border-background-non"
+                                                        placeholder="key" onchange="updateFormValueKey(this)">
+                                                    <select class="border-background-non"
+                                                        onchange="changeBodyFormInputType(this)">
+                                                        <option value="text">TEXT</option>
+                                                        <option value="file">FILE</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td class="data-cell">
+                                                <div class="flex-box">
+                                                    <input type="text"
+                                                        class="param-cell-input border-background-non value-input"
+                                                        placeholder="value" accept="image/*">
+                                                    <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -157,8 +157,43 @@
             <div class="dull-card">
                 <h3>Response</h3>
                 <div class="response-content">
-                    <div class="playground-response-section-message">
+                    <div id="playground-response-unavailable" class="playground-response-section-message">
                         Enter the URL and click Send to get Response
+                    </div>
+                    <div id="playground-response-section" class="displayNon">
+                        <div class="response-header-section">
+                            <div id="playground_response_header_tabs" class="tabs">
+                                <div id="playground_response_body_tab" class="tab active"
+                                    onclick="showTab('playground','response_header','response_body')">
+                                    <span>Body</span>
+                                </div>
+                                <div id="playground_response_headers_tab" class="tab"
+                                    onclick="showTab('playground','response_header','response_headers')">
+                                    <span>Headers</span>
+                                </div>
+                            </div>
+                            <div class="response-status-code">
+                                status code: <span id="playground_statusCode" class="status-code"></span>
+                            </div>
+                        </div>
+                        <div id="playground_response_header_content" class="header-content">
+                            <div id="playground_response_body_content" class="tab-content active">
+                                <div id="playground_respBody_wrapper" class="respBody">
+                                    <pre id="playground_respBody"></pre>
+                                </div>
+                            </div>
+                            <div id="playground_response_headers_content" class="tab-content response-headers">
+                                <table class="table whiteBorder">
+                                    <thead>
+                                        <tr>
+                                            <th class="header-cell whiteBorder">Key</th>
+                                            <th class="header-cell whiteBorder">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="playground_response_headers"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

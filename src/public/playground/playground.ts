@@ -89,6 +89,9 @@ function deleteRow(element: HTMLElement): void {
 }
 
 async function sendRequest(): Promise<void> {
+    (document.getElementById(`playground-response-unavailable`) as HTMLDivElement).classList.remove("displayNon");
+    (document.getElementById(`playground-response-section`) as HTMLDivElement).classList.add("displayNon");
+
     const url = urlInput.value;
     const method = (document.getElementById("playground-method-selector") as HTMLSelectElement).value;
     const headers = getHeaders()
@@ -100,9 +103,9 @@ async function sendRequest(): Promise<void> {
     if (!success) {
         showToast(errorMessage || "Something went wrong!");
     }
-
-    console.log(data, respHeaders, status)
-
+    updateUIWithResponse("playground", status as number, respHeaders as { [k: string]: string; }, data as string);
+    (document.getElementById(`playground-response-unavailable`) as HTMLDivElement).classList.add("displayNon");
+    (document.getElementById(`playground-response-section`) as HTMLDivElement).classList.remove("displayNon");
 }
 
 function getBody() {
