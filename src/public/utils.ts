@@ -8,6 +8,14 @@ const isValidJson = (str: string): boolean => {
     }
 };
 
+const showErrorOnBody = (endpointId: string): void => {
+    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
+};
+
+const removeErrorOnBody = (endpointId: string): void => {
+    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
+};
+
 
 // Show selected tab content
 const showTab = (endpointId: string, wrapper: string, tabName: string): void => {

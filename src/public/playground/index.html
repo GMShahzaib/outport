@@ -111,42 +111,45 @@
                         </div>
                         <div id="request_body_json">
                             <textarea id="playground_json_input_body"
-                                onKeyUp="setupFormateJsonInterval('playground_json_input_body')" class="body-input"
+                                onkeyup="setupFormateJsonInterval('playground_json_input_body')" class="body-input"
                                 rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>{}</textarea>
                         </div>
-                        <div id="request_body_form" class="mt-2" style="display: none;">
-                            <table class="table" id="bodyTable">
-                                <thead>
-                                    <tr>
-                                        <th class="header-cell">Key</th>
-                                        <th class="header-cell">Value</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="data-row">
-                                        <td class="data-cell">
-                                            <div class="flex-box">
-                                                <input class="param-cell-input border-background-non" placeholder="key"
-                                                    name="key">
-                                                <select class="border-background-non"
-                                                    onchange="changeBodyFormInputType(this)">
-                                                    <option value="text">TEXT</option>
-                                                    <option value="file">FILE</option>
-                                                </select>
-                                            </div>
-                                        </td>
-                                        <td class="data-cell">
-                                            <div class="flex-box">
-                                                <input type="text" class="param-cell-input border-background-non"
-                                                    placeholder="value" accept="image/*">
-                                                <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                            <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
-                        </div>
+                        <form id="playground_form_body">
+                            <div id="request_body_form" class="mt-2" style="display: none;">
+                                <table class="table" id="playground_form_body_table">
+                                    <thead>
+                                        <tr>
+                                            <th class="header-cell">Key</th>
+                                            <th class="header-cell">Value</th>
+                                        </tr>
+                                    </thead>
+                                        <tbody>
+                                            <tr class="data-row">
+                                                <td class="data-cell">
+                                                    <div class="flex-box">
+                                                        <input class="param-cell-input border-background-non"
+                                                            placeholder="key" onchange="updateFormValueKey(this)">
+                                                        <select class="border-background-non"
+                                                            onchange="changeBodyFormInputType(this)">
+                                                            <option value="text">TEXT</option>
+                                                            <option value="file">FILE</option>
+                                                        </select>
+                                                    </div>
+                                                </td>
+                                                <td class="data-cell">
+                                                    <div class="flex-box">
+                                                        <input type="text"
+                                                            class="param-cell-input border-background-non value-input"
+                                                            placeholder="value" accept="image/*">
+                                                        <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
+                                </div>
+                            </form>
                     </div>
                 </div>
             </div>

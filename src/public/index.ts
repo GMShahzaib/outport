@@ -120,14 +120,6 @@ const execute = async (
     }
 };
 
-const showErrorOnBody = (endpointId: string): void => {
-    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
-};
-
-const removeErrorOnBody = (endpointId: string): void => {
-    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
-};
-
 // Update UI with response
 const updateUIWithResponse = (
     endpointId: string,
