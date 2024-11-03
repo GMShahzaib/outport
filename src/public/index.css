@@ -743,3 +743,21 @@ pre {
   color: #606060;
 }
 
+.example-response{
+  background-color: #f4f4f9;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.example-response-description{
+  font-size: 16px;
+}
+
+.example-response-status-code {
+  font-size: 16px;
+}
+
+.pointer{
+  cursor: pointer;
+}
