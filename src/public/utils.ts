@@ -83,11 +83,13 @@ const updateToast = (message: string, show: boolean): void => {
 // Update UI with response
 const updateUIWithResponse = (
     endpointId: string,
+    time: string,
     status: number,
     headers: { [key: string]: string },
     data: string
 ): void => {
     updateElement(`${endpointId}_statusCode`, String(status));
+    updateElement(`${endpointId}_resp_time`, time);
     updateTable(`${endpointId}_response_headers`, headers);
     updateElement(`${endpointId}_respBody`, data);
 

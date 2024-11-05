@@ -76,7 +76,8 @@ const getQueryParameters = (endpointId: string): string => {
 const execute = async (
     endpointId: string,
     path: string,
-    method: string = 'GET'
+    method: string = 'GET',
+    timeout?: number
 ): Promise<void> => {
 
     let requestBody;
@@ -108,13 +109,13 @@ const execute = async (
     document.getElementById(`${endpointId}_response`)?.classList.add("displayNon");
 
     try {
-        const { success, errorMessage, data, headers: respHeaders, status } = await testApi({ path: fullUrl, method, headers, body: requestBody })
+        const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({ path: fullUrl, method, headers, body: requestBody, timeout })
 
         if (!success) {
-            showToast(errorMessage || "Something went wrong!");
+            return showToast(errorMessage || "Something went wrong!");
         }
 
-        updateUIWithResponse(endpointId, status as number, respHeaders as { [k: string]: string; }, data as string);
+        updateUIWithResponse(endpointId, time, status as number, respHeaders as { [k: string]: string; }, data as string);
     } catch (error: unknown) {
         console.error(error);
     }

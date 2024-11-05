@@ -5,9 +5,10 @@ const testApi = async (data: {
     body?: string | FormData,
     timeout?: number,
 }
-): Promise<{ success: boolean, errorMessage?: string, status?: number; headers?: { [k: string]: string; }; data?: string; }> => {
+): Promise<{ success: boolean, time: string, errorMessage?: string, status?: number; headers?: { [k: string]: string; }; data?: string; }> => {
+    const startTime = Date.now()
 
-    const { path, method = 'GET', headers = {}, body, timeout = 5000 } = data
+    const { path, method = 'GET', headers = {}, body, timeout = 10000 } = data
 
     console.log({ path, method, headers, body, timeout });
 
@@ -18,14 +19,21 @@ const testApi = async (data: {
         const respHeaders = Object.fromEntries(response.headers.entries());
         const data = await parseResponse(response);
 
+        const time = convertMillSecToReadable(Date.now() - startTime);
+
+
         return {
             success: true,
+            time,
             status: response.status,
             headers: respHeaders,
             data
         }
     } catch (error: unknown) {
-        const errorResp: { success: boolean, errorMessage?: string } = { success: false }
+        const errorResp: { success: boolean, time: string, errorMessage?: string } = { success: false, time: convertMillSecToReadable(Date.now() - startTime) }
+        if(typeof error == 'string'){            
+            errorResp.errorMessage = error
+        }
         if (error instanceof Error) {
             errorResp.errorMessage = error.message
         }
@@ -46,11 +54,37 @@ const buildFetchOptions = (
     return options;
 };
 
+function convertMillSecToReadable(ms: number) {
+    const milliseconds = ms % 1000;
+    const seconds = Math.floor((ms / 1000) % 60);
+    const minutes = Math.floor((ms / (1000 * 60)) % 60);
+    const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+
+    let time = ""
+    if (hours) {
+        time += `${hours}h`
+    }
+    if (minutes) {
+        if(time) time+=", "
+        time += `${minutes}m`
+    }
+    if (seconds) {
+        if(time) time+=", "
+        time += `${seconds}s`
+    }
+    if (milliseconds) {
+        if(time) time+=", "
+        time += `${milliseconds}ms`
+    }
+
+    return time
+}
+
 
 // Fetch with timeout
 const fetchWithTimeout = (url: string, options: RequestInit, timeout: number): Promise<Response> => {
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeout);
+    const timer = setTimeout(() => controller.abort("Request Time Out!"), timeout);
     options.signal = controller.signal;
 
     return fetch(url, options).finally(() => clearTimeout(timer));

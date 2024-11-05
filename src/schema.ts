@@ -18,8 +18,8 @@ export interface BodyData {
 export interface Response {
   status: number;
   description: string;
-  value?:string;
-  headers?:Header[]
+  value?: string;
+  headers?: Header[]
 }
 
 export interface Endpoint {
@@ -39,4 +39,5 @@ export interface APIDocumentation {
   servers: string[];
   headers: Header[]
   description: string;
+  timeout?: number
 }

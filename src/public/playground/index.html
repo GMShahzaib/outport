@@ -129,7 +129,7 @@
                                                 <div class="flex-box">
                                                     <input class="param-cell-input border-background-non"
                                                         placeholder="key" onchange="updateFormValueKey(this)">
-                                                    <select class="border-background-non"
+                                                    <select class="border-background-non" 
                                                         onchange="changeBodyFormInputType(this)">
                                                         <option value="text">TEXT</option>
                                                         <option value="file">FILE</option>
@@ -172,8 +172,14 @@
                                     <span>Headers</span>
                                 </div>
                             </div>
-                            <div class="response-status-code">
-                                status code: <span id="playground_statusCode" class="status-code"></span>
+                            <div class="flex-box">
+                                <div class="response-time">
+                                    <span id="playground_resp_time"></span>
+                                </div>
+
+                                <div class="response-status-code">
+                                    status code: <span id="playground_statusCode" class="status-code"></span>
+                                </div>
                             </div>
                         </div>
                         <div id="playground_response_header_content" class="header-content">

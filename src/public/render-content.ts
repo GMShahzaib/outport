@@ -11,7 +11,7 @@ window.onload = function () {
 function setupUI(apiOptions: { apis: SchemaApi[]; values: APIDocumentation }): void {
   populateBaseUrls(apiOptions.values.servers);
   populateHeaderInformation(apiOptions.values);
-  populateApiEndpoints(apiOptions.apis);
+  populateApiEndpoints(apiOptions.apis, apiOptions.values.timeout);
 }
 
 function populateBaseUrls(urls: string[]): void {
@@ -37,14 +37,14 @@ function populateHeaderInformation(values: APIDocumentation): void {
   globalHeaders.innerHTML = buildGlobalHeaders(values.headers);
 }
 
-function populateApiEndpoints(apis: SchemaApi[]): void {
+function populateApiEndpoints(apis: SchemaApi[], timeout?: number): void {
   const outportUI = document.getElementById('outport-ui') as HTMLElement;
   outportUI.innerHTML = apis
-    .map(({ name, endpoints }) => buildApiSection(name, endpoints))
+    .map(({ name, endpoints }) => buildApiSection(name, endpoints, timeout))
     .join('');
 }
 
-function buildApiSection(name: string, endpoints: Endpoint[]): string {
+function buildApiSection(name: string, endpoints: Endpoint[], timeout?: number): string {
   const categoryId = uidGenerator();
   return `
     <section> 
@@ -53,14 +53,14 @@ function buildApiSection(name: string, endpoints: Endpoint[]): string {
           <span class="collection-name">${name}</span>
         </div>
         <div id="${categoryId}" class="endpoints">
-          ${endpoints.map((endpoint) => buildEndpointSection(endpoint)).join('')}
+          ${endpoints.map((endpoint) => buildEndpointSection(endpoint, timeout)).join('')}
         </div>
       </div>
     </section>
   `;
 }
 
-function buildEndpointSection(endpoint: Endpoint): string {
+function buildEndpointSection(endpoint: Endpoint, timeout?: number): string {
   const endpointId = uidGenerator();
 
   return `
@@ -72,7 +72,7 @@ function buildEndpointSection(endpoint: Endpoint): string {
       </div>
       <div id="${endpointId}" class="endpoint">
         ${buildAddressParams(endpointId, endpoint.path)}
-        ${buildRequestSection(endpointId, endpoint)}
+        ${buildRequestSection(endpointId, endpoint, timeout)}
         ${buildResponseSection(endpointId, endpoint)}
         ${endpoint.responses ? buildResponses(endpointId, endpoint.responses) : ''}
 
@@ -81,7 +81,7 @@ function buildEndpointSection(endpoint: Endpoint): string {
   `;
 }
 
-function buildRequestSection(endpointId: string, endpoint: Endpoint): string {
+function buildRequestSection(endpointId: string, endpoint: Endpoint, timeout?: number): string {
   return `
     <div class="dull-card">
       <div class="request-header-section">
@@ -94,7 +94,7 @@ function buildRequestSection(endpointId: string, endpoint: Endpoint): string {
         ${buildRequestParameters(endpointId, endpoint.parameters)}
       </div>
       <div id="${endpointId}_executeBtn" class="execute-btn-wrapper">
-        <button class="execute-button" onclick="execute('${endpointId}', '${endpoint.path}', '${endpoint.method}')">Execute</button>
+        <button class="execute-button" onclick="execute('${endpointId}', '${endpoint.path}', '${endpoint.method}',${timeout})">execute</button>
       </div>
     </div>
   `;
@@ -105,8 +105,14 @@ function buildResponseSection(endpointId: string, endpoint: Endpoint): string {
     <div id="${endpointId}_response" class="dull-card displayNon">
       <div class="response-header-section">
         ${buildResponseTabs(endpointId)}
-        <div class="response-status-code">
-          status code: <span id="${endpointId}_statusCode" class="status-code"></span>
+        <div class="flex-box">
+          <div class="response-time">
+            <span id="${endpointId}_resp_time"></span>
+          </div>
+
+          <div class="response-status-code">
+            status code: <span id="${endpointId}_statusCode" class="status-code"></span>
+          </div>
         </div>
       </div>
       <div id="${endpointId}_response_header_content" class="header-content">
@@ -163,7 +169,17 @@ function buildRequestBodyContent(endpointId: string, body: { type: 'json' | 'for
       </div>
       <div>
         <form id="${endpointId}_form_input_body" class="body-form">
-          ${body?.data?.map(buildFormDataField).join('')}
+          <table class="table" id="playground_form_body_table">
+              <thead>
+                  <tr>
+                      <th class="header-cell">Key</th>
+                      <th class="header-cell">Value</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  ${body?.data?.map(buildFormDataField).join('')}
+              </tbody>
+          </table>
         </form>
       </div>
     </div>
@@ -202,11 +218,23 @@ function extractRequestBody(body: { type: 'json' | 'form', data: BodyData[] }): 
 }
 
 function buildFormDataField(data: { key: string; value?: string | number, type: string }): string {
+  console.log(data.type)
   return `
-  <div>
-    <label class="body-form-title" for="${data.key}">${data.key}:</label>
-    <input type="${data.type}"  name="${data.key}" value="${data.value || ""}" accept="image/*" >
-  </div>
+  <tr class="data-row">
+    <td class="data-cell">
+        <div class="flex-box">
+            <input class="param-cell-input border-background-non" value="${data.key}" disabled>
+            <select class="border-background-non" disabled>
+              ${data.type == "text" ? '<option value="text">TEXT</option>' : '<option value="file">FILE</option>'}                
+            </select>
+        </div>
+    </td>
+    <td class="data-cell">
+        <input type="${data.type}"
+            class="param-cell-input border-background-non value-input" name="${data.key}" value="${data.value || ""}"
+            placeholder="value" accept="image/*">
+    </td>
+  </tr>
   `;
 }
 

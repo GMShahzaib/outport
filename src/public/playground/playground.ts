@@ -98,12 +98,12 @@ async function sendRequest(): Promise<void> {
     let body;
     if (method != "get") body = getBody()
 
-    const { success, errorMessage, data, headers: respHeaders, status } = await testApi({ path: url, method, headers, body });
+    const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({ path: url, method, headers, body, timeout: 60000 });
 
     if (!success) {
         showToast(errorMessage || "Something went wrong!");
     }
-    updateUIWithResponse("playground", status as number, respHeaders as { [k: string]: string; }, data as string);
+    updateUIWithResponse("playground", time, status as number, respHeaders as { [k: string]: string; }, data as string);
     (document.getElementById(`playground-response-unavailable`) as HTMLDivElement).classList.add("displayNon");
     (document.getElementById(`playground-response-section`) as HTMLDivElement).classList.remove("displayNon");
 }
