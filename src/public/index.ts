@@ -78,45 +78,64 @@ const execute = async (
     path: string,
     method: string = 'GET',
     timeout?: number
-): Promise<void> => {
-
-    let requestBody;
+  ): Promise<void> => {
+    const executeBtn = document.getElementById(`${endpointId}_executeBtn`) as HTMLButtonElement;
+    const loader = document.getElementById(`${endpointId}_executeBtn_loader`) as HTMLDivElement;
+    const responseSection = document.getElementById(`${endpointId}_response`) as HTMLDivElement;
+  
+    // Toggle button and loader visibility
+    executeBtn.style.display = "none";
+    loader.style.display = "block";
+  
     const params = getQueryParameters(endpointId);
     const pathWithParams = getAddressWithParameters(endpointId, path);
     const headers = getRequestHeaders(endpointId);
     const baseUrl = getSelectedBaseUrl();
     const fullUrl = `${baseUrl}${pathWithParams}${params ? `?${params}` : ''}`;
-
+  
+    let requestBody;
     if (method !== "GET") {
-
-        const value = (document.getElementById(`${endpointId}_body_type_selector`) as HTMLSelectElement).value
-
-        const isJson = value == "json"
-        if (isJson) {
-            const body = (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).value;
-            if (body && !isValidJson(body)) {
-                showErrorOnBody(endpointId);
-                return;
-            }
-            requestBody = body && JSON.stringify(JSON.parse(body));
-            removeErrorOnBody(endpointId);
-        } else {
-            const formData = document.getElementById(`${endpointId}_form_input_body`) as HTMLFormElement
-            requestBody = new FormData(formData)
+      const bodyTypeSelector = document.getElementById(`${endpointId}_body_type_selector`) as HTMLSelectElement;
+      const bodyType = bodyTypeSelector.value;
+  
+      if (bodyType === "json") {
+        const jsonInputBody = document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement;
+        const body = jsonInputBody.value;
+  
+        if (body && !isValidJson(body)) {
+          showErrorOnBody(endpointId);
+          return;
         }
+        requestBody = body ? JSON.stringify(JSON.parse(body)) : undefined;
+        removeErrorOnBody(endpointId);
+      } else {
+        const formData = document.getElementById(`${endpointId}_form_input_body`) as HTMLFormElement;
+        requestBody = new FormData(formData);
+      }
     }
-
-    document.getElementById(`${endpointId}_response`)?.classList.add("displayNon");
-
+  
+    responseSection?.classList.add("displayNon");
+  
     try {
-        const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({ path: fullUrl, method, headers, body: requestBody, timeout })
-
-        if (!success) {
-            return showToast(errorMessage || "Something went wrong!");
-        }
-
-        updateUIWithResponse(endpointId, time, status as number, respHeaders as { [k: string]: string; }, data as string);
-    } catch (error: unknown) {
-        console.error(error);
+      const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({
+        path: fullUrl,
+        method,
+        headers,
+        body: requestBody,
+        timeout,
+      });
+  
+      if (!success) {
+        showToast(errorMessage || "Something went wrong!");
+      } else if (errorMessage !== "Request Time Out!") {
+        updateUIWithResponse(endpointId, time, status as number, respHeaders as { [key: string]: string }, data as string);
+      }
+    } catch (error) {
+      console.error("An unexpected error occurred:", error);
+    } finally {
+      // Reset button and loader visibility
+      executeBtn.style.display = "block";
+      loader.style.display = "none";
     }
-};
+  };
+  

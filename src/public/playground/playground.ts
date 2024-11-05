@@ -12,6 +12,15 @@ jsonDiv.style.display = 'block';
 // Change request body type
 selectElement.addEventListener('change', toggleRequestBodyType);
 
+function goOneStepBack() {
+    const currentUrl = window.location.href.replace(/\/$/, '');
+    
+    const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
+    
+    window.location.href = newUrl;
+}
+
+
 function updateFormValueKey(keyInput: HTMLInputElement): void {
     // Find the associated value input field in the same row
     const valueInput = keyInput.closest('.data-row')?.querySelector('.value-input') as HTMLInputElement | null;
@@ -89,25 +98,43 @@ function deleteRow(element: HTMLElement): void {
 }
 
 async function sendRequest(): Promise<void> {
-    (document.getElementById(`playground-response-unavailable`) as HTMLDivElement).classList.remove("displayNon");
-    (document.getElementById(`playground-response-section`) as HTMLDivElement).classList.add("displayNon");
-
+    const responseUnavailable = document.getElementById(`playground-response-unavailable`) as HTMLDivElement;
+    const responseSection = document.getElementById(`playground-response-section`) as HTMLDivElement;
+    const loader = document.getElementById(`playground-executeBtn-loader`) as HTMLDivElement;
+  
+    responseUnavailable.classList.add("displayNon");
+    responseSection.classList.add("displayNon");
+    loader.classList.remove("displayNon");
+  
     const url = urlInput.value;
     const method = (document.getElementById("playground-method-selector") as HTMLSelectElement).value;
-    const headers = getHeaders()
-    let body;
-    if (method != "get") body = getBody()
-
-    const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({ path: url, method, headers, body, timeout: 60000 });
-
-    if (!success) {
+    const headers = getHeaders();
+    const body = method !== "get" ? getBody() : undefined;
+  
+    try {
+      const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({
+        path: url,
+        method,
+        headers,
+        body,
+        timeout: 60000
+      });
+  
+      if (!success) {
         showToast(errorMessage || "Something went wrong!");
+      } else if (errorMessage === "Request Time Out!") {
+        responseUnavailable.classList.remove("displayNon");
+      } else {
+        updateUIWithResponse("playground", time, status as number, respHeaders as { [key: string]: string }, data as string);
+        responseSection.classList.remove("displayNon");
+      }
+    } catch (error) {
+      showToast("An unexpected error occurred!");
+    } finally {
+      loader.classList.add("displayNon");
     }
-    updateUIWithResponse("playground", time, status as number, respHeaders as { [k: string]: string; }, data as string);
-    (document.getElementById(`playground-response-unavailable`) as HTMLDivElement).classList.add("displayNon");
-    (document.getElementById(`playground-response-section`) as HTMLDivElement).classList.remove("displayNon");
-}
-
+  }
+  
 function getBody() {
     let requestBody
     const value = (document.getElementById("playground_request_body_type") as HTMLSelectElement).value

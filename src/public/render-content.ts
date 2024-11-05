@@ -86,15 +86,16 @@ function buildRequestSection(endpointId: string, endpoint: Endpoint, timeout?: n
     <div class="dull-card">
       <div class="request-header-section">
         ${buildRequestTabs(endpointId, endpoint)}
-        <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn')">Try it</button>
+        <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn_wrapper')">Try it</button>
       </div>
       <div id="${endpointId}_request_header_content" class="request-content">
         ${endpoint.body ? buildRequestBodyContent(endpointId, endpoint.body) : ""}
         ${buildRequestHeaders(endpointId, endpoint.headers)}
         ${buildRequestParameters(endpointId, endpoint.parameters)}
       </div>
-      <div id="${endpointId}_executeBtn" class="execute-btn-wrapper">
-        <button class="execute-button" onclick="execute('${endpointId}', '${endpoint.path}', '${endpoint.method}',${timeout})">execute</button>
+      <div id="${endpointId}_executeBtn_wrapper" class="execute-btn-wrapper">
+        <button id="${endpointId}_executeBtn" class="execute-button" onclick="execute('${endpointId}', '${endpoint.path}', '${endpoint.method}',${timeout})">execute</button>
+        <div id="${endpointId}_executeBtn_loader" class="loader" style="display:none;"></div>
       </div>
     </div>
   `;
@@ -345,66 +346,70 @@ function buildResponseHeaders(endpointId: string): string {
 
 function buildResponses(endpointId: string, responses: Response[]): string {
   return `
-  <div class="dull-card">
-
-  <div class="pointer" onclick ="toggleContent('${endpointId}_responses')">
-    <h4>Responses:</h4>
-  </div>
-    <div id='${endpointId}_responses' style="display:none;">
-      ${responses.map((response, ind) => `
-        <div class="example-response">
-          <div class="flex-box pointer" onclick ="toggleContent('${endpointId}_${ind}')">
-            <div class="example-response-description">
+    <div class="dull-card">
+      <div class="pointer" onclick="toggleContent('${endpointId}_responses')">
+        <h4>Responses:</h4>
+      </div>
+      <div id='${endpointId}_responses' style="display:none;">
+        ${responses.map((response, ind) => `
+          <div class="example-response">
+            <div class="flex-box pointer" onclick="toggleContent('${endpointId}_${ind}')">
+              <div class="example-response-description">
                 <span>${response.description}</span>
-            </div>
-            <div class="example-response-status-code">
+              </div>
+              <div class="example-response-status-code">
                 Status code: <span class="status-code">${response.status}</span>
+              </div>
             </div>
-          </div>
-          <div id="${endpointId}_${ind}"  style="display:none;">
-          <div class="response-header-section">
-              <div id="${endpointId}_${ind}_response_header_tabs" class="tabs">
-                  <div id="${endpointId}_${ind}_response_body_tab" class="tab active"
-                      onclick="showTab('${endpointId}_${ind}','response_header','response_body')">
+            <div id="${endpointId}_${ind}" style="display:none;">
+              <div class="response-header-section">
+                <div id="${endpointId}_${ind}_response_header_tabs" class="tabs">
+                  ${response.value ? `
+                    <div id="${endpointId}_${ind}_response_body_tab" class="tab active"
+                      onclick="showTab('${endpointId}_${ind}', 'response_header', 'response_body')">
                       <span>Body</span>
-                  </div>
-                  <div id="${endpointId}_${ind}_response_headers_tab" class="tab"
-                      onclick="showTab('${endpointId}_${ind}','response_header','response_headers')">
+                    </div>` : ''}
+                  ${response.headers ? `
+                    <div id="${endpointId}_${ind}_response_headers_tab" class="tab"
+                      onclick="showTab('${endpointId}_${ind}', 'response_header', 'response_headers')">
                       <span>Headers</span>
-                  </div>
+                    </div>` : ''}
+                </div>
               </div>
-          </div>
-          <div id="${endpointId}_${ind}_response_header_content" class="header-content">
-              <div id="${endpointId}_${ind}_response_body_content" class="tab-content active">
-                  <div id="${endpointId}_${ind}_respBody_wrapper" class="respBody">
+              <div id="${endpointId}_${ind}_response_header_content" class="header-content">
+                ${response.value ? `
+                  <div id="${endpointId}_${ind}_response_body_content" class="tab-content active">
+                    <div id="${endpointId}_${ind}_respBody_wrapper" class="respBody">
                       <pre id="${endpointId}_${ind}_respBody">${response.value}</pre>
-                  </div>
-              </div>
-              <div id="${endpointId}_${ind}_response_headers_content" class="tab-content response-headers">
-                  <table class="table whiteBorder">
+                    </div>
+                  </div>` : ''}
+                ${response.headers ? `
+                  <div id="${endpointId}_${ind}_response_headers_content" class="tab-content response-headers">
+                    <table class="table whiteBorder">
                       <thead>
-                          <tr>
-                              <th class="header-cell whiteBorder">Key</th>
-                              <th class="header-cell whiteBorder">Value</th>
-                          </tr>
+                        <tr>
+                          <th class="header-cell whiteBorder">Key</th>
+                          <th class="header-cell whiteBorder">Value</th>
+                        </tr>
                       </thead>
                       <tbody>
-                        ${response.headers && response.headers.map((header) => `
-                          <tr class= "data-row" >
-                            <td class="data-cell whiteBorder"> <span class="response-header-key"> ${header.key} </span></td>
-                            <td class="data-cell whiteBorder"> <span class="response-header-value"> ${header.value} </span></td>
-                          </tr>
-                        `).join('')}
+                        ${response.headers.map((header) => `
+                          <tr class="data-row">
+                            <td class="data-cell whiteBorder">
+                              <span class="response-header-key">${header.key}</span>
+                            </td>
+                            <td class="data-cell whiteBorder">
+                              <span class="response-header-value">${header.value}</span>
+                            </td>
+                          </tr>`).join('')}
                       </tbody>
-                  </table>
+                    </table>
+                  </div>` : ''}
               </div>
-          </div>
-          </div>
-          
-        </div>
-      `).join('')}
+            </div>
+          </div>`).join('')}
+      </div>
     </div>
-  </div>
   `;
 }
 

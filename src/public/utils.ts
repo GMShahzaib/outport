@@ -88,10 +88,12 @@ const updateUIWithResponse = (
     headers: { [key: string]: string },
     data: string
 ): void => {
+    const div = document.createElement('div');
+    div.textContent = data;
     updateElement(`${endpointId}_statusCode`, String(status));
     updateElement(`${endpointId}_resp_time`, time);
     updateTable(`${endpointId}_response_headers`, headers);
-    updateElement(`${endpointId}_respBody`, data);
+    updateElement(`${endpointId}_respBody`, div.innerHTML);
 
     document.getElementById(`${endpointId}_response`)?.classList.remove("displayNon");
 };
@@ -101,6 +103,7 @@ const updateElement = (id: string, content: string): void => {
 };
 
 const updateTable = (id: string, headers: { [key: string]: string }): void => {
+    if (!headers) return
     const rows = Object.keys(headers).map(key => `
         <tr class="data-row">
           <td class="data-cell whiteBorder"><span class="response-header-key">${key}</span></td>

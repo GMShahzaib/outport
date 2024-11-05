@@ -17,7 +17,7 @@
                         alt="Logo" class="logo">
                     <h3 class="name">outport</h3>
                 </div>
-                <a class="primary-button" href="javascript:window.history.back();">
+                <a class="primary-button" href="javascript:void(0);" onclick="goOneStepBack()">
                     <span class="arrow-icon">&#9664;</span>
                     <span class="arrow-text">Go Back</span>
                 </a>
@@ -27,19 +27,21 @@
 
     <main>
         <section>
-            <div class="playground-url-container">
-                <div class="playground-endpoint">
-                    <select id="playground-method-selector" class="playground-method-selector">
-                        <option value="get">GET</option>
-                        <option value="post">POST</option>
-                        <option value="patch">PATCH</option>
-                        <option value="delete">DELETE</option>
-                    </select>
-                    <input class="playground-url-input" type="text" id="playground-url-input"
-                        placeholder="Enter URL or paste text">
+            <form onsubmit="sendRequest(); return false;">
+                    <div class="playground-url-container">
+                    <div class="playground-endpoint">
+                        <select id="playground-method-selector" class="playground-method-selector">
+                            <option value="get">GET</option>
+                            <option value="post">POST</option>
+                            <option value="patch">PATCH</option>
+                            <option value="delete">DELETE</option>
+                        </select>
+                        <input class="playground-url-input" type="text" id="playground-url-input"
+                            placeholder="Enter URL or paste text">
+                    </div>
+                    <button class="primary-button" type="submit">Send</button>
                 </div>
-                <button class="primary-button" onclick="sendRequest()">Send</button>
-            </div>
+            </form>
 
             <div class="dull-card">
                 <div class="tabs" id="playground_request_header_tabs">
@@ -129,7 +131,7 @@
                                                 <div class="flex-box">
                                                     <input class="param-cell-input border-background-non"
                                                         placeholder="key" onchange="updateFormValueKey(this)">
-                                                    <select class="border-background-non" 
+                                                    <select class="border-background-non"
                                                         onchange="changeBodyFormInputType(this)">
                                                         <option value="text">TEXT</option>
                                                         <option value="file">FILE</option>
@@ -157,6 +159,8 @@
             <div class="dull-card">
                 <h3>Response</h3>
                 <div class="response-content">
+                    <div id="playground-executeBtn-loader" class="loader displayNon"
+                        style="margin: 100px auto 100px auto;"></div>
                     <div id="playground-response-unavailable" class="playground-response-section-message">
                         Enter the URL and click Send to get Response
                     </div>
