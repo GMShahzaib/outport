@@ -123,7 +123,6 @@ function getBody() {
         removeErrorOnBody("playground");
     } else {
         const formData = document.getElementById(`playground_form_body`) as HTMLFormElement
-        console.log(formData)
         requestBody = new FormData(formData)
     }
     return requestBody
