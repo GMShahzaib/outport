@@ -136,6 +136,10 @@ header .brand .logo {
   height: auto;
   max-width: 50px;
 }
+header .brand .name {
+margin-left: 10px;
+}
+
 
 .header-content {
   width: 100%;
