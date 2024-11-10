@@ -59,7 +59,6 @@ const formatJson = (ele: HTMLTextAreaElement): void => {
     }
 };
 
-
 // Show toast message
 const showToast = (message: string): void => {
     updateToast(message, true);

@@ -12,24 +12,17 @@
 <body>
     <header>
         <div class="header-content">
-            <div class="flex-box">
                 <div class="brand">
-                    <img src="../assets/outport.png"
-                        alt="Logo" class="logo">
+                    <img src="../assets/outport.png" alt="Logo" class="logo">
                     <h3 class="name">outport</h3>
                 </div>
-                <a class="primary-button" href="javascript:void(0);" onclick="goOneStepBack()">
-                    <span class="arrow-icon">&#9664;</span>
-                    <span class="arrow-text">Go Back</span>
-                </a>
-            </div>
         </div>
     </header>
 
     <main>
         <section>
             <form onsubmit="sendRequest(); return false;">
-                    <div class="playground-url-container">
+                <div class="playground-url-container">
                     <div class="playground-endpoint">
                         <select id="playground-method-selector" class="playground-method-selector">
                             <option value="get">GET</option>
@@ -45,13 +38,17 @@
             </form>
 
             <div class="dull-card">
-                <div class="tabs" id="playground_request_header_tabs">
-                    <div id="playground_request_parameters_tab" class="tab active"
-                        onclick="showTab('playground', 'request_header', 'request_parameters')">Parameters</div>
-                    <div id="playground_request_headers_tab" class="tab"
-                        onclick="showTab('playground', 'request_header', 'request_headers')">Headers</div>
-                    <div id="playground_request_body_tab" class="tab"
-                        onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
+                <div class="flex-box">
+                    <div class="tabs" id="playground_request_header_tabs">
+                        <div id="playground_request_parameters_tab" class="tab active"
+                            onclick="showTab('playground', 'request_header', 'request_parameters')">Parameters</div>
+                        <div id="playground_request_headers_tab" class="tab"
+                            onclick="showTab('playground', 'request_header', 'request_headers')">Headers</div>
+                        <div id="playground_request_body_tab" class="tab"
+                            onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
+                    </div>
+                    <div><button class="icon-btn" title="copy to clipboard" onclick="copyRequest()"><img
+                                class="image-icon" src="../assets/copy_icon.png" /></button></div>
                 </div>
 
                 <div id="playground_request_header_content" class="request-content">
@@ -216,6 +213,17 @@
         </div>
 
     </main>
+
+    <script>
+        const copyRequest = async () => {
+            try {
+                await navigator.clipboard.writeText(JSON.stringify({ hi: "hello" }, null, 4));
+                console.log('Content copied to clipboard');
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        }
+    </script>
 
     <script src="../utils.js"></script>
     <script src="./playground.js"></script>

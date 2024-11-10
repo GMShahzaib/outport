@@ -65,10 +65,13 @@ function buildEndpointSection(endpoint: Endpoint, timeout?: number): string {
 
   return `
     <div class="collapsible">
-      <div class="flex clickable ptb-5" onclick="toggleContent('${endpointId}')">
-        <div class="http-method ${endpoint.method.toLowerCase()}">${endpoint.method}</div>
-        <div class="endpoint-path">${endpoint.path}</div>
-        <div class="endpoint-summary">${endpoint.summary}</div>
+      <div class="flex-box clickable ptb-5" >
+        <div class="flex-box endpoint-header" onclick="toggleContent('${endpointId}')">
+            <div class="http-method ${endpoint.method.toLowerCase()}">${endpoint.method}</div>
+            <div class="endpoint-path">${endpoint.path}</div>
+            <div class="endpoint-summary">${endpoint.summary}</div>
+        </div>
+        <div><button class="icon-btn" title="load to Playground" onclick="loadDataToPlayground('${endpointId}', '${endpoint.path}', '${endpoint.method}')"><img class="image-icon" src="./assets/redirect_icon.png" alt="Italian Trulli"></button></div>
       </div>
       <div id="${endpointId}" class="endpoint">
         ${buildAddressParams(endpointId, endpoint.path)}
@@ -281,7 +284,7 @@ function buildRequestHeaders(endpointId: string, headers: Header[] = []): string
           <th class="header-cell">Description</th>
         </tr>
       </thead>
-      <tbody id="${endpointId}_request_headers_content">
+      <tbody id="${endpointId}_request_headers_body">
         ${headers.map(buildRequestHeader).join('')}
       </tbody>
     </table>

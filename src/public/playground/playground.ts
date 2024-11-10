@@ -1,25 +1,101 @@
 // Element references
-const selectElement = document.getElementById('playground_request_body_type') as HTMLSelectElement;
+const bodyTypeSelectElement = document.getElementById('playground_request_body_type') as HTMLSelectElement;
 const jsonDiv = document.getElementById('request_body_json') as HTMLDivElement;
 const formDiv = document.getElementById('request_body_form') as HTMLDivElement;
+const jsonBodyInput = (document.getElementById(`playground_json_input_body`) as HTMLTextAreaElement)
+const formBodyData = document.getElementById(`playground_form_body`) as HTMLFormElement
 const parametersTable = document.getElementById("parametersTable") as HTMLTableElement;
 const headersTable = document.getElementById("headersTable") as HTMLTableElement;
 const urlInput = document.getElementById("playground-url-input") as HTMLInputElement;
+const methodSelect = (document.getElementById("playground-method-selector") as HTMLSelectElement)
 
 // Initial setup
 jsonDiv.style.display = 'block';
 
 // Change request body type
-selectElement.addEventListener('change', toggleRequestBodyType);
+bodyTypeSelectElement.addEventListener('change', toggleRequestBodyType);
 
-function goOneStepBack() {
-    const currentUrl = window.location.href.replace(/\/$/, '');
-    
-    const newUrl = currentUrl.substring(0, currentUrl.lastIndexOf('/'));
-    
-    window.location.href = newUrl;
+
+window.onload = function (): void {
+    const params = getUrlParams(window.location.search);
+    loadUrl(params.url);
+    loadMethod(params.method);
+    loadHeaders(params.headers);
+    loadBodyType(params.bodyType);
+    loadBody(params.bodyType, params.body);
+};
+
+function loadUrl(url?: string): void {
+    if (url) {
+        urlInput.value = decodeURIComponent(url);
+        syncTableWithURL();
+    }
 }
 
+function loadMethod(method?: string): void {
+    if (method) {
+        methodSelect.value = method.toLowerCase();
+    }
+}
+
+function loadHeaders(headers?: string): void {
+    if (headers) {
+        const headerObj = JSON.parse(headers);
+        const headersTableBody = document.querySelector<HTMLTableSectionElement>('#headersTable tbody');
+
+        if (headersTableBody) {
+            headersTableBody.innerHTML = "";
+        }
+
+        Object.keys(headerObj).forEach(key => {
+            addRow("headersTable", key, headerObj[key]);
+        });
+    }
+}
+
+function loadBodyType(bodyType?: string): void {
+    if (bodyType) {
+        bodyTypeSelectElement.value = bodyType;
+        toggleRequestBodyType();
+    }
+}
+
+function loadBody(bodyType?: string, body?: string): void {
+    if (body) {
+        if (bodyType === "json") {
+            jsonBodyInput.innerHTML = body;
+            formatJson(jsonBodyInput);
+        } else if (bodyType === "form") {
+            const formData = JSON.parse(body)
+
+            const formDataTableBody = document.querySelector<HTMLTableSectionElement>(`#playground_form_body_table tbody`) as HTMLTableSectionElement;
+
+            if (formDataTableBody) {
+                formDataTableBody.innerHTML = "";
+            }
+
+            Object.keys(formData).forEach(key => {
+                addReqBodyRow(key, formData[key]?.type, formData[key]?.value)
+            })
+        }
+    }
+}
+
+function getUrlParams(queryString: string): Record<string, string> {
+    const params = new URLSearchParams(queryString);
+    const result: Record<string, string> = {};
+
+    for (const [key, value] of params.entries()) {
+        try {
+            result[key] = decodeURIComponent(value);
+        } catch (e) {
+            console.error(`Failed to decode URI component for key ${key}: ${e}`);
+            result[key] = value;
+        }
+    }
+
+    return result;
+}
 
 function updateFormValueKey(keyInput: HTMLInputElement): void {
     // Find the associated value input field in the same row
@@ -32,7 +108,7 @@ function updateFormValueKey(keyInput: HTMLInputElement): void {
 }
 
 function toggleRequestBodyType(): void {
-    const isJson = selectElement.value === 'json';
+    const isJson = bodyTypeSelectElement.value === 'json';
     jsonDiv.style.display = isJson ? 'block' : 'none';
     formDiv.style.display = isJson ? 'none' : 'block';
 }
@@ -49,16 +125,16 @@ function addRowWithQueryParamListeners(): void {
     initializeRealTimeURLUpdate();
 }
 
-function addRow(tableId: string): void {
+function addRow(tableId: string, key?: string, value?: string): void {
     const tableBody = document.querySelector<HTMLTableSectionElement>(`#${tableId} tbody`);
     if (tableBody) {
         const newRow = document.createElement('tr');
         newRow.classList.add('data-row');
         newRow.innerHTML = `
-            <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="key" name="key"></td>
+            <td class="data-cell"><input class="param-cell-input border-background-non" value="${key || ""}" placeholder="key" name="key"></td>
             <td class="data-cell">
                 <div class="flex-box">
-                    <input class="param-cell-input border-background-non" placeholder="value" name="value">
+                    <input class="param-cell-input border-background-non" placeholder="value" name="value" value="${value || ""}">
                     <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
                 </div>
             </td>`;
@@ -66,7 +142,7 @@ function addRow(tableId: string): void {
     }
 }
 
-function addReqBodyRow(): void {
+function addReqBodyRow(key?: string, valueType?: string, value?: string): void {
     const tableBody = document.querySelector<HTMLTableSectionElement>(`#playground_form_body_table tbody`) as HTMLTableSectionElement;
     const newRow = document.createElement('tr');
     newRow.classList.add('data-row');
@@ -74,8 +150,8 @@ function addReqBodyRow(): void {
     newRow.innerHTML = `
         <td class="data-cell">
             <div class="flex-box">
-                <input class="param-cell-input border-background-non key-input" placeholder="key" oninput="updateFormValueKey(this)">
-                <select class="border-background-non" onchange="changeBodyFormInputType(this)">
+                <input class="param-cell-input border-background-non key-input" value="${key || ""}" placeholder="key" oninput="updateFormValueKey(this)">
+                <select class="border-background-non" onchange="changeBodyFormInputType(this)" value="${valueType || ""}">
                     <option value="text">TEXT</option>
                     <option value="file">FILE</option>
                 </select>
@@ -83,7 +159,7 @@ function addReqBodyRow(): void {
         </td>
         <td class="data-cell">
             <div class="flex-box">
-                <input type="text" class="param-cell-input border-background-non value-input" placeholder="value" name="value" accept="image/*">
+                <input type="${valueType || "text"}" value="${value || ""}" class="param-cell-input border-background-non value-input" placeholder="value" name="value" accept="image/*">
                 <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
             </div>
         </td>
@@ -101,47 +177,47 @@ async function sendRequest(): Promise<void> {
     const responseUnavailable = document.getElementById(`playground-response-unavailable`) as HTMLDivElement;
     const responseSection = document.getElementById(`playground-response-section`) as HTMLDivElement;
     const loader = document.getElementById(`playground-executeBtn-loader`) as HTMLDivElement;
-  
+
     responseUnavailable.classList.add("displayNon");
     responseSection.classList.add("displayNon");
     loader.classList.remove("displayNon");
-  
+
     const url = urlInput.value;
-    const method = (document.getElementById("playground-method-selector") as HTMLSelectElement).value;
+    const method = methodSelect.value;
     const headers = getHeaders();
     const body = method !== "get" ? getBody() : undefined;
-  
+
     try {
-      const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({
-        path: url,
-        method,
-        headers,
-        body,
-        timeout: 60000
-      });
-  
-      if (!success) {
-        showToast(errorMessage || "Something went wrong!");
-      } else if (errorMessage === "Request Time Out!") {
-        responseUnavailable.classList.remove("displayNon");
-      } else {
-        updateUIWithResponse("playground", time, status as number, respHeaders as { [key: string]: string }, data as string);
-        responseSection.classList.remove("displayNon");
-      }
+        const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({
+            path: url,
+            method,
+            headers,
+            body,
+            timeout: 60000
+        });
+
+        if (!success) {
+            showToast(errorMessage || "Something went wrong!");
+        } else if (errorMessage === "Request Time Out!") {
+            responseUnavailable.classList.remove("displayNon");
+        } else {
+            updateUIWithResponse("playground", time, status as number, respHeaders as { [key: string]: string }, data as string);
+            responseSection.classList.remove("displayNon");
+        }
     } catch (error) {
-      showToast("An unexpected error occurred!");
+        showToast("An unexpected error occurred!");
     } finally {
-      loader.classList.add("displayNon");
+        loader.classList.add("displayNon");
     }
-  }
-  
+}
+
 function getBody() {
     let requestBody
-    const value = (document.getElementById("playground_request_body_type") as HTMLSelectElement).value
+    const value = bodyTypeSelectElement.value
 
     const isJson = value == "json"
     if (isJson) {
-        const body = (document.getElementById(`playground_json_input_body`) as HTMLTextAreaElement).value;
+        const body = jsonBodyInput.value;
         if (body && !isValidJson(body)) {
             showErrorOnBody("playground");
             return;
@@ -149,8 +225,7 @@ function getBody() {
         requestBody = body && JSON.stringify(JSON.parse(body));
         removeErrorOnBody("playground");
     } else {
-        const formData = document.getElementById(`playground_form_body`) as HTMLFormElement
-        requestBody = new FormData(formData)
+        requestBody = new FormData(formBodyData)
     }
     return requestBody
 }

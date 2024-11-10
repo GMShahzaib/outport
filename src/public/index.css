@@ -214,11 +214,6 @@ main {
   transition: background-color 0.3s ease;
 }
 
-.flex {
-  display: flex;
-  align-items: center;
-}
-
 .endpoint {
   padding: 5px;
   display: none;
@@ -409,6 +404,7 @@ main {
 .flex-row-start {
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: flex-start;
 }
 
@@ -793,4 +789,22 @@ pre {
   100% {
     transform: rotate(1turn)
   }
+}
+
+
+.icon-btn{
+  max-width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+
+.image-icon{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.endpoint-header{
+  flex-grow: 1;
+  justify-content: flex-start !important;
 }
