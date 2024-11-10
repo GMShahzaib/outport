@@ -111,3 +111,19 @@ const updateTable = (id: string, headers: { [key: string]: string }): void => {
     `).join('');
     updateElement(id, rows);
 };
+
+function convertFormBodyToJson(formData: FormData, formElement: HTMLFormElement): string {
+    const obj: { [key: string]: { value?: string; type: string } } = {};
+  
+    formData.forEach((value, key) => {
+      const inputElement = formElement.querySelector(`[name="${key}"]`) as HTMLInputElement | null;
+      const type = inputElement ? inputElement.type : "unknown";
+  
+      obj[key] = { type }
+      if (typeof value == "string") {
+        obj[key].value = value
+      }
+    });
+  
+    return JSON.stringify(obj);
+  }

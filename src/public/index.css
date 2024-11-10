@@ -70,6 +70,7 @@ header p {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  text-align: center;
 }
 
 .arrow-icon {
@@ -807,4 +808,8 @@ pre {
 .endpoint-header{
   flex-grow: 1;
   justify-content: flex-start !important;
+}
+
+.response-icon-btn{
+  margin-left: 10px;
 }

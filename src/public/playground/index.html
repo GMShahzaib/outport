@@ -12,15 +12,16 @@
 <body>
     <header>
         <div class="header-content">
-                <div class="brand">
-                    <img src="../assets/outport.png" alt="Logo" class="logo">
-                    <h3 class="name">outport</h3>
-                </div>
+            <div class="brand">
+                <img src="../assets/outport.png" alt="Logo" class="logo">
+                <h3 class="name">outport</h3>
+            </div>
         </div>
     </header>
 
     <main>
         <section>
+            <span id="tooltip" style="visibility: hidden; position: absolute;">Copied</span>
             <form onsubmit="sendRequest(); return false;">
                 <div class="playground-url-container">
                     <div class="playground-endpoint">
@@ -47,8 +48,7 @@
                         <div id="playground_request_body_tab" class="tab"
                             onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
                     </div>
-                    <div><button class="icon-btn" title="copy to clipboard" onclick="copyRequest()"><img
-                                class="image-icon" src="../assets/copy_icon.png" /></button></div>
+                    <div><button id="request_copy_btn" class="icon-btn" title="copy to clipboard" onclick="copyRequest()"><img class="image-icon" src="../assets/copy_icon.png" /></button></div>
                 </div>
 
                 <div id="playground_request_header_content" class="request-content">
@@ -182,6 +182,8 @@
                                 <div class="response-status-code">
                                     status code: <span id="playground_statusCode" class="status-code"></span>
                                 </div>
+
+                                <div><button id="response_copy_btn" class="icon-btn response-icon-btn" title="copy to clipboard" onclick="copyResponse()"><img class="image-icon" src="../assets/copy_icon.png" /></button></div>
                             </div>
                         </div>
                         <div id="playground_response_header_content" class="header-content">
@@ -213,17 +215,6 @@
         </div>
 
     </main>
-
-    <script>
-        const copyRequest = async () => {
-            try {
-                await navigator.clipboard.writeText(JSON.stringify({ hi: "hello" }, null, 4));
-                console.log('Content copied to clipboard');
-            } catch (err) {
-                console.error('Failed to copy: ', err);
-            }
-        }
-    </script>
 
     <script src="../utils.js"></script>
     <script src="./playground.js"></script>

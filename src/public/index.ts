@@ -74,7 +74,7 @@ function loadDataToPlayground(endpointId: string, path: string, method: string) 
     body = requestBody?.body
   }
 
-  let destinationPath = `playground?method=${method}&url=${fullUrl.replace(/{/g, '%7B').replace(/}/g, '%7D')}`
+  let destinationPath = `playground?method=${method}&url=${encodeURIComponent(fullUrl)}`
 
   if (headers) {
     destinationPath += `&headers=${JSON.stringify(headers)}`
@@ -84,23 +84,6 @@ function loadDataToPlayground(endpointId: string, path: string, method: string) 
   }
   document.location.href = destinationPath
 }
-
-function convertFormBodyToJson(formData: FormData, formElement: HTMLFormElement): string {
-  const obj: { [key: string]: { value?: string; type: string } } = {};
-
-  formData.forEach((value, key) => {
-    const inputElement = formElement.querySelector(`[name="${key}"]`) as HTMLInputElement | null;
-    const type = inputElement ? inputElement.type : "unknown";
-
-    obj[key] = { type }
-    if (typeof value == "string") {
-      obj[key].value = value
-    }
-  });
-
-  return JSON.stringify(obj);
-}
-
 
 // Get request header
 const getRequestHeaders = (endpointId: string): { [key: string]: string } => {

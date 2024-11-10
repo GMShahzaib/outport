@@ -17,7 +17,8 @@ bodyTypeSelectElement.addEventListener('change', toggleRequestBodyType);
 
 
 window.onload = function (): void {
-    const params = getUrlParams(window.location.search);
+    const params = Object.fromEntries(new URLSearchParams(window.location.search).entries());
+
     loadUrl(params.url);
     loadMethod(params.method);
     loadHeaders(params.headers);
@@ -79,22 +80,6 @@ function loadBody(bodyType?: string, body?: string): void {
             })
         }
     }
-}
-
-function getUrlParams(queryString: string): Record<string, string> {
-    const params = new URLSearchParams(queryString);
-    const result: Record<string, string> = {};
-
-    for (const [key, value] of params.entries()) {
-        try {
-            result[key] = decodeURIComponent(value);
-        } catch (e) {
-            console.error(`Failed to decode URI component for key ${key}: ${e}`);
-            result[key] = value;
-        }
-    }
-
-    return result;
 }
 
 function updateFormValueKey(keyInput: HTMLInputElement): void {
@@ -159,7 +144,7 @@ function addReqBodyRow(key?: string, valueType?: string, value?: string): void {
         </td>
         <td class="data-cell">
             <div class="flex-box">
-                <input type="${valueType || "text"}" value="${value || ""}" class="param-cell-input border-background-non value-input" placeholder="value" name="value" accept="image/*">
+                <input type="${valueType || "text"}" name="${key || ""}" value="${value || ""}" class="param-cell-input border-background-non value-input" placeholder="value" name="value" accept="image/*">
                 <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
             </div>
         </td>
@@ -309,3 +294,72 @@ function syncTableWithURL(): void {
 }
 
 initializeRealTimeURLUpdate();
+
+
+
+const copyRequest = async () => {
+    const url = new URL(urlInput.value);
+    const method = methodSelect.value;
+    const headers = getHeaders();
+    const headersList = Object.keys(headers).map(key => ({ key, value: headers[key], description: "" }));
+
+    const params = Object.fromEntries(new URLSearchParams(url.search).entries());
+    const paramsList = Object.keys(params).map(key => ({ key, value: params[key], description: "" }));
+
+
+
+    let bodyType = bodyTypeSelectElement.value;
+    let bodyData;
+    if (method !== "get") {
+        const body = getBody()
+        if (body instanceof FormData) {
+            bodyData = JSON.parse(convertFormBodyToJson(body, formBodyData))
+        } else {
+            bodyData = body && JSON.parse(body)
+        }
+    }
+
+    const object = {
+        path: url.origin + url.pathname,
+        method: method.toUpperCase(),
+        headers: headersList,
+        parameters: paramsList,
+        body: method !== "get" ? {
+            type: bodyType,
+            data: bodyData
+        } : undefined,
+        responses: [],
+    }
+
+
+    try {
+        await navigator.clipboard.writeText(JSON.stringify(object, null, 4)).then(() => {
+            // show tooltip
+        })
+
+        console.log('Content copied to clipboard');
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+}
+
+
+const copyResponse = async () => {
+    try {
+
+        const obj = {
+            status: 404,
+            description: "Not Found description.",
+            value: "Pepper Potts  and Tony Stark?",
+            headers: [{ key: "hi baby", value: "enjoy" }, { key: "by baby", value: "sad" }]
+        }
+        
+        await navigator.clipboard.writeText(JSON.stringify(obj, null, 4)).then(() => {
+            // show tooltip
+        })
+
+        console.log('Content copied to clipboard');
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+}
