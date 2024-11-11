@@ -165,14 +165,18 @@ async function sendRequest(): Promise<void> {
     const responseSection = document.getElementById(`playground-response-section`) as HTMLDivElement;
     const loader = document.getElementById(`playground-executeBtn-loader`) as HTMLDivElement;
 
-    responseUnavailable.classList.add("displayNon");
-    responseSection.classList.add("displayNon");
-    loader.classList.remove("displayNon");
-
     const url = urlInput.value;
     const method = methodSelect.value;
     const headers = getHeaders();
     const body = method !== "get" ? getBody() : undefined;
+
+    if (!url || !method) {
+        return showToast("Request is empty.");
+    }
+
+    responseUnavailable.classList.add("displayNon");
+    responseSection.classList.add("displayNon");
+    loader.classList.remove("displayNon");
 
     try {
         const { success, errorMessage, data, headers: respHeaders, status, time } = await testApi({
@@ -300,13 +304,16 @@ initializeRealTimeURLUpdate();
 
 
 const copyRequest = async () => {
-    const url = new URL(decodeURIComponent(urlInput.value));
+    if (!urlInput.value || !methodSelect.value) {
+        return showToast("Request is empty.");
+    }
+    const url = new URL(decodeURIComponent(urlInput.value))
     const method = methodSelect.value;
     const headers = getHeaders();
     const headersList = Object.keys(headers).map(key => ({ key, value: headers[key], description: "" }));
 
     const params = Object.fromEntries(new URLSearchParams(url.search).entries());
-    const paramsList = Object.keys(params).map(key => ({ key, value: params[key], description: "",required:false }));
+    const paramsList = Object.keys(params).map(key => ({ key, value: params[key], description: "", required: false }));
 
 
 
@@ -336,11 +343,9 @@ const copyRequest = async () => {
 
 
     try {
-        await navigator.clipboard.writeText(JSON.stringify(object, null, 4)).then(() => {
-            // show tooltip
-        })
+        await navigator.clipboard.writeText(JSON.stringify(object, null, 4))
 
-        console.log('Content copied to clipboard');
+        showToast("Request Coped.");
     } catch (err) {
         console.error('Failed to copy: ', err);
     }
@@ -366,8 +371,8 @@ const copyResponse = async () => {
         };
 
         await navigator.clipboard.writeText(JSON.stringify(responseObj, null, 4));
+        showToast("Response Coped.");
 
-        console.log('Content copied to clipboard');
     } catch (err) {
         console.error('Failed to copy: ', err);
     }

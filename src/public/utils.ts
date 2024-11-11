@@ -62,7 +62,7 @@ const formatJson = (ele: HTMLTextAreaElement): void => {
 // Show toast message
 const showToast = (message: string): void => {
     updateToast(message, true);
-    setTimeout(hideToast, 8000); // Hide toast after 8 seconds
+    setTimeout(hideToast, 4000); // Hide toast after 4 seconds
 };
 
 // Hide toast message
@@ -114,28 +114,37 @@ const updateTable = (id: string, headers: { [key: string]: string }): void => {
 
 function convertFormBodyToJson(formData: FormData, formElement: HTMLFormElement): string {
     const obj: { [key: string]: { value?: string; type: string } } = {};
-  
-    formData.forEach((value, key) => {
-      const inputElement = formElement.querySelector(`[name="${key}"]`) as HTMLInputElement | null;
-      const type = inputElement ? inputElement.type : "unknown";
-  
-      obj[key] = { type }
-      if (typeof value == "string") {
-        obj[key].value = value
-      }
-    });
-  
-    return JSON.stringify(obj);
-  }
 
-  function isValidHttpUrl(value:string) {
+    formData.forEach((value, key) => {
+        const inputElement = formElement.querySelector(`[name="${key}"]`) as HTMLInputElement | null;
+        const type = inputElement ? inputElement.type : "unknown";
+
+        obj[key] = { type }
+        if (typeof value == "string") {
+            obj[key].value = value
+        }
+    });
+
+    return JSON.stringify(obj);
+}
+
+function isValidHttpUrl(value: string) {
     let url;
-    
+
     try {
-      url = new URL(value);
+        url = new URL(value);
     } catch (_) {
-      return false;  
+        return false;
     }
-  
+
     return url.protocol === "http:" || url.protocol === "https:";
-  }
+}
+
+
+function hideElement(id: string) {
+    (document.getElementById(id) as HTMLDivElement).classList.add("displayNon");
+}
+
+function showElement(id: string) {
+    (document.getElementById(id) as HTMLDivElement).classList.remove("displayNon");
+}

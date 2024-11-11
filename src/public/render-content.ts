@@ -11,10 +11,10 @@ window.onload = function () {
 function setupUI(apiOptions: { apis: SchemaApi[]; values: APIDocumentation }): void {
   const baseUrlContain = document.getElementById('base-url-container') as HTMLDivElement
   console.log(apiOptions.values.servers)
-  if(apiOptions.values.servers) {
+  if (apiOptions.values.servers) {
     populateBaseUrls(apiOptions.values.servers);
     baseUrlContain.style.display = "block"
-  }else{
+  } else {
     baseUrlContain.style.display = "none"
   }
   populateHeaderInformation(apiOptions.values);
@@ -72,14 +72,14 @@ function buildEndpointSection(endpoint: Endpoint, timeout?: number): string {
   const endpointId = uidGenerator();
 
   return `
-    <div class="collapsible">
+    <div class="collapsible" onmouseenter="showElement('${endpointId}_redirectBtn')" onmouseleave="hideElement('${endpointId}_redirectBtn')">
       <div class="flex-box clickable ptb-5" >
         <div class="flex-box endpoint-header" onclick="toggleContent('${endpointId}')">
             <div class="http-method ${endpoint.method.toLowerCase()}">${endpoint.method}</div>
             <div class="endpoint-path">${endpoint.path}</div>
             <div class="endpoint-summary">${endpoint.summary}</div>
         </div>
-        <div><button class="icon-btn" title="load to Playground" onclick="loadDataToPlayground('${endpointId}', '${endpoint.path}', '${endpoint.method}')"><img class="image-icon" src="./assets/redirect_icon.png" alt="Italian Trulli"></button></div>
+        <div id="${endpointId}_redirectBtn" class="displayNon" ><button class="icon-btn" title="load to Playground" onclick="loadDataToPlayground('${endpointId}', '${endpoint.path}', '${endpoint.method}')"><img class="image-icon" src="./assets/redirect_icon.png" alt="Italian Trulli"></button></div>
       </div>
       <div id="${endpointId}" class="endpoint">
         ${buildAddressParams(endpointId, endpoint.path)}
@@ -392,26 +392,26 @@ function buildResponses(endpointId: string, responses: Response[]): string {
                   <div id="${endpointId}_${ind}_response_body_content" class="tab-content active">
                     <div id="${endpointId}_${ind}_respBody_wrapper" class="respBody">
                       <pre id="${endpointId}_${ind}_respBody">${((data) => {
-                          let body = data;
+        let body = data;
 
-                          // Check if the data is a JSON-like string and parse it to an object if necessary
-                          try {
-                              body = typeof body === 'string' && isValidJson(body) ? JSON.parse(body) : body;
-                          } catch (_) {
-                              // Handle parsing error (if any)
-                              console.error('Invalid JSON format');
-                          }
+        // Check if the data is a JSON-like string and parse it to an object if necessary
+        try {
+          body = typeof body === 'string' && isValidJson(body) ? JSON.parse(body) : body;
+        } catch (_) {
+          // Handle parsing error (if any)
+          console.error('Invalid JSON format');
+        }
 
-                          // Check if the body is an object and stringify it, otherwise return it as is
-                          if (typeof body === 'object' && body !== null) {
-                              try {
-                                  body = JSON.stringify(body, null, 4); // Convert to formatted JSON string
-                              } catch (_) {
-                                  console.error('Stringify failed');
-                              }
-                          }
-                          return body;
-                      })(response.value)}</pre>
+        // Check if the body is an object and stringify it, otherwise return it as is
+        if (typeof body === 'object' && body !== null) {
+          try {
+            body = JSON.stringify(body, null, 4); // Convert to formatted JSON string
+          } catch (_) {
+            console.error('Stringify failed');
+          }
+        }
+        return body;
+      })(response.value)}</pre>
                     </div>
                   </div>` : ''}
                 ${response.headers ? `
