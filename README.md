@@ -145,4 +145,4 @@ app.use('/docs', outport.serve());
 
 ### 4. Accessing the Documentation
 
-Run your Express app and navigate to `/docs` to see the interactive documentation of your API.
+Run your app and navigate to `/docs` to see the interactive documentation of your API.
