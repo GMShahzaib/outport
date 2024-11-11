@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc && npm run copy-html",
-    "copy-html": "copyfiles -u 1 \"src/public/**/*.html\" \"src/public/**/*.png\" \"src/public/**/*.css\" dist/"
+    "build": "tsc && npm run copy-files",
+    "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/"
   },
   "keywords": [],
   "author": "",
