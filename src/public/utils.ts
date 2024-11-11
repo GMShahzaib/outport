@@ -105,8 +105,8 @@ const updateTable = (id: string, headers: { [key: string]: string }): void => {
     if (!headers) return
     const rows = Object.keys(headers).map(key => `
         <tr class="data-row">
-          <td class="data-cell whiteBorder"><span class="response-header-key">${key}</span></td>
-          <td class="data-cell whiteBorder"><span class="response-header-value">${headers[key]}</span></td>
+          <td class="data-cell whiteBorder"><span name="key"  class="response-header-key">${key}</span></td>
+          <td class="data-cell whiteBorder"><span name="value" class="response-header-value">${headers[key]}</span></td>
         </tr>
     `).join('');
     updateElement(id, rows);
@@ -126,4 +126,16 @@ function convertFormBodyToJson(formData: FormData, formElement: HTMLFormElement)
     });
   
     return JSON.stringify(obj);
+  }
+
+  function isValidHttpUrl(value:string) {
+    let url;
+    
+    try {
+      url = new URL(value);
+    } catch (_) {
+      return false;  
+    }
+  
+    return url.protocol === "http:" || url.protocol === "https:";
   }

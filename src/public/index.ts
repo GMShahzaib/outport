@@ -29,7 +29,11 @@ const execute = async (
 
   const baseUrl = getSelectedBaseUrl();
   const params = getQueryParameters(endpointId)
-  const fullUrl = `${baseUrl}${getAddressWithParameters(endpointId, path)}${params ? `?${params}` : ''}`
+
+  let fullUrl = `${getAddressWithParameters(endpointId, path)}${params ? `?${params}` : ''}`
+  if (!isValidHttpUrl(path)) {
+    fullUrl = `${baseUrl}` + fullUrl
+  }
   const headers = getRequestHeaders(endpointId);
   const body = getRequestBody(method, endpointId);
 
@@ -61,7 +65,11 @@ const execute = async (
 function loadDataToPlayground(endpointId: string, path: string, method: string) {
   const baseUrl = getSelectedBaseUrl();
   const params = getQueryParameters(endpointId)
-  const fullUrl = `${baseUrl}${path}${params ? `?${params}` : ''}`
+
+  let fullUrl = `${path}${params ? `?${params}` : ''}`
+  if (!isValidHttpUrl(path)) {
+    fullUrl = `${baseUrl}` + fullUrl
+  }
 
   const headers = getRequestHeaders(endpointId);
   const requestBody = getRequestBody(method, endpointId);

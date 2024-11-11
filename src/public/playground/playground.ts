@@ -6,8 +6,10 @@ const jsonBodyInput = (document.getElementById(`playground_json_input_body`) as 
 const formBodyData = document.getElementById(`playground_form_body`) as HTMLFormElement
 const parametersTable = document.getElementById("parametersTable") as HTMLTableElement;
 const headersTable = document.getElementById("headersTable") as HTMLTableElement;
+const responseHeadersTable = document.getElementById("responseHeadersTable") as HTMLTableElement;
 const urlInput = document.getElementById("playground-url-input") as HTMLInputElement;
 const methodSelect = (document.getElementById("playground-method-selector") as HTMLSelectElement)
+
 
 // Initial setup
 jsonDiv.style.display = 'block';
@@ -298,7 +300,7 @@ initializeRealTimeURLUpdate();
 
 
 const copyRequest = async () => {
-    const url = new URL(urlInput.value);
+    const url = new URL(decodeURIComponent(urlInput.value));
     const method = methodSelect.value;
     const headers = getHeaders();
     const headersList = Object.keys(headers).map(key => ({ key, value: headers[key], description: "" }));
@@ -322,6 +324,7 @@ const copyRequest = async () => {
     const object = {
         path: url.origin + url.pathname,
         method: method.toUpperCase(),
+        summary: "",
         headers: headersList,
         parameters: paramsList,
         body: method !== "get" ? {
@@ -346,20 +349,40 @@ const copyRequest = async () => {
 
 const copyResponse = async () => {
     try {
+        const statusCode = document.getElementById("playground_statusCode") as HTMLSpanElement;
+        const respBody = document.getElementById("playground_respBody") as HTMLPreElement;
+        const headers = getResponseHeaders();
+        let body = respBody.innerHTML;
 
-        const obj = {
-            status: 404,
-            description: "Not Found description.",
-            value: "Pepper Potts  and Tony Stark?",
-            headers: [{ key: "hi baby", value: "enjoy" }, { key: "by baby", value: "sad" }]
+        if (isValidJson(body)) {
+            body = JSON.parse(body);
         }
-        
-        await navigator.clipboard.writeText(JSON.stringify(obj, null, 4)).then(() => {
-            // show tooltip
-        })
+
+        const responseObj = {
+            status: statusCode.innerHTML ? Number(statusCode.innerHTML) : "",
+            description: "Example Response:",
+            value: body,
+            headers
+        };
+
+        await navigator.clipboard.writeText(JSON.stringify(responseObj, null, 4));
 
         console.log('Content copied to clipboard');
     } catch (err) {
         console.error('Failed to copy: ', err);
     }
+};
+
+function getResponseHeaders() {
+    const headers: { [key: string]: string }[] = [];
+    const rows = responseHeadersTable.querySelectorAll("tr.data-row");
+
+    rows.forEach(row => {
+        const key = (row.querySelector('span[name="key"]') as HTMLSpanElement).innerHTML;
+        const value = (row.querySelector('span[name="value"]') as HTMLSpanElement).innerHTML;
+        if (key && value) {
+            headers.push({ key, value })
+        }
+    });
+    return headers
 }

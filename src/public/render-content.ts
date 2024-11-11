@@ -383,7 +383,27 @@ function buildResponses(endpointId: string, responses: Response[]): string {
                 ${response.value ? `
                   <div id="${endpointId}_${ind}_response_body_content" class="tab-content active">
                     <div id="${endpointId}_${ind}_respBody_wrapper" class="respBody">
-                      <pre id="${endpointId}_${ind}_respBody">${response.value}</pre>
+                      <pre id="${endpointId}_${ind}_respBody">${((data) => {
+                          let body = data;
+
+                          // Check if the data is a JSON-like string and parse it to an object if necessary
+                          try {
+                              body = typeof body === 'string' && isValidJson(body) ? JSON.parse(body) : body;
+                          } catch (_) {
+                              // Handle parsing error (if any)
+                              console.error('Invalid JSON format');
+                          }
+
+                          // Check if the body is an object and stringify it, otherwise return it as is
+                          if (typeof body === 'object' && body !== null) {
+                              try {
+                                  body = JSON.stringify(body, null, 4); // Convert to formatted JSON string
+                              } catch (_) {
+                                  console.error('Stringify failed');
+                              }
+                          }
+                          return body;
+                      })(response.value)}</pre>
                     </div>
                   </div>` : ''}
                 ${response.headers ? `
