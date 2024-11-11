@@ -1,6 +1,6 @@
 # Outport
 
-Outport is an API testing and documentation library, that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.
+Outport is an API testing and documentation library that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.
 
 ## Features
 
@@ -22,9 +22,9 @@ npm install outport
 
 To use **Outport** in your project, follow the steps below:
 
-### 1. Import Outport and configure it
+### 1. Import Outport and Configure It
 
-First, import **Outport** and initialize it with your desired configuration. Below is an example of how to set up **Outport** in an Express app.
+Import **Outport** and initialize it with your desired configuration. Below is an example of how to set up **Outport** in an Express app.
 
 ```javascript
 import Outport from 'outport';
@@ -33,7 +33,7 @@ const outport = new Outport({
     title: 'User Management APIs',
     version: '1.0.0',
     servers: [
-        'http://localhost:8081', 
+        'http://localhost:8081',
         'https://api.example.com/v1'
     ],
     headers: [
@@ -53,66 +53,129 @@ const outport = new Outport({
 });
 ```
 
-### 2. Define your API routes
+### 2. Define Your API Routes
 
-You can define your API endpoints by using the `outport.use()` method, passing an array of route objects. Below is an example of defining GET and POST routes:
+Define your API endpoints using the `outport.use()` method by passing an array of route objects. Below is an example that defines GET and POST routes:
 
 ```javascript
-outport.use("Users", [
+outport.use("Apis title", [
     {
-        path: '/users',
-        method: 'get',
-        summary: "Fetches a list of users.",
+        path: "/test-get",
+        method: "GET",
+        summary: "Fetches example data.",
         headers: [
-            { key: "Authorization", value: "Bearer <token>", description: "JWT token for authorization" },
-            { key: "Accept", value: "application/json", description: "Indicates that the client expects a JSON response" }
+            { key: "header1", value: "50", description: "Example header" },
+            { key: "header2", value: "50", description: "Another example header" }
         ],
         parameters: [
-            { key: "page", value: "1", description: "Page number for pagination" },
-            { key: "limit", value: "20", description: "Number of users per page" }
+            { key: "param1", value: "50", description: "Example parameter", required: false },
+            { key: "param2", value: "50", description: "Another parameter", required: false },
+            { key: "param3", value: "50", description: "Third parameter", required: false }
         ],
         responses: [
-            { code: 200, description: "Success - returns a list of users" },
-            { code: 401, description: "Unauthorized - invalid or missing token" },
-            { code: 500, description: "Internal server error" }
-        ],
+            {
+                status: 200,
+                description: "Example Response:",
+                value: {
+                    success: true,
+                    params: {
+                        param1: "50",
+                        param2: "50",
+                        param3: "50"
+                    },
+                    message: "success"
+                },
+                headers: [
+                    { key: "access-control-allow-origin", value: "*" },
+                    { key: "content-length", value: "89" },
+                    { key: "content-type", value: "application/json; charset=utf-8" },
+                    { key: "date", value: "Mon, 11 Nov 2024 12:15:38 GMT" },
+                    { key: "etag", value: "W/\"59-MUxpGl4+hXme7ole0kweVCoQ93Y\"" },
+                    { key: "x-powered-by", value: "Express" }
+                ]
+            }
+        ]
     },
     {
-        path: '/users',
-        method: 'post',
-        summary: "Creates a new user.",
-        headers: [
-            { key: "Authorization", value: "Bearer <token>", description: "JWT token for authorization" },
-            { key: "Content-Type", value: "application/json", description: "Indicates the request body is in JSON format" }
+        path: '/test-get/{id}/products/{pid}',
+        method: 'GET',
+        summary: "Fetch product details.",
+        parameters: [
+            { key: "hello", value: "50", description: "Sample parameter", required: false },
+            { key: "hello2", value: "50", description: "Additional parameter", required: false },
+            { key: "hello3", value: "50", description: "Extra parameter", required: false }
         ],
+        responses: [
+            { status: 200, description: "This is my test description." }
+        ]
+    },
+    {
+        path: '/test-post',
+        method: 'POST',
+        summary: "Submit a test post.",
         body: {
-            name: "John Doe",
-            email: "john.doe@example.com",
-            password: "password123"
+            type: "form",
+            data: [
+                { key: "name", value: 50, type: 'text' },
+                { key: "profile", type: 'file' },
+                { key: "address", type: 'text' }
+            ]
+        },
+        parameters: [
+            { key: "hello", value: "50", description: "Description here", required: false },
+            { key: "hello2", value: "50", description: "Second description", required: false }
+        ],
+        responses: [
+            { status: 200, description: "This is my test description." }
+        ]
+    },
+    {
+        path: '/test-post',
+        method: 'POST',
+        summary: "Submit JSON data.",
+        body: {
+            type: "json",
+            data: [
+                { key: "hello", value: 50, type: 'text' }
+            ]
         },
         parameters: [],
         responses: [
-            { code: 201, description: "User created successfully" },
-            { code: 400, description: "Bad request - missing or invalid parameters" },
-            { code: 401, description: "Unauthorized - invalid or missing token" }
+            { status: 200, description: "This is my test description." }
+        ]
+    }
+]);
+
+outport.use("auth", [
+    {
+        path: '/test-get',
+        method: 'GET',
+        summary: "Auth endpoint example.",
+        headers: [
+            { key: "header1", value: "50", description: "Description for header1" },
+            { key: "header2", value: "50", description: "Description for header2" }
         ],
+        parameters: [
+            { key: "param1", value: "50", description: "Param description", required: false },
+            { key: "param2", value: "50", description: "Another param description", required: false },
+            { key: "param3", value: "50", description: "Third param description", required: false }
+        ],
+        responses: []
     }
 ]);
 ```
 
-### 3. Serve the documentation
+### 3. Serve the Documentation
 
-Finally, you can serve the **Outport** documentation in your Express app using:
+Serve the **Outport** documentation in your Express app using:
 
 ```javascript
 app.use('/docs', outport.serve());
 ```
 
-Now, when you visit `/docs` in your browser, you'll be able to see the documentation for your API, complete with endpoints, descriptions, parameters, headers, and more.
+### 4. Example Setup
 
-## Example Setup
-
-Here’s a complete example of how to use **Outport** in an Express app:
+Here's a complete example of how to use **Outport** in an Express app:
 
 ```javascript
 import express from 'express';
@@ -137,7 +200,7 @@ const outport = new Outport({
 outport.use("Example APIs", [
     {
         path: '/example-get',
-        method: 'get',
+        method: 'GET',
         summary: "Example GET endpoint",
         headers: [
             { key: "Authorization", value: "Bearer TOKEN", description: "Authorization token" }
@@ -156,6 +219,6 @@ app.listen(3000, () => {
 });
 ```
 
-### 4. Accessing the Documentation
+### 5. Accessing the Documentation
 
 Run your Express app and navigate to `/docs` to see the interactive documentation of your API.
