@@ -32,7 +32,7 @@ import Outport from 'outport';
 
 const outport = new Outport({
     title: 'User Management APIs',
-    version: '1.0.1', // Updated to reflect version from package.json
+    version: '1.0.0',
     servers: [
         'http://localhost:8081',
         'https://api.example.com/v1'
