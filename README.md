@@ -5,8 +5,9 @@ Outport is an API testing and documentation library that helps you document, tes
 ## Features
 
 - Easily document your API endpoints
-- Include headers, parameters, body, and responses
 - Auto-generate API documentation
+- Easily debugging for your API endpoints
+- Include headers, parameters, body, and responses
 - Simple setup and usage
 - Supports multiple servers and environments
 
