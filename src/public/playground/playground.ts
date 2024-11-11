@@ -306,7 +306,7 @@ const copyRequest = async () => {
     const headersList = Object.keys(headers).map(key => ({ key, value: headers[key], description: "" }));
 
     const params = Object.fromEntries(new URLSearchParams(url.search).entries());
-    const paramsList = Object.keys(params).map(key => ({ key, value: params[key], description: "" }));
+    const paramsList = Object.keys(params).map(key => ({ key, value: params[key], description: "",required:false }));
 
 
 

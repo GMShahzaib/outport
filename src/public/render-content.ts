@@ -9,7 +9,14 @@ window.onload = function () {
 };
 
 function setupUI(apiOptions: { apis: SchemaApi[]; values: APIDocumentation }): void {
-  populateBaseUrls(apiOptions.values.servers);
+  const baseUrlContain = document.getElementById('base-url-container') as HTMLDivElement
+  console.log(apiOptions.values.servers)
+  if(apiOptions.values.servers) {
+    populateBaseUrls(apiOptions.values.servers);
+    baseUrlContain.style.display = "block"
+  }else{
+    baseUrlContain.style.display = "none"
+  }
   populateHeaderInformation(apiOptions.values);
   populateApiEndpoints(apiOptions.apis, apiOptions.values.timeout);
 }
@@ -23,6 +30,7 @@ function populateBaseUrls(urls: string[]): void {
     option.text = url;
     selectElement.appendChild(option);
   });
+  selectElement.style.display = "block"
 }
 
 function populateHeaderInformation(values: APIDocumentation): void {

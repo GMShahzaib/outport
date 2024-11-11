@@ -70,7 +70,6 @@ header p {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  text-align: center;
 }
 
 .arrow-icon {
