@@ -142,52 +142,6 @@ Serve the **Outport** documentation in your Express app using:
 app.use('/docs', outport.serve());
 ```
 
-### 4. Example Setup
-
-Here's a complete example of how to use **Outport** in an Express app:
-
-```javascript
-import express from 'express';
-import Outport from 'outport';
-
-const app = express();
-
-const outport = new Outport({
-    title: 'My API',
-    version: '1.0.0',
-    servers: ['http://localhost:3000'],
-    "headers": [
-        {
-            "key": "Authorization",
-            "value": "Bearer TOKEN",
-            "description": "Authorization header"
-        }
-    ],
-    "description": 'API Documentation using Outport.',
-});
-
-outport.use("Example APIs", [
-    {
-        path: '/example-get',
-        "method": 'GET',
-        "summary": "Example GET endpoint",
-        "headers": [
-            { "key": "Authorization", "value": "Bearer TOKEN", "description": "Authorization token" }
-        ],
-        "parameters": [
-            { "key": "param1", "value": "value1", "description": "Example parameter" }
-        ],
-        "responses": [],
-    }
-]);
-
-app.use('/docs', outport.serve());
-
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
-});
-```
-
-### 5. Accessing the Documentation
+### 4. Accessing the Documentation
 
 Run your Express app and navigate to `/docs` to see the interactive documentation of your API.
