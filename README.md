@@ -1,19 +1,19 @@
 # Outport
 
-Outport is an API testing and documentation library that helps you document, test, and visualize your API endpoints. It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.
+Outport is an API testing and documentation library that helps you document, test, and visualize your API endpoints. It provides an organized interface to define your API endpoints and displays them in a user-friendly format for ease of use and debugging.
 
 ## Features
 
-- Easily document your API endpoints
-- Auto-generate API documentation
-- Easily debugging for your API endpoints
-- Include headers, parameters, body, and responses
-- Simple setup and usage
+- Easily document API endpoints
+- Auto-generate API documentation with a clean interface
+- Debugging support for API endpoints with detailed request information
+- Define headers, parameters, body, and responses for API routes
+- Simple setup and usage in an Express environment
 - Supports multiple servers and environments
 
 ## Installation
 
-You can install **Outport** via NPM:
+Install **Outport** via NPM:
 
 ```bash
 npm install outport
@@ -25,14 +25,14 @@ To use **Outport** in your project, follow the steps below:
 
 ### 1. Import Outport and Configure It
 
-Import **Outport** and initialize it with your desired configuration. Below is an example of how to set up **Outport** in an Express app.
+Import **Outport** and initialize it with your configuration. Here's an example setup in an Express app:
 
 ```javascript
 import Outport from 'outport';
 
 const outport = new Outport({
     title: 'User Management APIs',
-    version: '1.0.0',
+    version: '1.0.1', // Updated to reflect version from package.json
     servers: [
         'http://localhost:8081',
         'https://api.example.com/v1'
@@ -41,25 +41,24 @@ const outport = new Outport({
         {
             key: "x-api-key",
             value: "YOUR_API_KEY_HERE",
-            description: "API key required to authenticate requests",
+            description: "API key required to authenticate requests"
         },
         {
             key: "x-globe-header",
             value: "AJFLJL23J43908F09A8SD09",
-            description: "Used for global session identification across requests",
+            description: "Used for global session identification across requests"
         }
     ],
-    description: `Outport is an API testing and documentation library, that helps you document, test, and visualize your API endpoints.
-    It offers a straightforward and organized way to define your API endpoints and display them in a user-friendly interface.`,
+    description: `Outport is an API testing and documentation library that helps you document, test, and visualize your API endpoints in a user-friendly interface.`,
 });
 ```
 
-### 2. Define Your API Routes
+### 2. Define API Routes
 
-Define your API endpoints using the `outport.use()` method by passing an array of route objects. Below is an example that defines GET and POST routes:
+Define API endpoints using the `outport.use()` method. Here’s an example defining GET and POST routes:
 
 ```javascript
-outport.use("Apis title", [
+outport.use("API Examples", [
     {
         "path": "/test-get",
         "method": "GET",
@@ -116,28 +115,13 @@ outport.use("Apis title", [
         "responses": [
             { "status": 200, "description": "This is my test description." }
         ]
-    },
-    {
-        "path": '/test-post',
-        "method": 'POST',
-        "summary": "Submit JSON data.",
-        "body": {
-            "type": "json",
-            "data": [
-                { "key": "hello", "value": 50, "type": 'text' }
-            ]
-        },
-        "parameters": [],
-        "responses": [
-            { "status": 200, "description": "This is my test description." }
-        ]
     }
 ]);
 ```
 
 ### 3. Serve the Documentation
 
-Serve the **Outport** documentation in your Express app using:
+Serve the **Outport** documentation in your Express app:
 
 ```javascript
 app.use('/docs', outport.serve());
@@ -145,4 +129,21 @@ app.use('/docs', outport.serve());
 
 ### 4. Accessing the Documentation
 
-Run your app and navigate to `/docs` to see the interactive documentation of your API.
+Start your app and navigate to `/docs` to access the interactive documentation of your API.
+
+## Scripts
+
+- **`npm run build`**: Transpiles TypeScript files and copies public assets to the `dist/` directory.
+- **`npm run test`**: Placeholder for tests, currently outputs a test error.
+
+## Development Dependencies
+
+The project relies on the following development dependencies:
+
+- **TypeScript**: Used to compile TypeScript source files.
+- **@types/express** and **@types/node**: TypeScript types for Express and Node.
+- **copyfiles**: Utility for copying assets (HTML, PNG, CSS) from `src/public` to `dist`.
+
+## Peer Dependencies
+
+- **Express**: Works with both Express 4 and the upcoming Express 5 beta releases.
