@@ -97,19 +97,6 @@ outport.use("Apis title", [
         ]
     },
     {
-        path: '/test-get/{id}/products/{pid}',
-        method: 'GET',
-        summary: "Fetch product details.",
-        parameters: [
-            { key: "hello", value: "50", description: "Sample parameter", required: false },
-            { key: "hello2", value: "50", description: "Additional parameter", required: false },
-            { key: "hello3", value: "50", description: "Extra parameter", required: false }
-        ],
-        responses: [
-            { status: 200, description: "This is my test description." }
-        ]
-    },
-    {
         path: '/test-post',
         method: 'POST',
         summary: "Submit a test post.",
@@ -143,24 +130,6 @@ outport.use("Apis title", [
         responses: [
             { status: 200, description: "This is my test description." }
         ]
-    }
-]);
-
-outport.use("auth", [
-    {
-        path: '/test-get',
-        method: 'GET',
-        summary: "Auth endpoint example.",
-        headers: [
-            { key: "header1", value: "50", description: "Description for header1" },
-            { key: "header2", value: "50", description: "Description for header2" }
-        ],
-        parameters: [
-            { key: "param1", value: "50", description: "Param description", required: false },
-            { key: "param2", value: "50", description: "Another param description", required: false },
-            { key: "param3", value: "50", description: "Third param description", required: false }
-        ],
-        responses: []
     }
 ]);
 ```
