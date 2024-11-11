@@ -60,75 +60,75 @@ Define your API endpoints using the `outport.use()` method by passing an array o
 ```javascript
 outport.use("Apis title", [
     {
-        path: "/test-get",
-        method: "GET",
-        summary: "Fetches example data.",
-        headers: [
-            { key: "header1", value: "50", description: "Example header" },
-            { key: "header2", value: "50", description: "Another example header" }
+        "path": "/test-get",
+        "method": "GET",
+        "summary": "Fetches example data.",
+        "headers": [
+            { "key": "header1", "value": "50", "description": "Example header" },
+            { "key": "header2", "value": "50", "description": "Another example header" }
         ],
-        parameters: [
-            { key: "param1", value: "50", description: "Example parameter", required: false },
-            { key: "param2", value: "50", description: "Another parameter", required: false },
-            { key: "param3", value: "50", description: "Third parameter", required: false }
+        "parameters": [
+            { "key": "param1", "value": "50", "description": "Example parameter", "required": false },
+            { "key": "param2", "value": "50", "description": "Another parameter", "required": false },
+            { "key": "param3", "value": "50", "description": "Third parameter", "required": false }
         ],
-        responses: [
+        "responses": [
             {
-                status: 200,
-                description: "Example Response:",
-                value: {
-                    success: true,
-                    params: {
-                        param1: "50",
-                        param2: "50",
-                        param3: "50"
+                "status": 200,
+                "description": "Example Response:",
+                "value": {
+                    "success": true,
+                    "params": {
+                        "param1": "50",
+                        "param2": "50",
+                        "param3": "50"
                     },
-                    message: "success"
+                    "message": "success"
                 },
-                headers: [
-                    { key: "access-control-allow-origin", value: "*" },
-                    { key: "content-length", value: "89" },
-                    { key: "content-type", value: "application/json; charset=utf-8" },
-                    { key: "date", value: "Mon, 11 Nov 2024 12:15:38 GMT" },
-                    { key: "etag", value: "W/\"59-MUxpGl4+hXme7ole0kweVCoQ93Y\"" },
-                    { key: "x-powered-by", value: "Express" }
+                "headers": [
+                    { "key": "access-control-allow-origin", "value": "*" },
+                    { "key": "content-length", "value": "89" },
+                    { "key": "content-type", "value": "application/json; charset=utf-8" },
+                    { "key": "date", "value": "Mon, 11 Nov 2024 12:15:38 GMT" },
+                    { "key": "etag", "value": "W/\"59-MUxpGl4+hXme7ole0kweVCoQ93Y\"" },
+                    { "key": "x-powered-by", "value": "Express" }
                 ]
             }
         ]
     },
     {
-        path: '/test-post',
-        method: 'POST',
-        summary: "Submit a test post.",
-        body: {
-            type: "form",
-            data: [
-                { key: "name", value: 50, type: 'text' },
-                { key: "profile", type: 'file' },
-                { key: "address", type: 'text' }
+        "path": '/test-post',
+        "method": 'POST',
+        "summary": "Submit a test post.",
+        "body": {
+            "type": "form",
+            "data": [
+                { "key": "name", "value": 50, "type": 'text' },
+                { "key": "profile", "type": 'file' },
+                { "key": "address", "type": 'text' }
             ]
         },
-        parameters: [
-            { key: "hello", value: "50", description: "Description here", required: false },
-            { key: "hello2", value: "50", description: "Second description", required: false }
+        "parameters": [
+            { "key": "hello", "value": "50", "description": "Description here", "required": false },
+            { "key": "hello2", "value": "50", "description": "Second description", "required": false }
         ],
-        responses: [
-            { status: 200, description: "This is my test description." }
+        "responses": [
+            { "status": 200, "description": "This is my test description." }
         ]
     },
     {
-        path: '/test-post',
-        method: 'POST',
-        summary: "Submit JSON data.",
-        body: {
-            type: "json",
-            data: [
-                { key: "hello", value: 50, type: 'text' }
+        "path": '/test-post',
+        "method": 'POST',
+        "summary": "Submit JSON data.",
+        "body": {
+            "type": "json",
+            "data": [
+                { "key": "hello", "value": 50, "type": 'text' }
             ]
         },
-        parameters: [],
-        responses: [
-            { status: 200, description: "This is my test description." }
+        "parameters": [],
+        "responses": [
+            { "status": 200, "description": "This is my test description." }
         ]
     }
 ]);
@@ -156,28 +156,28 @@ const outport = new Outport({
     title: 'My API',
     version: '1.0.0',
     servers: ['http://localhost:3000'],
-    headers: [
+    "headers": [
         {
-            key: "Authorization",
-            value: "Bearer TOKEN",
-            description: "Authorization header"
+            "key": "Authorization",
+            "value": "Bearer TOKEN",
+            "description": "Authorization header"
         }
     ],
-    description: 'API Documentation using Outport.',
+    "description": 'API Documentation using Outport.',
 });
 
 outport.use("Example APIs", [
     {
         path: '/example-get',
-        method: 'GET',
-        summary: "Example GET endpoint",
-        headers: [
-            { key: "Authorization", value: "Bearer TOKEN", description: "Authorization token" }
+        "method": 'GET',
+        "summary": "Example GET endpoint",
+        "headers": [
+            { "key": "Authorization", "value": "Bearer TOKEN", "description": "Authorization token" }
         ],
-        parameters: [
-            { key: "param1", value: "value1", description: "Example parameter" }
+        "parameters": [
+            { "key": "param1", "value": "value1", "description": "Example parameter" }
         ],
-        responses: [],
+        "responses": [],
     }
 ]);
 
