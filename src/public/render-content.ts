@@ -41,7 +41,15 @@ function populateHeaderInformation(values: APIDocumentation): void {
   title.innerHTML = values.title;
   version.innerHTML = 'v' + values.version;
   description.innerHTML = values.description;
-  globalHeaders.innerHTML = buildGlobalHeaders(values.headers);
+
+  const globalHeadersBtn = document.getElementById('globalHeadersBtn') as HTMLButtonElement
+
+  if (values.headers) {
+    globalHeaders.innerHTML = buildGlobalHeaders(values.headers);
+    globalHeadersBtn.classList.remove("displayNon")
+  } else {
+    globalHeadersBtn.classList.add("displayNon")
+  }
 }
 
 function populateApiEndpoints(apis: SchemaApi[], timeout?: number): void {
@@ -326,7 +334,7 @@ function buildRequestParameters(endpointId: string, parameters?: Parameter[]): s
           </tr>
         </thead>
         <tbody id="${endpointId}_query_params_body">
-          ${parameters && parameters.map(buildParameterSection).join('')}
+          ${parameters ? parameters.map(buildParameterSection).join('') : ""}
         </tbody>
       </table>
     </div>

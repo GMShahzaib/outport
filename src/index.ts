@@ -41,10 +41,10 @@ class Outport {
       throw new Error("Invalid 'servers': must be a non-empty array of strings.");
     }
 
-    if (!Array.isArray(values.headers) || !values.headers.every(header => {
+    if (values.headers && (!Array.isArray(values.headers) || !values.headers.every(header => {
       return typeof header.key === 'string' && header.key.trim().length > 0 &&
              typeof header.value === 'string';
-    })) {
+    }))) {
       throw new Error("Invalid 'headers': each header must have a non-empty 'key' and a 'value' as strings.");
     }
 

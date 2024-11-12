@@ -163,6 +163,7 @@ header .base-url-container {
 
 .base-url-selector {
   cursor: pointer;
+  min-width: 250px;
 }
 
 header .base-url-selector:focus {

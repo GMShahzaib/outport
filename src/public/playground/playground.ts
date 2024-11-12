@@ -46,7 +46,7 @@ function loadHeaders(headers?: string): void {
         const headerObj = JSON.parse(headers);
         const headersTableBody = document.querySelector<HTMLTableSectionElement>('#headersTable tbody');
 
-        if (headersTableBody) {
+        if (headersTableBody && Object.keys(headerObj).length!==0) {
             headersTableBody.innerHTML = "";
         }
 

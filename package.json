@@ -9,7 +9,13 @@
     "build": "tsc && npm run copy-files",
     "prepublishOnly": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "outport",
+    "api",
+    "apis",
+    "connect",
+    "express"
+  ],
   "author": "",
   "license": "ISC",
   "description": "",
