@@ -46,7 +46,7 @@ function loadHeaders(headers?: string): void {
         const headerObj = JSON.parse(headers);
         const headersTableBody = document.querySelector<HTMLTableSectionElement>('#headersTable tbody');
 
-        if (headersTableBody && Object.keys(headerObj).length!==0) {
+        if (headersTableBody && Object.keys(headerObj).length !== 0) {
             headersTableBody.innerHTML = "";
         }
 
@@ -320,14 +320,24 @@ const copyRequest = async () => {
     let bodyType = bodyTypeSelectElement.value;
     let bodyData;
     if (method !== "get") {
-        const body = getBody()
+        const body = getBody();
+        let data: Record<string, any> | null = null;
+    
         if (body instanceof FormData) {
-            bodyData = JSON.parse(convertFormBodyToJson(body, formBodyData))
-        } else {
-            bodyData = body && JSON.parse(body)
+            data = JSON.parse(convertFormBodyToJson(body, formBodyData));
+        } else if (typeof body === "string") {
+            data = JSON.parse(body);
+        }
+    
+        if (data) {
+            bodyData = Object.entries(data).map(([key, value]) => ({
+                key,
+                value: value?.value ?? value,
+                type: value?.type
+            }));
         }
     }
-
+    
     const object = {
         path: url.origin + url.pathname,
         method: method.toUpperCase(),
