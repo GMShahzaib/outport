@@ -56,6 +56,11 @@ header p {
 }
 
 
+.empty-data-message{
+  width:100px;
+  margin:auto;
+}
+
 .title-wrapper {
   display: flex;
   align-items: center;

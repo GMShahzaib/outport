@@ -10,7 +10,6 @@ window.onload = function () {
 
 function setupUI(apiOptions: { apis: SchemaApi[]; values: APIDocumentation }): void {
   const baseUrlContain = document.getElementById('base-url-container') as HTMLDivElement
-  console.log(apiOptions.values.servers)
   if (apiOptions.values.servers) {
     populateBaseUrls(apiOptions.values.servers);
     baseUrlContain.style.display = "block"
@@ -50,6 +49,10 @@ function populateApiEndpoints(apis: SchemaApi[], timeout?: number): void {
   outportUI.innerHTML = apis
     .map(({ name, endpoints }) => buildApiSection(name, endpoints, timeout))
     .join('');
+  if (apis.length == 0) {
+    outportUI.innerHTML = `<div class="empty-data-message">No Data!</div>`
+  }
+
 }
 
 function buildApiSection(name: string, endpoints: Endpoint[], timeout?: number): string {
