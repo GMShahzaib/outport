@@ -91,26 +91,27 @@ function buildEndpointSection(endpoint: Endpoint, timeout?: number): string {
     </div>
   `;
 }
+// <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn_wrapper')">Try it</button>
 
 function buildRequestSection(endpointId: string, endpoint: Endpoint, timeout?: number): string {
   return `
     <div class="dull-card">
       <div class="request-header-section">
         ${buildRequestTabs(endpointId, endpoint)}
-        <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn_wrapper')">Try it</button>
+        <div id="${endpointId}_executeBtn_wrapper">
+          <button id="${endpointId}_executeBtn" class="execute-button" onclick="execute('${endpointId}', '${endpoint.path}', '${endpoint.method}',${timeout})">execute</button>
+          <div id="${endpointId}_executeBtn_loader" class="loader" style="display:none;"></div>
+        </div>
       </div>
       <div id="${endpointId}_request_header_content" class="request-content">
         ${endpoint.body ? buildRequestBodyContent(endpointId, endpoint.body) : ""}
         ${buildRequestHeaders(endpointId, endpoint.headers)}
         ${buildRequestParameters(endpointId, endpoint.parameters)}
       </div>
-      <div id="${endpointId}_executeBtn_wrapper" class="execute-btn-wrapper">
-        <button id="${endpointId}_executeBtn" class="execute-button" onclick="execute('${endpointId}', '${endpoint.path}', '${endpoint.method}',${timeout})">execute</button>
-        <div id="${endpointId}_executeBtn_loader" class="loader" style="display:none;"></div>
-      </div>
     </div>
   `;
 }
+
 
 function buildResponseSection(endpointId: string, endpoint: Endpoint): string {
   return `
@@ -358,10 +359,10 @@ function buildResponseHeaders(endpointId: string): string {
 function buildResponses(endpointId: string, responses: Response[]): string {
   return `
     <div class="dull-card">
-      <div class="pointer" onclick="toggleContent('${endpointId}_responses')">
+      <div class="pointer">
         <h4>Responses:</h4>
       </div>
-      <div id='${endpointId}_responses' style="display:none;">
+      <div id='${endpointId}_responses'>
         ${responses.map((response, ind) => `
           <div class="example-response">
             <div class="flex-box pointer" onclick="toggleContent('${endpointId}_${ind}')">
@@ -372,7 +373,7 @@ function buildResponses(endpointId: string, responses: Response[]): string {
                 Status code: <span class="status-code">${response.status}</span>
               </div>
             </div>
-            <div id="${endpointId}_${ind}" style="display:none;">
+            <div id="${endpointId}_${ind}" class="dull-card" style="display:none;">
               <div class="response-header-section">
                 <div id="${endpointId}_${ind}_response_header_tabs" class="tabs">
                   ${response.value ? `

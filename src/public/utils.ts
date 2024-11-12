@@ -62,7 +62,7 @@ const formatJson = (ele: HTMLTextAreaElement): void => {
 // Show toast message
 const showToast = (message: string): void => {
     updateToast(message, true);
-    setTimeout(hideToast, 4000); // Hide toast after 4 seconds
+    setTimeout(hideToast, 3000); // Hide toast after 3 seconds
 };
 
 // Hide toast message
