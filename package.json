@@ -2,11 +2,12 @@
   "name": "outport",
   "version": "1.0.0",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/",
     "build": "tsc && npm run copy-files",
-    "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [],
   "author": "",

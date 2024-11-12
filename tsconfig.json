@@ -8,6 +8,7 @@
     "rootDir": "./src",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "declaration": true,
     "typeRoots": [
       "./node_modules/@types"
     ],
