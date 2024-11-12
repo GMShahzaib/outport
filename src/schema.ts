@@ -1,7 +1,6 @@
 export interface Parameter {
   key: string;
   value: string;
-  required: boolean;
   description?: string;
 }
 export interface Header {

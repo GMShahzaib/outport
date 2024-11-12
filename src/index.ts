@@ -128,10 +128,9 @@ class Outport {
     if (endpoint.parameters) {
       if (!Array.isArray(endpoint.parameters) || !endpoint.parameters.every(param => {
         return typeof param.key === 'string' && param.key.trim().length > 0 &&
-               typeof param.value === 'string' &&
-               typeof param.required === 'boolean';
+               typeof param.value === 'string'
       })) {
-        throw new Error(`Invalid 'parameters' at index ${index}: each parameter must have a non-empty 'key', a 'value', and a 'required' boolean.`);
+        throw new Error(`Invalid 'parameters' at index ${index}: each parameter must have a non-empty 'key', a 'value'.`);
       }
     }
 
