@@ -31,7 +31,7 @@ const testApi = async (data: {
         }
     } catch (error: unknown) {
         const errorResp: { success: boolean, time: string, errorMessage?: string } = { success: false, time: convertMillSecToReadable(Date.now() - startTime) }
-        if(typeof error == 'string'){            
+        if (typeof error == 'string') {
             errorResp.errorMessage = error
         }
         if (error instanceof Error) {
@@ -47,10 +47,23 @@ const buildFetchOptions = (
     headers: Record<string, string>,
     body?: string | FormData
 ): RequestInit => {
-    const options: RequestInit = { method: method.toUpperCase(), headers };
+    const modifiedHeaders = { ...headers };
+
+    // Set Content-Type header if body is a string
+    if (body && typeof body === 'string') {
+        modifiedHeaders['Content-Type'] = 'application/json';
+    }
+
+    const options: RequestInit = {
+        method: method.toUpperCase(),
+        headers: modifiedHeaders,
+    };
+
+    // Add the body only if it's a POST or PUT request
     if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
         options.body = body;
     }
+
     return options;
 };
 
@@ -65,15 +78,15 @@ function convertMillSecToReadable(ms: number) {
         time += `${hours}h`
     }
     if (minutes) {
-        if(time) time+=", "
+        if (time) time += ", "
         time += `${minutes}m`
     }
     if (seconds) {
-        if(time) time+=", "
+        if (time) time += ", "
         time += `${seconds}s`
     }
     if (milliseconds) {
-        if(time) time+=", "
+        if (time) time += ", "
         time += `${milliseconds}ms`
     }
 
