@@ -322,13 +322,13 @@ const copyRequest = async () => {
     if (method !== "get") {
         const body = getBody();
         let data: Record<string, any> | null = null;
-    
+
         if (body instanceof FormData) {
             data = JSON.parse(convertFormBodyToJson(body, formBodyData));
         } else if (typeof body === "string") {
             data = JSON.parse(body);
         }
-    
+
         if (data) {
             bodyData = Object.entries(data).map(([key, value]) => ({
                 key,
@@ -337,7 +337,7 @@ const copyRequest = async () => {
             }));
         }
     }
-    
+
     const object = {
         path: url.origin + url.pathname,
         method: method.toUpperCase(),
@@ -353,7 +353,12 @@ const copyRequest = async () => {
 
 
     try {
-        await navigator.clipboard.writeText(JSON.stringify(object, null, 4))
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(JSON.stringify(object, null, 4))
+        } else {
+            return showToast("copy function works only on secure connections. (localhost or https)");
+
+        }
 
         showToast("Request Coped.");
     } catch (err) {
@@ -380,7 +385,12 @@ const copyResponse = async () => {
             headers
         };
 
-        await navigator.clipboard.writeText(JSON.stringify(responseObj, null, 4));
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(JSON.stringify(responseObj, null, 4));
+        } else {
+            return showToast("copy function works only on secure connections. (localhost or https)");
+
+        }
         showToast("Response Coped.");
 
     } catch (err) {
