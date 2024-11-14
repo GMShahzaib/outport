@@ -17,6 +17,10 @@ Check out a live demo of Outport [here](https://outport-demo-production.up.railw
 - Simple setup and usage in an Express environment
 - Supports multiple servers and environments
 
+Here’s the updated installation and usage guide:
+
+---
+
 ## Installation
 
 Install **Outport** via NPM:
@@ -27,11 +31,11 @@ npm install outport
 
 ## Usage
 
-To use **Outport** in your project, follow the steps below:
+To use **Outport** in your project, follow these steps:
 
 ### 1. Import Outport and Configure It
 
-Import **Outport** and initialize it with your configuration. Here's an example setup in an Express app:
+Import **Outport** and initialize it with your configuration. Here’s an example setup in an Express app:
 
 ```javascript
 import Outport from 'outport';
@@ -40,18 +44,14 @@ const outport = new Outport({
     title: 'User Management APIs',
     version: '1.0.0',
     servers: [
-        'http://localhost:8081',
+        'https://outport-demo-production.up.railway.app',
+        'http://localhost:8080',
         'https://api.example.com/v1'
     ],
     headers: [
         {
-            key: "x-api-key",
-            value: "YOUR_API_KEY_HERE",
-            description: "API key required to authenticate requests"
-        },
-        {
-            key: "x-globe-header",
-            value: "AJFLJL23J43908F09A8SD09",
+            key: "Authorization",
+            value: "Bearer xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
             description: "Used for global session identification across requests"
         }
     ],
@@ -61,65 +61,61 @@ const outport = new Outport({
 
 ### 2. Define API Routes
 
-Define API endpoints using the `outport.use()` method. Here’s an example defining GET and POST routes:
+Define your API endpoints using the `outport.use()` method. Here’s an example with routes for `Authentication` and `Users`:
 
 ```javascript
-outport.use("API Examples", [
+outport.use("Authentication", [
     {
-        "path": "/test-get",
-        "method": "GET",
-        "summary": "Fetches example data.",
-        "headers": [
-            { "key": "header1", "value": "50", "description": "Example header" },
-            { "key": "header2", "value": "50", "description": "Another example header" }
-        ],
-        "parameters": [
-            { "key": "param1", "value": "50", "description": "Example parameter", "required": false },
-            { "key": "param2", "value": "50", "description": "Another parameter", "required": false },
-            { "key": "param3", "value": "50", "description": "Third parameter", "required": false }
-        ],
-        "responses": [
-            {
-                "status": 200,
-                "description": "Example Response:",
-                "value": {
-                    "success": true,
-                    "params": {
-                        "param1": "50",
-                        "param2": "50",
-                        "param3": "50"
-                    },
-                    "message": "success"
-                },
-                "headers": [
-                    { "key": "access-control-allow-origin", "value": "*" },
-                    { "key": "content-length", "value": "89" },
-                    { "key": "content-type", "value": "application/json; charset=utf-8" },
-                    { "key": "date", "value": "Mon, 11 Nov 2024 12:15:38 GMT" },
-                    { "key": "etag", "value": "W/\"59-MUxpGl4+hXme7ole0kweVCoQ93Y\"" },
-                    { "key": "x-powered-by", "value": "Express" }
-                ]
-            }
-        ]
-    },
-    {
-        "path": '/test-post',
-        "method": 'POST',
-        "summary": "Submit a test post.",
-        "body": {
-            "type": "form",
-            "data": [
-                { "key": "name", "value": 50, "type": 'text' },
-                { "key": "profile", "type": 'file' },
-                { "key": "address", "type": 'text' }
+        path: "/login",
+        method: "POST",
+        summary: "Authenticate user and return token.",
+        body: {
+            type: "json",
+            data: [
+                { key: "username", value: "johndoe" },
+                { key: "email", value: "johndoe@example.com" },
+                { key: "password", value: "testing123!" }
             ]
         },
-        "parameters": [
-            { "key": "hello", "value": "50", "description": "Description here", "required": false },
-            { "key": "hello2", "value": "50", "description": "Second description", "required": false }
+        responses: [
+            {
+                status: 200,
+                description: "Login successful.",
+                value: {
+                    message: "Login successful",
+                    user: {
+                        id: 1,
+                        username: "johndoe",
+                        email: "johndoe@example.com",
+                        token: "abc123xyz"
+                    }
+                }
+            }
+        ]
+    }
+]);
+
+outport.use("Users", [
+    {
+        path: "/users",
+        method: "GET",
+        summary: "Fetch a list of users.",
+        parameters: [
+            { key: "page", value: "1", description: "Page number" },
+            { key: "limit", value: "10", description: "Items per page" }
         ],
-        "responses": [
-            { "status": 200, "description": "This is my test description." }
+        responses: [
+            {
+                status: 200,
+                description: "List of users.",
+                value: {
+                    message: "Fetched all users successfully",
+                    users: [
+                        { id: 1, username: "johndoe", email: "johndoe@example.com" },
+                        { id: 2, username: "janedoe", email: "janedoe@example.com" }
+                    ]
+                }
+            }
         ]
     }
 ]);
@@ -127,12 +123,11 @@ outport.use("API Examples", [
 
 ### 3. Serve the Documentation
 
-Serve the **Outport** documentation in your Express app:
+Integrate Outport’s documentation in your Express app by adding:
 
 ```javascript
 app.use('/docs', outport.serve());
 ```
-
 ### 4. Accessing the Documentation
 
 Start your app and navigate to `/docs` to access the interactive documentation of your API.
