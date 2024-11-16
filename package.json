@@ -16,7 +16,7 @@
     "connect",
     "express"
   ],
-  "author": "",
+  "author": "Mirza Shahzaib <gms.shahzaib@gmail.com> (https://github.com/GMShahzaib)",
   "license": "ISC",
   "description": "",
   "devDependencies": {
