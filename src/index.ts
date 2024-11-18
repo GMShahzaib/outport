@@ -1,4 +1,4 @@
-import express, { NextFunction, Request } from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import { APIDocumentation, Endpoint } from './schema.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -177,10 +177,10 @@ class Outport {
   /**
    * Middleware function for initializing Swagger documentation.
    * @param {Request} req - The HTTP request object.
-   * @param {any} res - The HTTP response object.
+   * @param {Response} res - The HTTP response object.
    * @param {NextFunction} next - The next middleware function.
    */
-  private swaggerInitFn(req: Request, res: any, next: NextFunction) {
+  private swaggerInitFn(req: Request, res: Response, next: NextFunction) {
     const url = req.url && req.url.split('?')[0];
 
     if (url.endsWith('/outport-des-init.js')) {
