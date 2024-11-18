@@ -1,13 +1,17 @@
 {
   "name": "outport",
-  "version": "1.1.4",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "version": "1.1.6",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
     "import": "./dist/index.js",
     "require": "./dist/index.cjs"
   },
+  "files": [
+    "dist/",
+    "README.md"
+  ],
   "scripts": {
     "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/",
     "create-cjs-file": "npx rollup dist/index.js --file dist/index.cjs --format cjs --external express,path,url",
