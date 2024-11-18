@@ -11,7 +11,7 @@
   "scripts": {
     "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/",
     "create-cjs-file": "npx rollup dist/index.js --file dist/index.cjs --format cjs --external express,path,url",
-    "build": "tsc && npm run create-cjs-file && npm run copy-files",
+    "build": "tsc  --declaration --emitDeclarationOnly && npm run create-cjs-file && npm run copy-files",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
