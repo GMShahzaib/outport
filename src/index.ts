@@ -183,9 +183,7 @@ class Outport {
   private swaggerInitFn(req: Request, res: any, next: NextFunction) {
     const url = req.url && req.url.split('?')[0];
 
-    if (url.endsWith('/absolute-path.js')) {
-      res.sendStatus(404);
-    } else if (url.endsWith('/outport-des-init.js')) {
+    if (url.endsWith('/outport-des-init.js')) {
       res.set('Content-Type', 'application/javascript');
       res.send(this.outportTPLString.replace('<% apiOptions %>', this.stringify({ apis: this.apis, values: this.values })));
     } else {
