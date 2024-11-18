@@ -1,12 +1,17 @@
 {
   "name": "outport",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "exports": {
+    "import": "./dist/index.js",
+    "require": "./dist/index.cjs"
+  },
   "scripts": {
     "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/",
-    "build": "tsc && npm run copy-files",
+    "create-cjs-file": "npx rollup dist/index.js --file dist/index.cjs --format cjs --external express,path,url",
+    "build": "tsc && npm run create-cjs-file && npm run copy-files",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
@@ -24,6 +29,7 @@
     "@types/node": "^22.1.0",
     "copyfiles": "^2.4.1",
     "express": "^4.19.2",
+    "rollup": "^4.27.2",
     "typescript": "^5.5.4"
   },
   "peerDependencies": {

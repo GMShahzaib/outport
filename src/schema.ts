@@ -17,7 +17,7 @@ export interface BodyData {
 export interface Response {
   status: number;
   description: string;
-  value?: string;
+  value?: string | Object;
   headers?: Header[]
 }
 

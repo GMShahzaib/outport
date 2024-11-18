@@ -1,0 +1,797 @@
+/* main.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.mt-1 {
+  margin-top: 5px;
+}
+
+.mt-2 {
+  margin-top: 10px;
+}
+
+.mt-3 {
+  margin-top: 15px;
+}
+
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+header {
+  background-color: #264653;
+  /* Dark background similar to the example */
+  color: white;
+  /* White text for contrast */
+  padding: 20px;
+  /* Padding to space out the content */
+  width: 100%;
+  /* Full width */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow for depth */
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8em;
+  /* Adjusted font size to match the example */
+  font-weight: bold;
+}
+
+header p {
+  margin: 5px 0;
+  /* Space between paragraphs */
+  font-size: 0.9em;
+  /* Smaller font size for descriptions */
+}
+
+
+.empty-data-message{
+  width:100px;
+  margin:auto;
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.title-wrapper h1 {
+  margin-right: 10px;
+  /* Space between the title and the version */
+}
+
+.flex-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.arrow-icon {
+  margin-right: 5px;
+  /* Adjust margin as needed */
+  font-size: 18px;
+  /* Adjust font size if necessary */
+}
+
+.primary-button {
+  background-color: #c9ab04;
+  /* Green background */
+  border: none;
+  /* Remove border */
+  color: white;
+  /* White text */
+  padding: 10px 20px;
+  /* Some padding */
+  text-align: center;
+  /* Center the text */
+  text-decoration: none;
+  /* Remove underline */
+  display: inline-block;
+  /* Inline block for proper sizing */
+  font-size: 16px;
+  /* Set the font size */
+  margin: 10px 0px;
+  /* Add some margin */
+  cursor: pointer;
+  /* Pointer cursor on hover */
+  border-radius: 5px;
+  /* Rounded corners */
+}
+
+.primary-button:hover {
+  background-color: #aa9104;
+  /* Darker green on hover */
+}
+
+.version {
+  display: inline-block;
+  background-color: #e7e7e7;
+  /* Light gray background for version tag */
+  color: #343a40;
+  /* Dark text color */
+  border-radius: 5px;
+  padding: 2px 8px;
+  margin-left: 10px;
+  font-size: 0.85em;
+  /* Smaller font size */
+}
+
+.base-path {
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+header .brand {
+  display: flex;
+  align-items: center;
+}
+
+header .brand .logo {
+  height: auto;
+  max-width: 50px;
+}
+header .brand .name {
+margin-left: 10px;
+}
+
+
+.header-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+header .title-container {
+  margin-top: 30px
+}
+
+header .base-url-container {
+  margin-top: 30px;
+}
+
+.base-url-selector {
+  cursor: pointer;
+  min-width: 250px;
+}
+
+header .base-url-selector:focus {
+  border-color: #007BFF;
+}
+
+
+
+main {
+  margin: 30px auto;
+  background: white;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.collapsible-main {
+  padding: 0px 10px;
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
+  margin-top: 15px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.collapsible-main:hover {
+  background-color: #e2e6ea;
+}
+
+.collapsible-main .collection-name {
+  margin-left: 5px;
+}
+
+.endpoints {
+  display: block;
+  padding-bottom: 10px
+}
+
+.collapsible {
+  padding: 0px 5px;
+  border: 1px solid #ccc;
+  background-color: #f8f9fa;
+  margin-top: 5px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.endpoint {
+  padding: 5px;
+  display: none;
+}
+
+.endpoint h3 {
+  margin-bottom: 10px;
+  font-size: 1.4em;
+}
+
+.http-method {
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: white;
+  width: 80px;
+  text-align: center;
+  display: inline-block;
+}
+
+.get {
+  background-color: #71c387;
+}
+
+.post {
+  background-color: #66a3ff;
+}
+
+.put {
+  background-color: #ffe066;
+}
+
+.delete {
+  background-color: #f58a94;
+}
+
+.patch {
+  background-color: #ffb366;
+}
+
+.endpoint-path {
+  margin-left: 10px;
+  color: #454545;
+  font-family: monospace;
+  font-size: 16px;
+}
+
+.endpoint-summary {
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: normal;
+  color: #606060;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ptb-10 {
+  padding: 10px 0px;
+}
+
+.ptb-5 {
+  padding: 5px 0px;
+}
+
+/* Container for the header section */
+.request-header-section,
+.response-header-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Styling for the "header" text */
+.tabs {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.tab {
+  padding: 5px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.tab.active {
+  border-bottom: 2px solid #c9ab04;
+}
+
+.tab-content {
+  display: none;
+  margin-top: 5px;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+
+.request-content,
+.response-content {
+  background-color: #f4f4f9;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.body-input {
+  margin-top: 10px;
+  width: 100%;
+  background-color: #f4f4f9;
+  resize: vertical;
+  padding: 10px;
+  border-color: #c9ab04;
+  outline-color: #c9ab04;
+}
+
+.body-form {
+  margin-top: 10px;
+}
+
+.body-form-title {
+  display: inline-block;
+  min-width: 100px;
+}
+
+.body-input-error {
+  border-color: red;
+  border-radius: 5px;
+}
+
+.execute-button:hover {
+  background-color: #e0e0e0;
+}
+
+.execute-button {
+  border: 2px solid #c9ab04;
+  border-radius: 5px;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+
+
+/* response design */
+/* General styling for container and sections */
+.respBody,
+.response-headers {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #f4f4f9;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 10px 0;
+  color: #333;
+  font-size: 14px;
+}
+
+.flex-row-start {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.url-param-cell-input {
+  min-width: 60px;
+  margin-top: 5px;
+}
+
+.respBody,
+.response-headers,
+.respHeaders {
+  background-color: #264653;
+  /* Light yellow for response body and headers */
+  color: #ffffff;
+  font-size: 14px;
+  border-left: 5px solid #c9ab04;
+  /* Light orange side bar */
+  padding-left: 10px;
+}
+
+/* Make sure pre tags are displayed properly */
+pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Optional: Adding subtle shadow for better appearance */
+.respBody,
+.response-headers {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.displayNon {
+  display: none !important;
+}
+
+/* Ensure responsiveness */
+@media (max-width: 768px) {
+
+  .respBody,
+  .response-headers {
+    font-size: 12px;
+    padding: 10px;
+  }
+}
+
+.response-status-code {
+  border: 1px solid #c9ab04;
+  border-radius: 5px;
+  padding: 5px 10px 5px 10px;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
+.response-time {
+  font-size: 12px;
+}
+
+/* toast css */
+
+
+/* Container for the toast message */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 300px;
+  max-width: 700px;
+  background-color: #c9ab04;
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+}
+
+/* Show the toast */
+.show-toast {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Close button */
+.toast-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+
+.table {
+  width: 100%;
+}
+
+.header-cell {
+  padding-left: 10px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.data-cell {
+  font-weight: 600;
+  font-size: 12px;
+  text-align: left;
+  padding: 5px;
+}
+
+.dull-card {
+  background-color: #e2e6ea;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.response-header-key,
+.response-header-value {
+  margin-left: 10px;
+  color: #aaa;
+}
+
+.url-param-input {
+  outline-color: #c9ab04;
+  border: 1px solid #c9ab04;
+  padding: 5px;
+}
+
+.param-cell-input {
+  width: 100%;
+  padding-left: 10px;
+  outline: none;
+  border: none;
+}
+
+.table,
+.header-cell,
+.data-cell {
+  border: 1px solid #c9ab04;
+  border-collapse: collapse;
+}
+
+.whiteBorder {
+  border: 1px solid #fff !important;
+}
+
+
+
+/* model code */
+
+/* Modal container, initially hidden */
+.modal {
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black with opacity */
+}
+
+/* Modal content box */
+.modal-content {
+  background-color: #264653;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  max-width: 1000px;
+  /* Could be more or less, depending on screen size */
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Close button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #ffec99;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+
+
+
+
+/* globel headers */
+
+/* Container for all headers */
+.globe-headers-container {
+  margin-top: 20px;
+}
+
+/* Container for each header */
+.globe-header-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+/* Styling for the header key */
+.header-key {
+  font-weight: bold;
+  margin-bottom: 5px;
+  color: #fff;
+}
+
+/* Container for the input and description */
+.header-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Input field styling */
+.input-field {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+}
+
+/* Description styling */
+.header-description {
+  margin: 0;
+  font-size: 12px;
+  color: #bbb;
+}
+
+
+
+
+/* playground screen */
+
+
+.playground-url-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.playground-endpoint {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  padding: 0 10px 0px 10px;
+  border: 1px solid #c9ab04;
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.playground-method-selector {
+  border: none;
+  outline: none;
+  background-color: transparent;
+  padding: 10px 0 10px 0;
+  min-width: 80px
+}
+
+
+.playground-url-input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 10px 0 10px 0;
+  margin-left: 5px;
+}
+
+
+.border-background-non {
+  border: none;
+  outline: none;
+  background-color: transparent;
+}
+
+.add-more-text-btn {
+  display: inline-block;
+  margin-top: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  font-size: x-small;
+
+  &:hover {
+    color: #c9ab04;
+  }
+}
+
+.delete-text-btn {
+  display: inline-block;
+  cursor: pointer;
+  font-size: x-small;
+
+  &:hover {
+    color: #ff0101;
+  }
+}
+
+
+.body-type-select {
+  border: 1px solid #c9ab04;
+  border-radius: 5px;
+  outline: none;
+  background: none;
+  min-width: 80px;
+  padding: 5px;
+}
+
+.playground-response-section-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  color: #606060;
+}
+
+.example-response {
+  background-color: #f4f4f9;
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 5px;
+}
+
+.example-response-description {
+  font-size: 16px;
+}
+
+.example-response-status-code {
+  font-size: 16px;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+
+
+/* loader */
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background:
+    radial-gradient(farthest-side, #c9ab04 94%, #0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%, #c9ab04);
+  -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
+  animation: l13 1s infinite linear;
+  margin: auto;
+}
+
+@keyframes l13 {
+  100% {
+    transform: rotate(1turn)
+  }
+}
+
+
+.icon-btn{
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.image-icon{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.endpoint-header{
+  flex-grow: 1;
+  justify-content: flex-start !important;
+}
+
+.response-icon-btn{
+  margin-left: 10px;
+}

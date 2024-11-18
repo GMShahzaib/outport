@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Outport Playground</title>
+    <link rel="icon" type="image/x-icon" href="../assets/favicon.png">
+    <link rel="stylesheet" href="../index.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-content">
+            <div class="brand">
+                <img src="../assets/outport.png" alt="Logo" class="logo">
+                <h3 class="name">outport</h3>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <span id="tooltip" style="visibility: hidden; position: absolute;">Copied</span>
+            <form onsubmit="sendRequest(); return false;">
+                <div class="playground-url-container">
+                    <div class="playground-endpoint">
+                        <select id="playground-method-selector" class="playground-method-selector">
+                            <option value="get">GET</option>
+                            <option value="post">POST</option>
+                            <option value="put">PUT</option>
+                            <option value="patch">PATCH</option>
+                            <option value="delete">DELETE</option>
+                        </select>
+                        <input class="playground-url-input" type="text" id="playground-url-input"
+                            placeholder="Enter URL or paste text">
+                    </div>
+                    <button class="primary-button" type="submit">Send</button>
+                </div>
+            </form>
+
+            <div class="dull-card">
+                <div class="flex-box">
+                    <div class="tabs" id="playground_request_header_tabs">
+                        <div id="playground_request_parameters_tab" class="tab active"
+                            onclick="showTab('playground', 'request_header', 'request_parameters')">Parameters</div>
+                        <div id="playground_request_headers_tab" class="tab"
+                            onclick="showTab('playground', 'request_header', 'request_headers')">Headers</div>
+                        <div id="playground_request_body_tab" class="tab"
+                            onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
+                    </div>
+                    <div><button id="request_copy_btn" class="icon-btn" title="copy to clipboard" onclick="copyRequest()"><img class="image-icon" src="../assets/copy_icon.png" /></button></div>
+                </div>
+
+                <div id="playground_request_header_content" class="request-content">
+                    <div id="playground_request_parameters_content" class="tab-content active">
+                        <table class="table" id="parametersTable">
+                            <thead>
+                                <tr>
+                                    <th class="header-cell">Key</th>
+                                    <th class="header-cell">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="data-row">
+                                    <td class="data-cell"><input class="param-cell-input border-background-non"
+                                            placeholder="key" name="key"></td>
+                                    <td class="data-cell">
+                                        <div class="flex-box">
+                                            <input class="param-cell-input border-background-non" placeholder="value"
+                                                name="value">
+                                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h6 class="add-more-text-btn" onclick="addRowWithQueryParamListeners()">Add more...</h6>
+                    </div>
+
+                    <div id="playground_request_headers_content" class="tab-content">
+                        <table class="table" id="headersTable">
+                            <thead>
+                                <tr>
+                                    <th class="header-cell">Key</th>
+                                    <th class="header-cell">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="data-row">
+                                    <td class="data-cell"><input class="param-cell-input border-background-non"
+                                            placeholder="key" name="key"></td>
+                                    <td class="data-cell">
+                                        <div class="flex-box">
+                                            <input class="param-cell-input border-background-non" placeholder="value"
+                                                name="value">
+                                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h6 class="add-more-text-btn" onclick="addRow('headersTable')">Add more...</h6>
+                    </div>
+
+                    <div id="playground_request_body_content" class="tab-content">
+                        <div>
+                            <select id="playground_request_body_type" class="body-type-select">
+                                <option value="json">json</option>
+                                <option value="form">form</option>
+                            </select>
+                        </div>
+                        <div id="request_body_json">
+                            <textarea id="playground_json_input_body"
+                                onkeyup="setupFormateJsonInterval('playground_json_input_body')" class="body-input"
+                                rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>{}</textarea>
+                        </div>
+                        <form id="playground_form_body">
+                            <div id="request_body_form" class="mt-2" style="display: none;">
+                                <table class="table" id="playground_form_body_table">
+                                    <thead>
+                                        <tr>
+                                            <th class="header-cell">Key</th>
+                                            <th class="header-cell">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="data-row">
+                                            <td class="data-cell">
+                                                <div class="flex-box">
+                                                    <input class="param-cell-input border-background-non"
+                                                        placeholder="key" onchange="updateFormValueKey(this)">
+                                                    <select class="border-background-non"
+                                                        onchange="changeBodyFormInputType(this)">
+                                                        <option value="text">TEXT</option>
+                                                        <option value="file">FILE</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td class="data-cell">
+                                                <div class="flex-box">
+                                                    <input type="text"
+                                                        class="param-cell-input border-background-non value-input"
+                                                        placeholder="value" accept="image/*">
+                                                    <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dull-card">
+                <h3>Response</h3>
+                <div class="response-content">
+                    <div id="playground-executeBtn-loader" class="loader displayNon"
+                        style="margin: 100px auto 100px auto;"></div>
+                    <div id="playground-response-unavailable" class="playground-response-section-message">
+                        Enter the URL and click Send to get Response
+                    </div>
+                    <div id="playground-response-section" class="displayNon">
+                        <div class="response-header-section">
+                            <div id="playground_response_header_tabs" class="tabs">
+                                <div id="playground_response_body_tab" class="tab active"
+                                    onclick="showTab('playground','response_header','response_body')">
+                                    <span>Body</span>
+                                </div>
+                                <div id="playground_response_headers_tab" class="tab"
+                                    onclick="showTab('playground','response_header','response_headers')">
+                                    <span>Headers</span>
+                                </div>
+                            </div>
+                            <div class="flex-box">
+                                <div class="response-time">
+                                    <span id="playground_resp_time"></span>
+                                </div>
+
+                                <div class="response-status-code">
+                                    status code: <span id="playground_statusCode" class="status-code"></span>
+                                </div>
+
+                                <div><button id="response_copy_btn" class="icon-btn response-icon-btn" title="copy to clipboard" onclick="copyResponse()"><img class="image-icon" src="../assets/copy_icon.png" /></button></div>
+                            </div>
+                        </div>
+                        <div id="playground_response_header_content" class="header-content">
+                            <div id="playground_response_body_content" class="tab-content active">
+                                <div id="playground_respBody_wrapper" class="respBody">
+                                    <pre id="playground_respBody"></pre>
+                                </div>
+                            </div>
+                            <div id="playground_response_headers_content" class="tab-content response-headers">
+                                <table id="responseHeadersTable" class="table whiteBorder">
+                                    <thead>
+                                        <tr>
+                                            <th class="header-cell whiteBorder">Key</th>
+                                            <th class="header-cell whiteBorder">Value</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="playground_response_headers"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Toast message component -->
+        <div id="toast" class="toast-container">
+            <p id="toast-text"></p>
+            <button class="toast-close" onclick="hideToast()">✖</button>
+        </div>
+
+    </main>
+
+    <script src="../utils.js"></script>
+    <script src="./playground.js"></script>
+    <script src="../services/httpClient.js"></script>
+</body>
+
+</html>

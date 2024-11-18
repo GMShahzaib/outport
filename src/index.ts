@@ -1,6 +1,7 @@
 import express, { NextFunction, Request } from 'express';
 import { APIDocumentation, Endpoint } from './schema.js';
-import { getAbsoluteFSPath } from './public/absolute-path.js';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
 export interface SchemaApi {
   name: string;
@@ -43,7 +44,7 @@ class Outport {
 
     if (values.headers && (!Array.isArray(values.headers) || !values.headers.every(header => {
       return typeof header.key === 'string' && header.key.trim().length > 0 &&
-             typeof header.value === 'string';
+        typeof header.value === 'string';
     }))) {
       throw new Error("Invalid 'headers': each header must have a non-empty 'key' and a 'value' as strings.");
     }
@@ -73,7 +74,7 @@ class Outport {
     if (!Array.isArray(endpoints)) {
       throw new Error("Invalid 'endpoints': must be a array.");
     }
-    
+
     endpoints.forEach((endpoint, index) => {
       this.validateEndpoint(endpoint, index);
     });
@@ -119,7 +120,7 @@ class Outport {
     if (endpoint.headers) {
       if (!Array.isArray(endpoint.headers) || !endpoint.headers.every(header => {
         return typeof header.key === 'string' && header.key.trim().length > 0 &&
-               typeof header.value === 'string';
+          typeof header.value === 'string';
       })) {
         throw new Error(`Invalid 'headers' at index ${index}: each header must have a non-empty 'key' and a 'value' as strings.`);
       }
@@ -128,7 +129,7 @@ class Outport {
     if (endpoint.parameters) {
       if (!Array.isArray(endpoint.parameters) || !endpoint.parameters.every(param => {
         return typeof param.key === 'string' && param.key.trim().length > 0 &&
-               typeof param.value === 'string'
+          typeof param.value === 'string'
       })) {
         throw new Error(`Invalid 'parameters' at index ${index}: each parameter must have a non-empty 'key', a 'value'.`);
       }
@@ -150,7 +151,7 @@ class Outport {
       if (response.headers) {
         if (!Array.isArray(response.headers) || !response.headers.every(header => {
           return typeof header.key === 'string' && header.key.trim().length > 0 &&
-                 typeof header.value === 'string';
+            typeof header.value === 'string';
         })) {
           throw new Error(`Invalid 'headers' in 'responses' at index ${index}, response ${responseIndex}: each header must have a non-empty 'key' and a 'value' as strings.`);
         }
@@ -197,7 +198,11 @@ class Outport {
    * @returns {[express.Handler, express.Handler]} - An array with the middleware function and the static file handler.
    */
   public serve(): [(req: Request, resp: any, next: NextFunction) => void, express.Handler] {
-    return [this.swaggerInitFn, express.static(getAbsoluteFSPath())];
+    const filename = fileURLToPath(import.meta.url);
+    const dirname = path.dirname(filename);
+    const staticFilesPath = path.resolve(dirname,'public');
+        
+    return [this.swaggerInitFn, express.static(staticFilesPath)];
   }
 }
 
