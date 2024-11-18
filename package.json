@@ -17,13 +17,21 @@
   "keywords": [
     "outport",
     "api",
-    "apis",
-    "connect",
-    "express"
+    "api testing",
+    "api documentation",
+    "express middleware",
+    "swagger alternative"
+  ],
+  "contributors": [
+    {
+      "name": "Mirza Shahzaib",
+      "email": "gms.shahzaib@gmail.com",
+      "url": "https://github.com/GMShahzaib"
+    }
   ],
   "author": "Mirza Shahzaib <gms.shahzaib@gmail.com> (https://github.com/GMShahzaib)",
   "license": "ISC",
-  "description": "",
+  "description": "Outport is a versatile library for API testing and documentation, offering a user-friendly interface to define, test, and visualize API endpoints for seamless debugging and collaboration.",
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/node": "^22.1.0",
