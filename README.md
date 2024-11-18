@@ -1,23 +1,20 @@
+```markdown
 # Outport
 
-Outport is an API testing and documentation library that helps you document, test, and visualize your API endpoints. It provides an organized interface to define your API endpoints and displays them in a user-friendly format for ease of use and debugging.
-
+Outport is a versatile library for API testing and documentation, offering a user-friendly interface to define, test, and visualize API endpoints for seamless debugging and collaboration.
 
 ## Demo
 
 Check out a live demo of Outport [here](https://bugstuck.com/docs/).
 
-
 ## Features
 
-- Easily document API endpoints
-- Auto-generate API documentation with a clean interface
-- Debugging support for API endpoints with detailed request information
-- Define headers, parameters, body, and responses for API routes
-- Simple setup and usage in an Express environment
-- Supports multiple servers and environments
-
-Here’s the updated installation and usage guide:
+- Easily document API endpoints.
+- Auto-generate API documentation with a clean interface.
+- Debugging support for API endpoints with detailed request information.
+- Define headers, parameters, body, and responses for API routes.
+- Simple setup and usage in an Express environment.
+- Supports multiple servers and environments.
 
 ---
 
@@ -29,20 +26,22 @@ Install **Outport** via NPM:
 npm install outport
 ```
 
+---
+
 ## Usage
 
 To use **Outport** in your project, follow these steps:
 
-### 1. Import Outport and Configure It
+### 1. Import and Configure Outport
 
-Import **Outport** and initialize it with your configuration. Here’s an example setup in an Express app:
+Import **Outport** and initialize it with your configuration in an Express app:
 
 ```javascript
 import Outport from 'outport';
 
 const outport = new Outport({
     title: 'User Management APIs',
-    version: '1.0.0',
+    version: '1.1.4',
     servers: [
         'https://outport-demo-production.up.railway.app',
         'http://localhost:8080',
@@ -55,7 +54,7 @@ const outport = new Outport({
             description: "Used for global session identification across requests"
         }
     ],
-    description: `Outport is an API testing and documentation library that helps you document, test, and visualize your API endpoints in a user-friendly interface.`,
+    description: `Outport is a versatile library for API testing and documentation, offering a user-friendly interface to define, test, and visualize API endpoints for seamless debugging and collaboration.`,
 });
 ```
 
@@ -128,14 +127,19 @@ Integrate Outport’s documentation in your Express app by adding:
 ```javascript
 app.use('/docs', outport.serve());
 ```
+
 ### 4. Accessing the Documentation
 
 Start your app and navigate to `/docs` to access the interactive documentation of your API.
+
+---
 
 ## Scripts
 
 - **`npm run build`**: Transpiles TypeScript files and copies public assets to the `dist/` directory.
 - **`npm run test`**: Placeholder for tests, currently outputs a test error.
+
+---
 
 ## Development Dependencies
 
@@ -145,6 +149,28 @@ The project relies on the following development dependencies:
 - **@types/express** and **@types/node**: TypeScript types for Express and Node.
 - **copyfiles**: Utility for copying assets (HTML, PNG, CSS) from `src/public` to `dist`.
 
+---
+
 ## Peer Dependencies
 
 - **Express**: Works with both Express 4 and the upcoming Express 5 beta releases.
+
+---
+
+## Contributors
+
+- **Mirza Shahzaib** ([GitHub](https://github.com/GMShahzaib))  
+  Email: gms.shahzaib@gmail.com
+
+---
+
+## License
+
+This project is licensed under the ISC License.
+
+---
+
+## Repository
+
+Find the source code and contribute at [GitHub](https://github.com/GMShahzaib/outport).
+```
