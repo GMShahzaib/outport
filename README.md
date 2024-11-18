@@ -1,4 +1,3 @@
-```markdown
 # Outport
 
 Outport is a versatile library for API testing and documentation, offering a user-friendly interface to define, test, and visualize API endpoints for seamless debugging and collaboration.
@@ -25,7 +24,6 @@ Install **Outport** via NPM:
 ```bash
 npm install outport
 ```
-
 ---
 
 ## Usage
