@@ -4,12 +4,12 @@
     "module": "esnext",
     "strict": true,
     "esModuleInterop": true,
-    "outDir": "./dist",
+    "outDir": "./lib",
     "rootDir": "./src",
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
-    "declarationDir": "./dist",
+    "declarationDir": "./lib",
     "moduleResolution": "node",
     "typeRoots": [
       "./node_modules/@types"
@@ -20,6 +20,6 @@
   ],
   "exclude": [
     "node_modules",
-    "dist"
+    "lib"
   ]
 }

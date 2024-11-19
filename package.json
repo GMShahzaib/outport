@@ -1,21 +1,28 @@
 {
   "name": "outport",
   "version": "1.1.7",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "type": "module",
   "exports": {
-    "import": "./dist/index.js",
-    "require": "./dist/index.cjs"
+    "import": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "require": {
+      "types": "./lib/index.d.cts",
+      "default": "./lib/index.cjs"
+    }
   },
   "files": [
-    "dist/",
+    "lib/",
     "README.md"
   ],
   "scripts": {
-    "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" dist/",
-    "create-cjs-file": "npx rollup dist/index.js --file dist/index.cjs --format cjs --external express,path,url",
-    "build": "tsc && npm run create-cjs-file && npm run copy-files",
+    "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" lib/",
+    "create-cjs-file": "npx rollup lib/index.js --file lib/index.cjs --format cjs --external express,path,url",
+    "create-cts-file": "ts-node scripts/create.cts.js",
+    "build": "tsc && npm run create-cjs-file && npm run copy-files && npm run create-cts-file",
     "prepublishOnly": "npm run build"
   },
   "keywords": [

@@ -134,7 +134,7 @@ Start your app and navigate to `/docs` to access the interactive documentation o
 
 ## Scripts
 
-- **`npm run build`**: Transpiles TypeScript files and copies public assets to the `dist/` directory.
+- **`npm run build`**: Transpiles TypeScript files and copies public assets to the `lib/` directory.
 - **`npm run test`**: Placeholder for tests, currently outputs a test error.
 
 ---
@@ -145,7 +145,7 @@ The project relies on the following development dependencies:
 
 - **TypeScript**: Used to compile TypeScript source files.
 - **@types/express** and **@types/node**: TypeScript types for Express and Node.
-- **copyfiles**: Utility for copying assets (HTML, PNG, CSS) from `src/public` to `dist`.
+- **copyfiles**: Utility for copying assets (HTML, PNG, CSS) from `src/public` to `lib`.
 
 ---
 
