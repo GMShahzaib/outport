@@ -10,7 +10,7 @@
       "default": "./lib/index.js"
     },
     "require": {
-      "types": "./lib/index.d.ts",
+      "types": "./lib/index.d.cts",
       "default": "./lib/index.cjs"
     }
   },
