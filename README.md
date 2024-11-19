@@ -53,6 +53,7 @@ const outport = new Outport({
         }
     ],
     description: `Outport is a versatile library for API testing and documentation, offering a user-friendly interface to define, test, and visualize API endpoints for seamless debugging and collaboration.`,
+    playground:true
 });
 ```
 

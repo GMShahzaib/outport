@@ -36,7 +36,8 @@ export interface APIDocumentation {
   title: string;
   version: string;
   servers?: string[];
-  headers?: Header[]
+  headers?: Header[];
+  playground?: boolean;
   description: string;
   timeout?: number
 }

@@ -9,8 +9,8 @@ export interface SchemaApi {
 }
 
 class Outport {
-  private values: APIDocumentation;
-  private apis: SchemaApi[];
+  #values: APIDocumentation;
+  #apis: SchemaApi[];
 
   /**
    * Constructor for creating an instance of Outport.
@@ -18,10 +18,10 @@ class Outport {
    * @throws Will throw an error if the input `values` does not meet the validation criteria.
    */
   constructor(values: APIDocumentation) {
-    this.validateConstructorValues(values);
-    this.values = values;
-    this.apis = [];
-    this.swaggerInitFn = this.swaggerInitFn.bind(this);
+    this.#validateConstructorValues(values);
+    this.#values = { ...values, playground: values.playground !== undefined ? values.playground : true, };
+    this.#apis = [];
+    // this.#swaggerInitFn = this.#swaggerInitFn.bind(this);
   }
 
   /**
@@ -29,7 +29,7 @@ class Outport {
    * @param {APIDocumentation} values - The documentation values to validate.
    * @throws Will throw an error if any of the input values are invalid.
    */
-  private validateConstructorValues(values: APIDocumentation): void {
+  #validateConstructorValues(values: APIDocumentation): void {
     if (typeof values.title !== 'string' || values.title.trim().length === 0) {
       throw new Error("Invalid 'title': must be a non-empty string.");
     }
@@ -58,6 +58,10 @@ class Outport {
         throw new Error("Invalid 'timeout': must be a positive number if provided.");
       }
     }
+    
+    if (values.playground !== undefined && typeof values.playground !== 'boolean') {
+      throw new Error("Invalid 'playground': must be a boolean if provided.");
+    }
   }
 
   /**
@@ -76,14 +80,14 @@ class Outport {
     }
 
     endpoints.forEach((endpoint, index) => {
-      this.validateEndpoint(endpoint, index);
+      this.#validateEndpoint(endpoint, index);
     });
 
-    const obj = this.apis.find((item) => item.name == name);
+    const obj = this.#apis.find((item) => item.name == name);
     if (obj) {
       obj.endpoints = [...obj.endpoints, ...endpoints];
     } else {
-      this.apis.push({ name, endpoints });
+      this.#apis.push({ name, endpoints });
     }
   }
 
@@ -93,7 +97,7 @@ class Outport {
    * @param {number} index - The index of the endpoint in the array.
    * @throws Will throw an error if the endpoint properties do not meet the validation criteria.
    */
-  private validateEndpoint(endpoint: Endpoint, index: number): void {
+  #validateEndpoint(endpoint: Endpoint, index: number): void {
     if (typeof endpoint.path !== 'string' || endpoint.path.trim().length === 0) {
       throw new Error(`Invalid 'path' at index ${index}: must be a non-empty string.`);
     }
@@ -159,7 +163,7 @@ class Outport {
     });
   }
 
-  private outportTPLString = `
+  #outportTPLString = `
     <% apiOptions %>
 
     export default options
@@ -170,7 +174,7 @@ class Outport {
    * @param {object} obj - The object to convert.
    * @returns {string} - The stringified object.
    */
-  private stringify(obj: { apis: SchemaApi[]; values: APIDocumentation }) {
+  #stringify(obj: { apis: SchemaApi[]; values: APIDocumentation }) {
     return 'const options = ' + JSON.stringify(obj) + ';';
   }
 
@@ -180,12 +184,12 @@ class Outport {
    * @param {Response} res - The HTTP response object.
    * @param {NextFunction} next - The next middleware function.
    */
-  private swaggerInitFn(req: Request, res: Response, next: NextFunction) {
+  #swaggerInitFn(req: Request, res: Response, next: NextFunction) {
     const url = req.url && req.url.split('?')[0];
 
     if (url.endsWith('/outport-des-init.js')) {
       res.set('Content-Type', 'application/javascript');
-      res.send(this.outportTPLString.replace('<% apiOptions %>', this.stringify({ apis: this.apis, values: this.values })));
+      res.send(this.#outportTPLString.replace('<% apiOptions %>', this.#stringify({ apis: this.#apis, values: this.#values })));
     } else {
       next();
     }
@@ -198,9 +202,9 @@ class Outport {
   public serve(): [(req: Request, resp: any, next: NextFunction) => void, express.Handler] {
     const filename = fileURLToPath(import.meta.url);
     const dirname = path.dirname(filename);
-    const staticFilesPath = path.resolve(dirname,'public');
-        
-    return [this.swaggerInitFn, express.static(staticFilesPath)];
+    const staticFilesPath = path.resolve(dirname, 'public');
+
+    return [(req, res, next) => this.#swaggerInitFn(req, res, next), express.static(staticFilesPath)];
   }
 }
 

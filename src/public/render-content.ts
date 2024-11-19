@@ -8,16 +8,24 @@ window.onload = function () {
   setupUI(apiOptions);
 };
 
-function setupUI(apiOptions: { apis: SchemaApi[]; values: APIDocumentation }): void {
+function setupUI({apis,values}: { apis: SchemaApi[]; values: APIDocumentation }): void {
   const baseUrlContain = document.getElementById('base-url-container') as HTMLDivElement
-  if (apiOptions.values.servers) {
-    populateBaseUrls(apiOptions.values.servers);
+  const playgroundContainer = document.getElementById('playground-container') as HTMLDivElement
+
+  if(values.playground){
+    playgroundContainer.classList.remove("displayNon")
+  }else{
+    playgroundContainer.classList.add("displayNon")
+  }
+    
+  if (values.servers) {
+    populateBaseUrls(values.servers);
     baseUrlContain.style.display = "block"
   } else {
     baseUrlContain.style.display = "none"
   }
-  populateHeaderInformation(apiOptions.values);
-  populateApiEndpoints(apiOptions.apis, apiOptions.values.timeout);
+  populateHeaderInformation(values);
+  populateApiEndpoints(apis, values.timeout);
 }
 
 function populateBaseUrls(urls: string[]): void {

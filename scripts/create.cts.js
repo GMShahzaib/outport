@@ -8,5 +8,4 @@ fs.copyFile(source, destination, (err) => {
         console.error('Error occurred:', err);
         return;
     }
-    console.log('File copied and renamed successfully!');
 });
