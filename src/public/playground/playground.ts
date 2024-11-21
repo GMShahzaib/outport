@@ -160,6 +160,14 @@ function deleteRow(element: HTMLElement): void {
     updateURL();
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById("request-form") as HTMLFormElement;
+    form.addEventListener("submit", function (event) {
+        event.preventDefault(); // Prevent the form from being submitted
+        sendRequest();
+    });
+});
+
 async function sendRequest(): Promise<void> {
     const responseUnavailable = document.getElementById(`playground-response-unavailable`) as HTMLDivElement;
     const responseSection = document.getElementById(`playground-response-section`) as HTMLDivElement;
