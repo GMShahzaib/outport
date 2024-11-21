@@ -110,7 +110,6 @@ function buildEndpointSection(endpoint: Endpoint, timeout?: number): string {
     </div>
   `;
 }
-// <button class="test-btn" onclick="toggleContent('${endpointId}_executeBtn_wrapper')">Try it</button>
 
 function buildRequestSection(endpointId: string, endpoint: Endpoint, timeout?: number): string {
   return `

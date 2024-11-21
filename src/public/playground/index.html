@@ -22,7 +22,7 @@
     <main>
         <section>
             <span id="tooltip" style="visibility: hidden; position: absolute;">Copied</span>
-            <form id="request-form">
+            <form onsubmit="sendRequest(event)">
                 <div class="playground-url-container">
                     <div class="playground-endpoint">
                         <select id="playground-method-selector" class="playground-method-selector">
