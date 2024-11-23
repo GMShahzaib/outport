@@ -58,7 +58,7 @@ class Outport {
         throw new Error("Invalid 'timeout': must be a positive number if provided.");
       }
     }
-    
+
     if (values.playground !== undefined && typeof values.playground !== 'boolean') {
       throw new Error("Invalid 'playground': must be a boolean if provided.");
     }
@@ -195,16 +195,25 @@ class Outport {
     }
   }
 
+  #cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
+    res.setHeader(
+      'Content-Security-Policy',
+      "script-src 'self' 'unsafe-inline';"
+    );
+    next();
+  }
+
   /**
    * Serves the middleware for handling requests and serving static files.
    * @returns {[express.Handler, express.Handler]} - An array with the middleware function and the static file handler.
    */
-  public serve(): [(req: Request, resp: any, next: NextFunction) => void, express.Handler] {
+  public serve(): [(req: Request, resp: any, next: NextFunction) => void, (req: Request, resp: any, next: NextFunction) => void, express.Handler] {
     const filename = fileURLToPath(import.meta.url);
     const dirname = path.dirname(filename);
     const staticFilesPath = path.resolve(dirname, 'public');
 
-    return [(req, res, next) => this.#swaggerInitFn(req, res, next), express.static(staticFilesPath)];
+    return [
+      this.#cspMiddleware, (req, res, next) => this.#swaggerInitFn(req, res, next), express.static(staticFilesPath)];
   }
 }
 
