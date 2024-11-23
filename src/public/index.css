@@ -424,6 +424,9 @@ pre {
 .displayNon {
   display: none !important;
 }
+.respBody pre{
+  max-height: 450px;
+}
 
 /* Ensure responsiveness */
 @media (max-width: 768px) {

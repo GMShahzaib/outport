@@ -248,7 +248,7 @@ function extractRequestBody(body: { type: 'json' | 'form', data: BodyData[] }): 
   }, {});
 }
 
-function buildFormDataField(data: { key: string; value?: string | number, type: string }): string {
+function buildFormDataField(data: BodyData): string {
   return `
   <tr class="data-row">
     <td class="data-cell">

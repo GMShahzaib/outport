@@ -12,7 +12,7 @@ export interface BodyData {
   key: string,
   value?: string | number,
   description?: string;
-  type: "text" | 'file'
+  type?: "text" | 'file'
 }
 export interface Response {
   status: number;
@@ -29,7 +29,7 @@ export interface Endpoint {
   body?: { type: 'json' | 'form', data: BodyData[] },
   headers?: Header[];
   parameters?: Parameter[];
-  responses: Response[];
+  responses?: Response[];
 }
 
 export interface APIDocumentation {

@@ -121,29 +121,25 @@ class Outport {
       }
     }
 
-    if (endpoint.headers) {
-      if (!Array.isArray(endpoint.headers) || !endpoint.headers.every(header => {
-        return typeof header.key === 'string' && header.key.trim().length > 0 &&
-          typeof header.value === 'string';
-      })) {
-        throw new Error(`Invalid 'headers' at index ${index}: each header must have a non-empty 'key' and a 'value' as strings.`);
-      }
+    if (endpoint.headers && (!Array.isArray(endpoint.headers) || !endpoint.headers.every(header => {
+      return typeof header.key === 'string' && header.key.trim().length > 0 &&
+        typeof header.value === 'string';
+    }))) {
+      throw new Error(`Invalid 'headers' at index ${index}: each header must have a non-empty 'key' and a 'value' as strings.`);
     }
 
-    if (endpoint.parameters) {
-      if (!Array.isArray(endpoint.parameters) || !endpoint.parameters.every(param => {
-        return typeof param.key === 'string' && param.key.trim().length > 0 &&
-          typeof param.value === 'string'
-      })) {
-        throw new Error(`Invalid 'parameters' at index ${index}: each parameter must have a non-empty 'key', a 'value'.`);
-      }
+    if (endpoint.parameters && (!Array.isArray(endpoint.parameters) || !endpoint.parameters.every(param => {
+      return typeof param.key === 'string' && param.key.trim().length > 0 &&
+        typeof param.value === 'string'
+    }))) {
+      throw new Error(`Invalid 'parameters' at index ${index}: each parameter must have a non-empty 'key', a 'value'.`);
     }
 
-    if (!Array.isArray(endpoint.responses)) {
+    if (endpoint.responses && !Array.isArray(endpoint.responses)) {
       throw new Error(`Invalid 'responses' at index ${index}: must be a array.`);
     }
 
-    endpoint.responses.forEach((response, responseIndex) => {
+    endpoint.responses && endpoint.responses.forEach((response, responseIndex) => {
       if (typeof response.status !== 'number') {
         throw new Error(`Invalid 'status' in 'responses' at index ${index}, response ${responseIndex}: must be a number.`);
       }
