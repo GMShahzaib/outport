@@ -20,10 +20,11 @@ bodyTypeSelectElement.addEventListener('change', toggleRequestBodyType);
 
 window.onload = function (): void {
     const params = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-
     loadUrl(params.url);
     loadMethod(params.method);
     loadHeaders(params.headers);
+    loadParams(params.params);
+    updateURL()
     loadBodyType(params.bodyType);
     loadBody(params.bodyType, params.body);
 };
@@ -31,13 +32,28 @@ window.onload = function (): void {
 function loadUrl(url?: string): void {
     if (url) {
         urlInput.value = decodeURIComponent(url);
-        syncTableWithURL();
     }
 }
 
 function loadMethod(method?: string): void {
     if (method) {
         methodSelect.value = method.toLowerCase();
+    }
+}
+
+
+function loadParams(params?: string): void {
+    if (params) {
+        const paramsObj = JSON.parse(params);
+        const headersTableBody = document.querySelector<HTMLTableSectionElement>('#parametersTable tbody');
+
+        if (headersTableBody && Object.keys(paramsObj).length !== 0) {
+            headersTableBody.innerHTML = "";
+        }
+
+        Object.keys(paramsObj).forEach(key => {
+            addRow("parametersTable", key, paramsObj[key].value, paramsObj[key].description);
+        });
     }
 }
 
@@ -51,7 +67,7 @@ function loadHeaders(headers?: string): void {
         }
 
         Object.keys(headerObj).forEach(key => {
-            addRow("headersTable", key, headerObj[key]);
+            addRow("headersTable", key, headerObj[key].value, headerObj[key].description);
         });
     }
 }

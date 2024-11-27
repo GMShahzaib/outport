@@ -276,7 +276,7 @@ function buildGlobalHeaders(headers: Header[]): string {
             <span class="header-key">${key}:</span>
             <div class="header-details">
               <input id="${key}_value" header-data-key="${key}" type="text" class="input-field" value="${value}">
-              <p class="header-description">${description}</p>
+              <p id="${key}_description" class="header-description">${description}</p>
             </div>
           </div>
         `).join('')}
@@ -323,7 +323,7 @@ function buildRequestHeader(header: Header): string {
     <tr class="data-row">
       <td class="data-cell"><input class="param-cell-input" disabled placeholder="key" name="key" value="${header.key}"></input></td>
       <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="value" name="value" value="${header.value}"></input></td>
-      <td class="data-cell"><input class="param-cell-input" disabled placeholder="description" value="${header.description}"></input></td>
+      <td class="data-cell"><input class="param-cell-input" disabled placeholder="description" name="description" value="${header.description}"></input></td>
     </tr>
   `;
 }

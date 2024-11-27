@@ -30,11 +30,20 @@ const execute = async (
   const baseUrl = getSelectedBaseUrl();
   const params = getQueryParameters(endpointId)
 
-  let fullUrl = `${getAddressWithParameters(endpointId, path)}${params ? `?${params}` : ''}`
+  const urlParams = Object.keys(params).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key].value)}`).join('&');
+
+  let fullUrl = `${getAddressWithParameters(endpointId, path)}${urlParams ? `?${urlParams}` : ''}`
   if (!isValidHttpUrl(path)) {
     fullUrl = `${baseUrl}` + fullUrl
   }
-  const headers = getRequestHeaders(endpointId);
+  const headerList = getRequestHeaders(endpointId);
+
+  let headers: Record<string, string> = {}
+
+  Object.keys(headerList).forEach(key => {
+    headers[key] = headerList[key].value
+  });
+
   const body = getRequestBody(method, endpointId);
 
   responseSection?.classList.add("displayNon");
@@ -65,13 +74,15 @@ const execute = async (
 function loadDataToPlayground(endpointId: string, path: string, method: string) {
   const baseUrl = getSelectedBaseUrl();
   const params = getQueryParameters(endpointId)
+  const urlParams = Object.keys(params).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key].value)}`).join('&');
 
-  let fullUrl = `${path}${params ? `?${params}` : ''}`
+  let fullUrl = `${path}${urlParams ? `?${urlParams}` : ''}`
   if (!isValidHttpUrl(path)) {
-    fullUrl = `${baseUrl}` + fullUrl
+    fullUrl = `${baseUrl}` + fullUrl;
   }
 
   const headers = getRequestHeaders(endpointId);
+
   const requestBody = getRequestBody(method, endpointId);
 
   let body;
@@ -87,6 +98,9 @@ function loadDataToPlayground(endpointId: string, path: string, method: string) 
   if (headers) {
     destinationPath += `&headers=${JSON.stringify(headers)}`
   }
+  if (params) {
+    destinationPath += `&params=${JSON.stringify(params)}`
+  }
   if (body && requestBody?.type) {
     destinationPath += `&body=${body}&bodyType=${requestBody?.type}`
   }
@@ -94,22 +108,28 @@ function loadDataToPlayground(endpointId: string, path: string, method: string) 
 }
 
 // Get request header
-const getRequestHeaders = (endpointId: string): { [key: string]: string } => {
-  const headers: { [key: string]: string } = {};
+const getRequestHeaders = (endpointId: string): { [key: string]: { value: string, description: string } } => {
+  const headers: { [key: string]: { value: string, description: string } } = {};
 
   const requestHeaders = document.getElementById(`${endpointId}_request_headers_body`) as HTMLElement;
   const inputs = document.querySelectorAll<HTMLInputElement>('input[header-data-key]');
 
   inputs.forEach(input => {
     const key = input.getAttribute('header-data-key') || '';
-    headers[key] = input.value;
+    const description = (document.getElementById(`${key}_description`) as HTMLParagraphElement).innerHTML
+    headers[key] = { value: input.value, description };
   });
 
   if (requestHeaders) {
-    Array.from(requestHeaders.getElementsByTagName("tr")).forEach(tr => {
-      const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
-      const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
-      headers[key] = value;
+    const rows = requestHeaders.querySelectorAll("tr.data-row");
+
+    rows.forEach(row => {
+      const key = (row.querySelector('input[name="key"]') as HTMLInputElement).value;
+      const value = (row.querySelector('input[name="value"]') as HTMLInputElement).value;
+      const description = (row.querySelector('input[name="description"]') as HTMLInputElement).value;
+      if (key && value) {
+        headers[key] = { value, description };
+      }
     });
   }
 
@@ -121,17 +141,23 @@ const getSelectedBaseUrl = (): string => {
   return (document.getElementById('baseUrlSelector') as HTMLSelectElement).value;
 };
 
-// Get query parameters
-const getQueryParameters = (endpointId: string): string => {
+function getQueryParameters(endpointId: string) {
+  const params: { [key: string]: { value: string, description: string } } = {};
+
   const paramBody = document.getElementById(`${endpointId}_query_params_body`) as HTMLElement;
-  return Array.from(paramBody.getElementsByTagName("tr"))
-    .map(tr => {
-      const key = (tr.getElementsByTagName('td')[0].firstElementChild as HTMLInputElement).value;
-      const value = (tr.getElementsByTagName('td')[1].firstElementChild as HTMLInputElement).value;
-      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-    })
-    .join('&');
-};
+  const rows = paramBody.querySelectorAll("tr.data-row");
+
+  rows.forEach(row => {
+    const key = (row.querySelector('input[name="key"]') as HTMLInputElement).value;
+    const value = (row.querySelector('input[name="value"]') as HTMLInputElement).value;
+    const description = (row.querySelector('input[name="description"]') as HTMLInputElement).value;
+    if (key && value) {
+      params[key] = { value, description };
+    }
+  });
+  return params
+}
+
 // Get query parameters
 const getAddressWithParameters = (endpointId: string, path: string): string => {
   const variables = extractVariablesFromUrl(path);
