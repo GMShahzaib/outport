@@ -100,31 +100,29 @@ function toggleRequestBodyType(): void {
     formDiv.style.display = isJson ? 'none' : 'block';
 }
 
-function changeBodyFormInputType(selectElement: HTMLSelectElement): void {
-    const inputField = selectElement.closest('td')?.nextElementSibling?.querySelector('input');
-    if (inputField) {
-        inputField.type = selectElement.value;
-    }
-}
-
 function addRowWithQueryParamListeners(): void {
-    addRow("parametersTable");
+    addParamRow("parametersTable");
     initializeRealTimeURLUpdate();
 }
 
-function addRow(tableId: string, key?: string, value?: string): void {
-    const tableBody = document.querySelector<HTMLTableSectionElement>(`#${tableId} tbody`);
+function addParamRow(tableId: string, key?: string, value?: string, description?: string): void {
+    const table = document.getElementById(tableId) as HTMLTableElement;
+    const tableBody = table.querySelector('tbody') as HTMLTableSectionElement;
     if (tableBody) {
         const newRow = document.createElement('tr');
         newRow.classList.add('data-row');
         newRow.innerHTML = `
             <td class="data-cell"><input class="param-cell-input border-background-non" value="${key || ""}" placeholder="key" name="key"></td>
             <td class="data-cell">
+                <input class="param-cell-input border-background-non" placeholder="value" name="value" value="${value || ""}">
+            </td>
+            <td class="data-cell">
                 <div class="flex-box">
-                    <input class="param-cell-input border-background-non" placeholder="value" name="value" value="${value || ""}">
-                    <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                    <input class="param-cell-input border-background-non" placeholder="description" name="description" value="${description || ""}">
+                    <h6 class="delete-text-btn" onclick="deleteParamRow(this)">delete</h6>
                 </div>
-            </td>`;
+            </td>
+            `;
         tableBody.appendChild(newRow);
     }
 }
@@ -155,10 +153,11 @@ function addReqBodyRow(key?: string, valueType?: string, value?: string): void {
     tableBody.appendChild(newRow);
 }
 
-function deleteRow(element: HTMLElement): void {
+function deleteParamRow(element: HTMLElement): void {
     element.closest('tr')?.remove();
-    updateURL();
+    updateURL()
 }
+
 
 async function sendRequest(event: Event): Promise<void> {
     event.preventDefault();
@@ -168,7 +167,13 @@ async function sendRequest(event: Event): Promise<void> {
 
     const url = urlInput.value;
     const method = methodSelect.value;
-    const headers = getHeaders();
+    const headersList = getHeaders();
+    const headers: Record<string, string> = {}
+
+    Object.keys(headersList).forEach(key => {
+        headers[key] = headersList[key].value;
+    });
+
     const body = method !== "get" ? getBody() : undefined;
 
     if (!url || !method) {
@@ -223,17 +228,33 @@ function getBody() {
 }
 
 function getHeaders() {
-    const headers: { [key: string]: string } = {};
+    const headers: { [key: string]: { value: string, description: string } } = {};
     const rows = headersTable.querySelectorAll("tr.data-row");
 
     rows.forEach(row => {
         const key = (row.querySelector('input[name="key"]') as HTMLInputElement).value;
         const value = (row.querySelector('input[name="value"]') as HTMLInputElement).value;
+        const description = (row.querySelector('input[name="description"]') as HTMLInputElement).value;
         if (key && value) {
-            headers[key] = value;
+            headers[key] = { value, description };
         }
     });
     return headers
+}
+
+function getParams() {
+    const params: { [key: string]: { value: string, description: string } } = {};
+    const rows = parametersTable.querySelectorAll("tr.data-row");
+
+    rows.forEach(row => {
+        const key = (row.querySelector('input[name="key"]') as HTMLInputElement).value;
+        const value = (row.querySelector('input[name="value"]') as HTMLInputElement).value;
+        const description = (row.querySelector('input[name="description"]') as HTMLInputElement).value;
+        if (key && value) {
+            params[key] = { value, description };
+        }
+    });
+    return params
 }
 
 function initializeRealTimeURLUpdate(): void {
@@ -285,9 +306,12 @@ function syncTableWithURL(): void {
         newRow.innerHTML = `
             <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="key" value="${decodeURIComponent(key)}" name="key"></td>
             <td class="data-cell">
+                <input class="param-cell-input border-background-non" placeholder="value" value="${decodeURIComponent(value)}" name="value">
+            </td>
+            <td class="data-cell">
                 <div class="flex-box">
-                    <input class="param-cell-input border-background-non" placeholder="value" value="${decodeURIComponent(value)}" name="value">
-                    <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                    <input class="param-cell-input border-background-non" placeholder="description" value="" name="description">
+                    <h6 class="delete-text-btn" onclick="deleteParamRow(this)">delete</h6>
                 </div>
             </td>`;
     });
@@ -306,15 +330,20 @@ initializeRealTimeURLUpdate();
 
 const copyRequest = async () => {
     if (!urlInput.value || !methodSelect.value) {
-        return showToast("Request is empty.");
+        return showToast("Request is empty!");
     }
-    const url = new URL(decodeURIComponent(urlInput.value))
+    let url;
+    try {
+        url = new URL(decodeURIComponent(urlInput.value))
+    } catch (error) {
+        return showToast("Invalid url!");
+    }
     const method = methodSelect.value;
     const headers = getHeaders();
-    const headersList = Object.keys(headers).map(key => ({ key, value: headers[key], description: "" }));
+    const headersList = Object.keys(headers).map(key => ({ key, value: headers[key].value, description: headers[key].description }));
 
-    const params = Object.fromEntries(new URLSearchParams(url.search).entries());
-    const paramsList = Object.keys(params).map(key => ({ key, value: params[key], description: "" }));
+    const params = getParams();
+    const paramsList = Object.keys(params).map(key => ({ key, value: params[key].value, description: params[key].description }));
 
 
 
@@ -322,21 +351,23 @@ const copyRequest = async () => {
     let bodyData;
     if (method !== "get") {
         const body = getBody();
-        let data: Record<string, any> | null = null;
 
         if (body instanceof FormData) {
-            data = JSON.parse(convertFormBodyToJson(body, formBodyData));
-        } else if (typeof body === "string") {
-            data = JSON.parse(body);
-        }
-
-        if (data) {
+            let data: Record<string, any> = JSON.parse(convertFormBodyToJson(body, formBodyData));
             bodyData = Object.entries(data).map(([key, value]) => ({
                 key,
-                value: value?.value ?? value,
+                value: value?.value,
                 type: value?.type
             }));
+
+        } else if (typeof body === "string") {
+            let data: Record<string, any> = JSON.parse(body);
+            bodyData = Object.entries(data).map(([key, value]) => ({
+                key,
+                value
+            }));
         }
+
     }
 
     const object = {

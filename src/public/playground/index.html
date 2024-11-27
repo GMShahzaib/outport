@@ -49,7 +49,9 @@
                         <div id="playground_request_body_tab" class="tab"
                             onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
                     </div>
-                    <div><button id="request_copy_btn" class="icon-btn" title="copy to clipboard" onclick="copyRequest()"><img class="image-icon" src="../assets/copy_icon.png" /></button></div>
+                    <div><button id="request_copy_btn" class="icon-btn" title="copy to clipboard"
+                            onclick="copyRequest()"><img class="image-icon" src="../assets/copy_icon.png" /></button>
+                    </div>
                 </div>
 
                 <div id="playground_request_header_content" class="request-content">
@@ -59,6 +61,7 @@
                                 <tr>
                                     <th class="header-cell">Key</th>
                                     <th class="header-cell">Value</th>
+                                    <th class="header-cell">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -66,10 +69,12 @@
                                     <td class="data-cell"><input class="param-cell-input border-background-non"
                                             placeholder="key" name="key"></td>
                                     <td class="data-cell">
+                                        <input class="param-cell-input border-background-non" placeholder="value" name="value">
+                                    </td>
+                                    <td class="data-cell">
                                         <div class="flex-box">
-                                            <input class="param-cell-input border-background-non" placeholder="value"
-                                                name="value">
-                                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                            <input class="param-cell-input border-background-non" placeholder="description" name="description">
+                                            <h6 class="delete-text-btn" onclick="deleteParamRow(this)">delete</h6>
                                         </div>
                                     </td>
                                 </tr>
@@ -84,6 +89,7 @@
                                 <tr>
                                     <th class="header-cell">Key</th>
                                     <th class="header-cell">Value</th>
+                                    <th class="header-cell">Description</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -91,9 +97,11 @@
                                     <td class="data-cell"><input class="param-cell-input border-background-non"
                                             placeholder="key" name="key"></td>
                                     <td class="data-cell">
+                                        <input class="param-cell-input border-background-non" placeholder="value" name="value">
+                                    </td>
+                                    <td class="data-cell">
                                         <div class="flex-box">
-                                            <input class="param-cell-input border-background-non" placeholder="value"
-                                                name="value">
+                                            <input class="param-cell-input border-background-non" placeholder="Description" name="description">
                                             <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
                                         </div>
                                     </td>
@@ -184,7 +192,9 @@
                                     status code: <span id="playground_statusCode" class="status-code"></span>
                                 </div>
 
-                                <div><button id="response_copy_btn" class="icon-btn response-icon-btn" title="copy to clipboard" onclick="copyResponse()"><img class="image-icon" src="../assets/copy_icon.png" /></button></div>
+                                <div><button id="response_copy_btn" class="icon-btn response-icon-btn"
+                                        title="copy to clipboard" onclick="copyResponse()"><img class="image-icon"
+                                            src="../assets/copy_icon.png" /></button></div>
                             </div>
                         </div>
                         <div id="playground_response_header_content" class="header-content">

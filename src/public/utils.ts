@@ -148,3 +148,29 @@ function hideElement(id: string) {
 function showElement(id: string) {
     (document.getElementById(id) as HTMLDivElement).classList.remove("displayNon");
 }
+
+function addRow(tableId: string, key?: string, value?: string, description?: string): void {
+    const table = document.getElementById(tableId) as HTMLTableElement;
+    const tableBody = table.querySelector('tbody') as HTMLTableSectionElement;
+    
+    const newRow = document.createElement('tr');
+    newRow.classList.add('data-row');
+    newRow.innerHTML = `
+                <td class="data-cell"><input class="param-cell-input border-background-non" value="${key || ""}" placeholder="key" name="key"></td>
+                <td class="data-cell">
+                    <input class="param-cell-input border-background-non" placeholder="value" name="value" value="${value || ""}">
+                </td>
+                <td class="data-cell">
+                    <div class="flex-box">
+                        <input class="param-cell-input border-background-non" placeholder="description" name="description" value="${description || ""}">
+                        <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                    </div>
+                </td>
+                `;
+    tableBody.appendChild(newRow);
+}
+
+
+function deleteRow(element: HTMLElement): void {
+    element.closest('tr')?.remove();
+}

@@ -1,23 +1,22 @@
 // @ts-ignore
 import options from './outport-des-init.js';
-import { APIDocumentation, BodyData, Endpoint, Header, Parameter, Response } from '../schema.js';
-import { SchemaApi } from '../index.js';
+import { APIDocumentation, BodyData, Endpoint, Header, Parameter, ExampleResponse } from '../index.js';
 
 window.onload = function () {
-  const apiOptions = options as { apis: SchemaApi[]; values: APIDocumentation };
+  const apiOptions = options as { apis: { name: string, endpoints: Endpoint[] }[]; values: APIDocumentation };
   setupUI(apiOptions);
 };
 
-function setupUI({apis,values}: { apis: SchemaApi[]; values: APIDocumentation }): void {
+function setupUI({ apis, values }: { apis: { name: string, endpoints: Endpoint[] }[]; values: APIDocumentation }): void {
   const baseUrlContain = document.getElementById('base-url-container') as HTMLDivElement
   const playgroundContainer = document.getElementById('playground-container') as HTMLDivElement
 
-  if(values.playground){
+  if (values.playground) {
     playgroundContainer.classList.remove("displayNon")
-  }else{
+  } else {
     playgroundContainer.classList.add("displayNon")
   }
-    
+
   if (values.servers) {
     populateBaseUrls(values.servers);
     baseUrlContain.style.display = "block"
@@ -60,7 +59,7 @@ function populateHeaderInformation(values: APIDocumentation): void {
   }
 }
 
-function populateApiEndpoints(apis: SchemaApi[], timeout?: number): void {
+function populateApiEndpoints(apis: { name: string, endpoints: Endpoint[] }[], timeout?: number): void {
   const outportUI = document.getElementById('outport-ui') as HTMLElement;
   outportUI.innerHTML = apis
     .map(({ name, endpoints }) => buildApiSection(name, endpoints, timeout))
@@ -332,7 +331,7 @@ function buildRequestHeader(header: Header): string {
 function buildRequestParameters(endpointId: string, parameters?: Parameter[]): string {
   return `
     <div id="${endpointId}_request_parameters_content" class="tab-content active">
-      <table class="table">
+      <table id="${endpointId}_parameters_table" class="table">
         <thead>
           <tr>
             <th class="header-cell">Key</th>
@@ -344,6 +343,7 @@ function buildRequestParameters(endpointId: string, parameters?: Parameter[]): s
           ${parameters ? parameters.map(buildParameterSection).join('') : ""}
         </tbody>
       </table>
+      <h6 class="add-more-text-btn" onclick="addRow('${endpointId}_parameters_table')">Add more...</h6>
     </div>
   `;
 }
@@ -353,7 +353,7 @@ function buildParameterSection(param: Parameter): string {
     <tr class="data-row">
       <td class="data-cell"><input class="param-cell-input" disabled placeholder="key" name="key" value="${param.key}"></input></td>
       <td class="data-cell"><input class="param-cell-input border-background-non" placeholder="value" name="value" value="${param.value}"></input></td>
-      <td class="data-cell"><input class="param-cell-input" disabled placeholder="description" value="${param.description}"></input></td>
+      <td class="data-cell"><input class="param-cell-input border-background-non" disabled placeholder="description" name="description" value="${param.description || ""}"></td>
     </tr>
   `;
 }
@@ -374,7 +374,7 @@ function buildResponseHeaders(endpointId: string): string {
   `;
 }
 
-function buildResponses(endpointId: string, responses: Response[]): string {
+function buildResponses(endpointId: string, responses: ExampleResponse[]): string {
   return `
     <div class="dull-card">
       <div class="pointer">

@@ -157,11 +157,13 @@ function getRequestBody(method: string, endpointId: string) {
   if (method === "GET") return
 
   const bodyTypeSelector = document.getElementById(`${endpointId}_body_type_selector`) as HTMLSelectElement;
-  const bodyType = bodyTypeSelector.value;
+  const bodyType = bodyTypeSelector?.value;
+
+  if (!bodyType) return
 
   if (bodyType === "json") {
     const jsonInputBody = document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement;
-    const body = jsonInputBody.value;
+    const body = jsonInputBody?.value;
 
     if (body && !isValidJson(body)) {
       showErrorOnBody(endpointId);

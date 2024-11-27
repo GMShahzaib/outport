@@ -1,16 +1,59 @@
 import express, { NextFunction, Request, Response } from 'express';
-import { APIDocumentation, Endpoint } from './schema.js';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
-export interface SchemaApi {
-  name: string;
-  endpoints: Endpoint[];
+
+export interface Parameter {
+  key: string;
+  value: string;
+  description?: string;
 }
+export interface Header {
+  key: string;
+  value: string;
+  description?: string;
+}
+export interface BodyData {
+  key: string,
+  value?: Object,
+  description?: string;
+  type?: "text" | 'file'
+}
+export interface ExampleResponse {
+  status: number;
+  description: string;
+  value?: string | Object;
+  headers?: Header[]
+}
+
+export interface Endpoint {
+  path: string;
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  summary: string;
+  description?: string;
+  body?: { type: 'json' | 'form', data: BodyData[] },
+  headers?: Header[];
+  parameters?: Parameter[];
+  responses?: ExampleResponse[];
+}
+
+export interface APIDocumentation {
+  title: string;
+  version: string;
+  servers?: string[];
+  headers?: Header[];
+  playground?: boolean;
+  description: string;
+  timeout?: number
+}
+
 
 class Outport {
   #values: APIDocumentation;
-  #apis: SchemaApi[];
+  #apis: {
+    name: string;
+    endpoints: Endpoint[];
+  }[];
 
   /**
    * Constructor for creating an instance of Outport.
@@ -170,7 +213,12 @@ class Outport {
    * @param {object} obj - The object to convert.
    * @returns {string} - The stringified object.
    */
-  #stringify(obj: { apis: SchemaApi[]; values: APIDocumentation }) {
+  #stringify(obj: {
+    apis: {
+      name: string;
+      endpoints: Endpoint[];
+    }[]; values: APIDocumentation
+  }) {
     return 'const options = ' + JSON.stringify(obj) + ';';
   }
 
