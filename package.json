@@ -1,6 +1,6 @@
 {
   "name": "outport",
-  "version": "1.1.13",
+  "version": "1.1.14",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "type": "module",
