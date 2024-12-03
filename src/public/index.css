@@ -26,6 +26,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-width: 1200px;
 }
 
 header {
@@ -33,8 +34,9 @@ header {
   /* Dark background similar to the example */
   color: white;
   /* White text for contrast */
-  padding: 20px;
-  /* Padding to space out the content */
+
+  padding-bottom: 20px;
+
   width: 100%;
   /* Full width */
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
@@ -148,9 +150,10 @@ margin-left: 10px;
 
 
 .header-content {
-  width: 100%;
-  max-width: 1200px;
+  width: 1200px;
   margin: auto;
+  background-color: #264653;
+  padding: 20px 20px 0px 20px;
 }
 
 header .title-container {
@@ -179,7 +182,7 @@ main {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   width: 100%;
-  max-width: 1200px;
+  width: 1200px;
 }
 
 .collapsible-main {

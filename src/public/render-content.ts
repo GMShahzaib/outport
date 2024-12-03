@@ -145,7 +145,7 @@ function buildResponseSection(endpointId: string, endpoint: Endpoint): string {
           </div>
         </div>
       </div>
-      <div id="${endpointId}_response_header_content" class="header-content">
+      <div id="${endpointId}_response_header_content">
         ${buildResponseBodyContent(endpointId)}
         ${buildResponseHeaders(endpointId)}
       </div>
@@ -406,7 +406,7 @@ function buildResponses(endpointId: string, responses: ExampleResponse[]): strin
                     </div>` : ''}
                 </div>
               </div>
-              <div id="${endpointId}_${ind}_response_header_content" class="header-content">
+              <div id="${endpointId}_${ind}_response_header_content">
                 ${response.value ? `
                   <div id="${endpointId}_${ind}_response_body_content" class="tab-content active">
                     <div id="${endpointId}_${ind}_respBody_wrapper" class="respBody">
