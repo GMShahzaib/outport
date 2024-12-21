@@ -19,85 +19,79 @@ bodyTypeSelectElement.addEventListener('change', toggleRequestBodyType);
 
 
 window.onload = function (): void {
-    const params = Object.fromEntries(new URLSearchParams(window.location.search).entries());
-    loadUrl(params.url);
-    loadMethod(params.method);
-    loadHeaders(params.headers);
-    loadParams(params.params);
-    updateURL()
-    loadBodyType(params.bodyType);
-    loadBody(params.bodyType, params.body);
+    const data = JSON.parse(sessionStorage.getItem('playgroundData') || '{}');
+
+    if (data.url) loadUrl(data.url);
+    if (data.method) loadMethod(data.method);
+    if (data.headers) loadHeaders(data.headers);
+    if (data.params) {
+        loadParams(data.params)
+        updateURL();
+    };
+    if (data.bodyType) {
+        loadBodyType(data.bodyType);
+        if (data.bodyType === "json" && data.body) {
+            loadJsonBody(data.body);
+        } else if (data.bodyType === "form" && data.body) {
+            loadFormBody(data.body);
+        }
+    }
 };
 
-function loadUrl(url?: string): void {
-    if (url) {
-        urlInput.value = decodeURIComponent(url);
-    }
+function loadUrl(url: string): void {
+    urlInput.value = decodeURIComponent(url);
 }
 
-function loadMethod(method?: string): void {
-    if (method) {
-        methodSelect.value = method.toLowerCase();
-    }
+function loadMethod(method: string): void {
+    methodSelect.value = method.toLowerCase();
 }
 
 
-function loadParams(params?: string): void {
-    if (params) {
-        const paramsObj = JSON.parse(params);
-        const headersTableBody = document.querySelector<HTMLTableSectionElement>('#parametersTable tbody');
+function loadParams(params: { [key: string]: { value: string, description: string } }): void {
+    const headersTableBody = document.querySelector<HTMLTableSectionElement>('#parametersTable tbody');
 
-        if (headersTableBody && Object.keys(paramsObj).length !== 0) {
-            headersTableBody.innerHTML = "";
-        }
-
-        Object.keys(paramsObj).forEach(key => {
-            addRow("parametersTable", key, paramsObj[key].value, paramsObj[key].description);
-        });
+    if (headersTableBody && Object.keys(params).length !== 0) {
+        headersTableBody.innerHTML = "";
     }
+
+    Object.keys(params).forEach(key => {
+        addRow("parametersTable", key, params[key].value, params[key].description);
+    });
 }
 
-function loadHeaders(headers?: string): void {
-    if (headers) {
-        const headerObj = JSON.parse(headers);
-        const headersTableBody = document.querySelector<HTMLTableSectionElement>('#headersTable tbody');
+function loadHeaders(headers: { [key: string]: { value: string, description: string } }): void {
+    const headersTableBody = document.querySelector<HTMLTableSectionElement>('#headersTable tbody');
 
-        if (headersTableBody && Object.keys(headerObj).length !== 0) {
-            headersTableBody.innerHTML = "";
-        }
-
-        Object.keys(headerObj).forEach(key => {
-            addRow("headersTable", key, headerObj[key].value, headerObj[key].description);
-        });
+    if (headersTableBody && Object.keys(headers).length !== 0) {
+        headersTableBody.innerHTML = "";
     }
+
+    Object.keys(headers).forEach(key => {
+        addRow("headersTable", key, headers[key].value, headers[key].description);
+    });
 }
 
-function loadBodyType(bodyType?: string): void {
-    if (bodyType) {
-        bodyTypeSelectElement.value = bodyType;
-        toggleRequestBodyType();
-    }
+function loadBodyType(bodyType: string): void {
+    bodyTypeSelectElement.value = bodyType;
+    toggleRequestBodyType();
 }
 
-function loadBody(bodyType?: string, body?: string): void {
-    if (body) {
-        if (bodyType === "json") {
-            jsonBodyInput.innerHTML = body;
-            formatJson(jsonBodyInput);
-        } else if (bodyType === "form") {
-            const formData = JSON.parse(body)
+function loadJsonBody(body: string) {
+    jsonBodyInput.innerHTML = body;
+    formatJson(jsonBodyInput);
+}
+function loadFormBody(body: string) {
+    const formData = JSON.parse(body)
 
-            const formDataTableBody = document.querySelector<HTMLTableSectionElement>(`#playground_form_body_table tbody`) as HTMLTableSectionElement;
+    const formDataTableBody = document.querySelector<HTMLTableSectionElement>(`#playground_form_body_table tbody`) as HTMLTableSectionElement;
 
-            if (formDataTableBody) {
-                formDataTableBody.innerHTML = "";
-            }
-
-            Object.keys(formData).forEach(key => {
-                addReqBodyRow(key, formData[key]?.type, formData[key]?.value)
-            })
-        }
+    if (formDataTableBody) {
+        formDataTableBody.innerHTML = "";
     }
+
+    Object.keys(formData).forEach(key => {
+        addReqBodyRow(key, formData[key]?.type, formData[key]?.value)
+    })
 }
 
 function updateFormValueKey(keyInput: HTMLInputElement): void {

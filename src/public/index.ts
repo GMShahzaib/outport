@@ -1,3 +1,11 @@
+const goToPlaygroundWithoutData = (): void => {
+  // Remove the item from sessionStorage
+  sessionStorage.removeItem('playgroundData');
+
+  // Redirect the user to the playground page
+  window.location.href = 'playground';
+}
+
 const showModal = (): void => {
   setModalVisibility("myModal", true);
 }
@@ -93,18 +101,18 @@ function loadDataToPlayground(endpointId: string, path: string, method: string) 
     body = requestBody?.body
   }
 
-  let destinationPath = `playground?method=${method}&url=${encodeURIComponent(fullUrl)}`
+  // Store data in sessionStorage
+  const payload = {
+    method,
+    url: fullUrl,
+    headers,
+    params,
+    body,
+    bodyType: requestBody?.type,
+  };
+  sessionStorage.setItem('playgroundData', JSON.stringify(payload));
 
-  if (headers) {
-    destinationPath += `&headers=${JSON.stringify(headers)}`
-  }
-  if (params) {
-    destinationPath += `&params=${JSON.stringify(params)}`
-  }
-  if (body && requestBody?.type) {
-    destinationPath += `&body=${body}&bodyType=${requestBody?.type}`
-  }
-  document.location.href = destinationPath
+  document.location.href = 'playground'
 }
 
 // Get request header
