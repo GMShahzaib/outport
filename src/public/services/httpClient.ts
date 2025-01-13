@@ -60,7 +60,7 @@ const buildFetchOptions = (
     };
 
     // Add the body only if it's a POST or PUT request
-    if (body && ['POST', 'PUT'].includes(method.toUpperCase())) {
+    if (body && ['POST', 'PUT','PATCH','DELETE'].includes(method.toUpperCase())) {
         options.body = body;
     }
 
