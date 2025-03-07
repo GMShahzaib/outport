@@ -1,6 +1,6 @@
 {
   "name": "outport",
-  "version": "1.1.17",
+  "version": "1.1.18",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "type": "module",
@@ -53,6 +53,9 @@
   },
   "peerDependencies": {
     "express": ">=4.0.0 || >=5.0.0-beta"
+  },
+  "publishConfig": {
+  "registry": "https://npm.pkg.github.com/"
   },
   "repository": {
     "type": "git",
