@@ -1,6 +1,6 @@
 {
   "name": "@GMShahzaib/outport",
-  "version": "1.1.18",
+  "version": "1.1.19",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "type": "module",
@@ -55,7 +55,7 @@
     "express": ">=4.0.0 || >=5.0.0-beta"
   },
   "publishConfig": {
-  "registry": "https://npm.pkg.github.com/"
+    "registry": "https://npm.pkg.github.com/"
   },
   "repository": {
     "type": "git",
