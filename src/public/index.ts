@@ -15,8 +15,8 @@ const hideModal = (): void => {
 }
 
 const setModalVisibility = (modalId: string, isVisible: boolean): void => {
-  const modal = document.getElementById(modalId) as HTMLElement;
-  modal.style.display = isVisible ? "block" : "none";
+  const modal = document.getElementById(modalId);
+  if (modal) modal.style.display = isVisible ? "block" : "none";
 }
 
 
@@ -27,9 +27,14 @@ const execute = async (
   method: string = 'GET',
   timeout?: number
 ): Promise<void> => {
-  const executeBtn = document.getElementById(`${endpointId}_executeBtn`) as HTMLButtonElement;
-  const loader = document.getElementById(`${endpointId}_executeBtn_loader`) as HTMLDivElement;
-  const responseSection = document.getElementById(`${endpointId}_response`) as HTMLDivElement;
+  const executeBtn = document.getElementById(`${endpointId}_executeBtn`);
+  const loader = document.getElementById(`${endpointId}_executeBtn_loader`);
+  const responseSection = document.getElementById(`${endpointId}_response`);
+
+  if (!executeBtn || !loader || !responseSection) {
+    console.error(`Missing elements for endpoint: ${endpointId}`);
+    return;
+  }
 
   // Toggle button and loader visibility
   executeBtn.style.display = "none";
@@ -53,6 +58,16 @@ const execute = async (
   });
 
   const body = getRequestBody(method, endpointId);
+
+  // If body validation failed (invalid JSON), don't send request
+  if (method !== "GET" && body === undefined) {
+    const bodyElement = document.getElementById(`${endpointId}_json_input_body`);
+    if (bodyElement?.classList.contains("body-input-error")) {
+      executeBtn.style.display = "block";
+      loader.style.display = "none";
+      return;
+    }
+  }
 
   responseSection?.classList.add("displayNon");
 
@@ -79,7 +94,7 @@ const execute = async (
   }
 };
 
-function loadDataToPlayground(endpointId: string, path: string, method: string) {
+function loadDataToPlayground(endpointId: string, path: string, method: string): void {
   const baseUrl = getSelectedBaseUrl();
   const params = getQueryParameters(endpointId)
   const urlParams = Object.keys(params).map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key].value)}`).join('&');
@@ -95,8 +110,10 @@ function loadDataToPlayground(endpointId: string, path: string, method: string) 
 
   let body;
   if (requestBody?.body instanceof FormData) {
-    const formDataBodyElement = document.getElementById(`${endpointId}_form_input_body`) as HTMLFormElement
-    body = convertFormBodyToJson(requestBody?.body, formDataBodyElement)
+    const formDataBodyElement = document.getElementById(`${endpointId}_form_input_body`) as HTMLFormElement | null;
+    if (formDataBodyElement) {
+      body = convertFormBodyToJson(requestBody?.body, formDataBodyElement);
+    }
   } else {
     body = requestBody?.body
   }
@@ -133,9 +150,13 @@ const getRequestHeaders = (endpointId: string): { [key: string]: { value: string
     const rows = requestHeaders.querySelectorAll("tr.data-row");
 
     rows.forEach(row => {
-      const key = (row.querySelector('input[name="key"]') as HTMLInputElement).value;
-      const value = (row.querySelector('input[name="value"]') as HTMLInputElement).value;
-      const description = (row.querySelector('input[name="description"]') as HTMLInputElement).value;
+      const keyEl = row.querySelector('input[name="key"]') as HTMLInputElement | null;
+      const valueEl = row.querySelector('input[name="value"]') as HTMLInputElement | null;
+      const descEl = row.querySelector('input[name="description"]') as HTMLInputElement | null;
+      if (!keyEl || !valueEl) return;
+      const key = keyEl.value;
+      const value = valueEl.value;
+      const description = descEl?.value || '';
       if (key && value) {
         headers[key] = { value, description };
       }
@@ -147,19 +168,26 @@ const getRequestHeaders = (endpointId: string): { [key: string]: { value: string
 
 // Get selected base URL
 const getSelectedBaseUrl = (): string => {
-  return (document.getElementById('baseUrlSelector') as HTMLSelectElement).value;
+  const selector = document.getElementById('baseUrlSelector') as HTMLSelectElement | null;
+  return selector?.value || '';
 };
 
-function getQueryParameters(endpointId: string) {
+function getQueryParameters(endpointId: string): { [key: string]: { value: string, description: string } } {
   const params: { [key: string]: { value: string, description: string } } = {};
 
-  const paramBody = document.getElementById(`${endpointId}_query_params_body`) as HTMLElement;
+  const paramBody = document.getElementById(`${endpointId}_query_params_body`);
+  if (!paramBody) return params;
+
   const rows = paramBody.querySelectorAll("tr.data-row");
 
   rows.forEach(row => {
-    const key = (row.querySelector('input[name="key"]') as HTMLInputElement).value;
-    const value = (row.querySelector('input[name="value"]') as HTMLInputElement).value;
-    const description = (row.querySelector('input[name="description"]') as HTMLInputElement).value;
+    const keyEl = row.querySelector('input[name="key"]') as HTMLInputElement | null;
+    const valueEl = row.querySelector('input[name="value"]') as HTMLInputElement | null;
+    const descEl = row.querySelector('input[name="description"]') as HTMLInputElement | null;
+    if (!keyEl || !valueEl) return;
+    const key = keyEl.value;
+    const value = valueEl.value;
+    const description = descEl?.value || '';
     if (key && value) {
       params[key] = { value, description };
     }
@@ -171,7 +199,8 @@ function getQueryParameters(endpointId: string) {
 const getAddressWithParameters = (endpointId: string, path: string): string => {
   const variables = extractVariablesFromUrl(path);
   variables.forEach((key: string) => {
-    const value = (document.getElementById(`${endpointId}_${key}_value`) as HTMLInputElement).value;
+    const element = document.getElementById(`${endpointId}_${key}_value`) as HTMLInputElement | null;
+    const value = element?.value || '';
     path = path.replace(`{${key}}`, encodeURIComponent(value));
   });
   return path;
@@ -188,7 +217,7 @@ function extractVariablesFromUrl(urlTemplate: string): string[] {
 
 
 
-function getRequestBody(method: string, endpointId: string) {
+function getRequestBody(method: string, endpointId: string): { type: string, body: string | FormData | undefined } | undefined {
   if (method === "GET") return
 
   const bodyTypeSelector = document.getElementById(`${endpointId}_body_type_selector`) as HTMLSelectElement;

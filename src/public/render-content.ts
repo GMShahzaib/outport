@@ -8,20 +8,24 @@ window.onload = function () {
 };
 
 function setupUI({ apis, values }: { apis: { name: string, endpoints: Endpoint[] }[]; values: APIDocumentation }): void {
-  const baseUrlContain = document.getElementById('base-url-container') as HTMLDivElement
-  const playgroundContainer = document.getElementById('playground-container') as HTMLDivElement
+  const baseUrlContain = document.getElementById('base-url-container');
+  const playgroundContainer = document.getElementById('playground-container');
 
-  if (values.playground) {
-    playgroundContainer.classList.remove("displayNon")
-  } else {
-    playgroundContainer.classList.add("displayNon")
+  if (playgroundContainer) {
+    if (values.playground) {
+      playgroundContainer.classList.remove("displayNon")
+    } else {
+      playgroundContainer.classList.add("displayNon")
+    }
   }
 
-  if (values.servers) {
-    populateBaseUrls(values.servers);
-    baseUrlContain.style.display = "block"
-  } else {
-    baseUrlContain.style.display = "none"
+  if (baseUrlContain) {
+    if (values.servers) {
+      populateBaseUrls(values.servers);
+      baseUrlContain.style.display = "block"
+    } else {
+      baseUrlContain.style.display = "none"
+    }
   }
   populateHeaderInformation(values);
   populateApiEndpoints(apis, values.timeout);
@@ -29,7 +33,9 @@ function setupUI({ apis, values }: { apis: { name: string, endpoints: Endpoint[]
 }
 
 function populateBaseUrls(urls: string[]): void {
-  const selectElement = document.getElementById('baseUrlSelector') as HTMLSelectElement;
+  const selectElement = document.getElementById('baseUrlSelector') as HTMLSelectElement | null;
+  if (!selectElement) return;
+
   selectElement.innerHTML = '';
   urls.forEach((url) => {
     const option = document.createElement('option');
@@ -41,34 +47,34 @@ function populateBaseUrls(urls: string[]): void {
 }
 
 function populateHeaderInformation(values: APIDocumentation): void {
-  const title = document.getElementById('title') as HTMLElement;
-  const version = document.getElementById('version') as HTMLElement;
-  const description = document.getElementById('description') as HTMLElement;
-  const globalHeaders = document.getElementById('globalHeaders') as HTMLElement;
+  const title = document.getElementById('title');
+  const version = document.getElementById('version');
+  const description = document.getElementById('description');
+  const globalHeaders = document.getElementById('globalHeaders');
+  const globalHeadersBtn = document.getElementById('globalHeadersBtn');
 
-  title.innerHTML = escapeHtml(values.title);
-  version.innerHTML = 'v' + escapeHtml(values.version);
-  description.innerHTML = escapeHtml(values.description);
+  if (title) title.innerHTML = escapeHtml(values.title);
+  if (version) version.innerHTML = 'v' + escapeHtml(values.version);
+  if (description) description.innerHTML = escapeHtml(values.description);
 
-  const globalHeadersBtn = document.getElementById('globalHeadersBtn') as HTMLButtonElement
-
-  if (values.headers) {
+  if (values.headers && globalHeaders) {
     globalHeaders.innerHTML = buildGlobalHeaders(values.headers);
-    globalHeadersBtn.classList.remove("displayNon")
+    globalHeadersBtn?.classList.remove("displayNon")
   } else {
-    globalHeadersBtn.classList.add("displayNon")
+    globalHeadersBtn?.classList.add("displayNon")
   }
 }
 
 function populateApiEndpoints(apis: { name: string, endpoints: Endpoint[] }[], timeout?: number): void {
-  const outportUI = document.getElementById('outport-ui') as HTMLElement;
+  const outportUI = document.getElementById('outport-ui');
+  if (!outportUI) return;
+
   outportUI.innerHTML = apis
     .map(({ name, endpoints }) => buildApiSection(name, endpoints, timeout))
     .join('');
-  if (apis.length == 0) {
+  if (apis.length === 0) {
     outportUI.innerHTML = `<div class="empty-data-message">No Data!</div>`
   }
-
 }
 
 function buildApiSection(name: string, endpoints: Endpoint[], timeout?: number): string {
@@ -200,7 +206,7 @@ function buildRequestBodyContent(endpointId: string, body: { type: 'json' | 'for
       </div>
       <div>
         <form id="${endpointId}_form_input_body" class="body-form">
-          <table class="table" id="playground_form_body_table">
+          <table class="table" id="${endpointId}_form_body_table">
               <thead>
                   <tr>
                       <th class="header-cell">Key</th>
@@ -241,8 +247,8 @@ function buildResponseBodyContent(endpointId: string): string {
   `;
 }
 
-function extractRequestBody(body: { type: 'json' | 'form', data: BodyData[] }): Record<string, any> {
-  return (body?.data || []).reduce((acc: Record<string, any>, { key, value }) => {
+function extractRequestBody(body: { type: 'json' | 'form', data: BodyData[] }): Record<string, unknown> {
+  return (body?.data || []).reduce((acc: Record<string, unknown>, { key, value }) => {
     acc[key] = value !== undefined ? value : '';
     return acc;
   }, {});
@@ -255,7 +261,7 @@ function buildFormDataField(data: BodyData): string {
         <div class="flex-box">
             <input class="param-cell-input border-background-non" value="${escapeHtml(data.key)}" disabled>
             <select class="border-background-non" disabled>
-              ${data.type == "text" ? '<option value="text">TEXT</option>' : '<option value="file">FILE</option>'}
+              ${data.type === "text" ? '<option value="text">TEXT</option>' : '<option value="file">FILE</option>'}
             </select>
         </div>
     </td>
@@ -412,23 +418,16 @@ function buildResponses(endpointId: string, responses: ExampleResponse[]): strin
                   <div id="${endpointId}_${ind}_response_body_content" class="tab-content active">
                     <div id="${endpointId}_${ind}_respBody_wrapper" class="respBody">
                       <pre id="${endpointId}_${ind}_respBody">${escapeHtml(((data): string => {
-        let body: string | Object = data;
+        let body: string | object = data;
 
         // Check if the data is a JSON-like string and parse it to an object if necessary
-        try {
-          body = typeof body === 'string' && isValidJson(body) ? JSON.parse(body) : body;
-        } catch (_) {
-          // Handle parsing error (if any)
-          console.error('Invalid JSON format');
+        if (typeof body === 'string' && isValidJson(body)) {
+          body = JSON.parse(body);
         }
 
         // Check if the body is an object and stringify it, otherwise return it as is
         if (typeof body === 'object' && body !== null) {
-          try {
-            body = JSON.stringify(body, null, 4); // Convert to formatted JSON string
-          } catch (_) {
-            console.error('Stringify failed');
-          }
+          body = JSON.stringify(body, null, 4);
         }
         return String(body);
       })(response.value))}</pre>
@@ -485,7 +484,7 @@ function initEventDelegation(): void {
 }
 
 function handleClick(e: Event): void {
-  const target = (e.target as HTMLElement).closest('[data-action]') as HTMLElement;
+  const target = (e.target as HTMLElement).closest('[data-action]');
   if (!target) {
     // Handle stop propagation for modal content (only if no action)
     const stopPropTarget = (e.target as HTMLElement).closest('[data-stop-propagation]');
@@ -495,30 +494,37 @@ function handleClick(e: Event): void {
     return;
   }
 
-  const action = target.dataset.action;
+  const dataset = (target as HTMLElement).dataset;
+  const action = dataset.action;
   switch (action) {
     case 'toggleContent':
-      toggleContent(target.dataset.id!);
+      if (dataset.id) toggleContent(dataset.id);
       break;
     case 'showTab':
-      showTab(target.dataset.endpoint!, target.dataset.wrapper!, target.dataset.tab!);
+      if (dataset.endpoint && dataset.wrapper && dataset.tab) {
+        showTab(dataset.endpoint, dataset.wrapper, dataset.tab);
+      }
       break;
     case 'execute':
-      execute(
-        target.dataset.id!,
-        target.dataset.path!,
-        target.dataset.method!,
-        target.dataset.timeout ? Number(target.dataset.timeout) : undefined
-      );
+      if (dataset.id && dataset.path && dataset.method) {
+        execute(
+          dataset.id,
+          dataset.path,
+          dataset.method,
+          dataset.timeout ? Number(dataset.timeout) : undefined
+        );
+      }
       break;
     case 'loadDataToPlayground':
-      loadDataToPlayground(target.dataset.id!, target.dataset.path!, target.dataset.method!);
+      if (dataset.id && dataset.path && dataset.method) {
+        loadDataToPlayground(dataset.id, dataset.path, dataset.method);
+      }
       break;
     case 'addRow':
-      addRow(target.dataset.table!);
+      if (dataset.table) addRow(dataset.table);
       break;
     case 'deleteRow':
-      deleteRow(target);
+      deleteRow(target as HTMLElement);
       break;
     case 'goToPlayground':
       goToPlaygroundWithoutData();
@@ -537,8 +543,8 @@ function handleClick(e: Event): void {
 
 function handleKeyUp(e: Event): void {
   const target = e.target as HTMLElement;
-  if (target.dataset.action === 'formatJson') {
-    setupFormateJsonInterval(target.dataset.id!);
+  if (target.dataset.action === 'formatJson' && target.dataset.id) {
+    setupFormatJsonInterval(target.dataset.id);
   }
 }
 

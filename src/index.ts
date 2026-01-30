@@ -15,14 +15,14 @@ export interface Header {
 }
 export interface BodyData {
   key: string,
-  value?: Object,
+  value?: unknown,
   description?: string;
   type?: "text" | 'file'
 }
 export interface ExampleResponse {
   status: number;
   description: string;
-  value?: string | Object;
+  value?: string | Record<string, unknown>;
   headers?: Header[]
 }
 
@@ -64,7 +64,6 @@ class Outport {
     this.#validateConstructorValues(values);
     this.#values = { ...values, playground: values.playground !== undefined ? values.playground : true, };
     this.#apis = [];
-    // this.#swaggerInitFn = this.#swaggerInitFn.bind(this);
   }
 
   /**
@@ -97,8 +96,8 @@ class Outport {
     }
 
     if (values.timeout !== undefined) {
-      if (typeof values.timeout !== 'number' || values.timeout <= 0) {
-        throw new Error("Invalid 'timeout': must be a positive number if provided.");
+      if (typeof values.timeout !== 'number' || values.timeout <= 0 || values.timeout > 600000) {
+        throw new Error("Invalid 'timeout': must be a positive number between 1 and 600000ms if provided.");
       }
     }
 
@@ -119,14 +118,14 @@ class Outport {
     }
 
     if (!Array.isArray(endpoints)) {
-      throw new Error("Invalid 'endpoints': must be a array.");
+      throw new Error("Invalid 'endpoints': must be an array.");
     }
 
     endpoints.forEach((endpoint, index) => {
       this.#validateEndpoint(endpoint, index);
     });
 
-    const obj = this.#apis.find((item) => item.name == name);
+    const obj = this.#apis.find((item) => item.name === name);
     if (obj) {
       obj.endpoints = [...obj.endpoints, ...endpoints];
     } else {
@@ -179,7 +178,7 @@ class Outport {
     }
 
     if (endpoint.responses && !Array.isArray(endpoint.responses)) {
-      throw new Error(`Invalid 'responses' at index ${index}: must be a array.`);
+      throw new Error(`Invalid 'responses' at index ${index}: must be an array.`);
     }
 
     endpoint.responses && endpoint.responses.forEach((response, responseIndex) => {
@@ -218,7 +217,7 @@ class Outport {
       name: string;
       endpoints: Endpoint[];
     }[]; values: APIDocumentation
-  }) {
+  }): string {
     return 'const options = ' + JSON.stringify(obj) + ';';
   }
 
@@ -229,9 +228,9 @@ class Outport {
    * @param {NextFunction} next - The next middleware function.
    */
   #swaggerInitFn(req: Request, res: Response, next: NextFunction) {
-    const url = req.url && req.url.split('?')[0];
+    const url = req.url ? req.url.split('?')[0] : '';
 
-    if (url.endsWith('/outport-des-init.js')) {
+    if (url && url.endsWith('/outport-des-init.js')) {
       res.set('Content-Type', 'application/javascript');
       res.send(this.#outportTPLString.replace('<% apiOptions %>', this.#stringify({ apis: this.#apis, values: this.#values })));
     } else {
@@ -251,7 +250,7 @@ class Outport {
    * Serves the middleware for handling requests and serving static files.
    * @returns {[express.Handler, express.Handler]} - An array with the middleware function and the static file handler.
    */
-  public serve(): [(req: Request, resp: any, next: NextFunction) => void, (req: Request, resp: any, next: NextFunction) => void, express.Handler] {
+  public serve(): [(req: Request, res: Response, next: NextFunction) => void, (req: Request, res: Response, next: NextFunction) => void, express.Handler] {
     const filename = fileURLToPath(import.meta.url);
     const dirname = path.dirname(filename);
     const staticFilesPath = path.resolve(dirname, 'public');

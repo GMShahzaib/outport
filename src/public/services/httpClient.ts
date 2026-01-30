@@ -4,20 +4,19 @@ const testApi = async (data: {
     headers?: Record<string, string>,
     body?: string | FormData,
     timeout?: number,
+    signal?: AbortSignal,
 }
 ): Promise<{ success: boolean, time: string, errorMessage?: string, status?: number; headers?: { [k: string]: string; }; data?: string; }> => {
     const startTime = Date.now()
 
-    const { path, method = 'GET', headers = {}, body, timeout = 10000 } = data
-
-    console.log({ path, method, headers, body, timeout });
+    const { path, method = 'GET', headers = {}, body, timeout = 10000, signal } = data
 
     try {
         const options = buildFetchOptions(method, headers, body);
 
-        const response = await fetchWithTimeout(path, options, timeout);
+        const response = await fetchWithTimeout(path, options, timeout, signal);
         const respHeaders = Object.fromEntries(response.headers.entries());
-        const data = await parseResponse(response);
+        const responseData = await parseResponse(response);
 
         const time = convertMillSecToReadable(Date.now() - startTime);
 
@@ -27,11 +26,11 @@ const testApi = async (data: {
             time,
             status: response.status,
             headers: respHeaders,
-            data
+            data: responseData
         }
     } catch (error: unknown) {
         const errorResp: { success: boolean, time: string, errorMessage?: string } = { success: false, time: convertMillSecToReadable(Date.now() - startTime) }
-        if (typeof error == 'string') {
+        if (typeof error === 'string') {
             errorResp.errorMessage = error
         }
         if (error instanceof Error) {
@@ -67,7 +66,7 @@ const buildFetchOptions = (
     return options;
 };
 
-function convertMillSecToReadable(ms: number) {
+function convertMillSecToReadable(ms: number): string {
     const milliseconds = ms % 1000;
     const seconds = Math.floor((ms / 1000) % 60);
     const minutes = Math.floor((ms / (1000 * 60)) % 60);
@@ -90,14 +89,24 @@ function convertMillSecToReadable(ms: number) {
         time += `${milliseconds}ms`
     }
 
-    return time
+    return time || "0ms"
 }
 
 
 // Fetch with timeout
-const fetchWithTimeout = (url: string, options: RequestInit, timeout: number): Promise<Response> => {
+const fetchWithTimeout = (url: string, options: RequestInit, timeout: number, externalSignal?: AbortSignal): Promise<Response> => {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort("Request Time Out!"), timeout);
+
+    // If external signal is provided, abort when it aborts
+    if (externalSignal) {
+        if (externalSignal.aborted) {
+            controller.abort("Request cancelled");
+        } else {
+            externalSignal.addEventListener('abort', () => controller.abort("Request cancelled"), { once: true });
+        }
+    }
+
     options.signal = controller.signal;
 
     return fetch(url, options).finally(() => clearTimeout(timer));
@@ -106,7 +115,17 @@ const fetchWithTimeout = (url: string, options: RequestInit, timeout: number): P
 // Parse API response based on content type
 const parseResponse = async (response: Response): Promise<string> => {
     const contentType = response.headers.get('content-type');
-    return contentType && contentType.includes('application/json')
-        ? JSON.stringify(await response.json(), null, 2)
-        : await response.text();
+    // Always read as text first (can only read body once)
+    const text = await response.text();
+
+    if (contentType && contentType.includes('application/json')) {
+        try {
+            const jsonData = JSON.parse(text);
+            return JSON.stringify(jsonData, null, 2);
+        } catch {
+            // Server sent wrong Content-Type or malformed JSON
+            return text;
+        }
+    }
+    return text;
 };

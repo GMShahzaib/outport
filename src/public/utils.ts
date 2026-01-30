@@ -20,25 +20,30 @@ const escapeHtml = (str: string | undefined | null): string => {
 };
 
 const showErrorOnBody = (endpointId: string): void => {
-    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
+    document.getElementById(`${endpointId}_json_input_body`)?.classList.add("body-input-error");
 };
 
 const removeErrorOnBody = (endpointId: string): void => {
-    (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.remove("body-input-error");
+    document.getElementById(`${endpointId}_json_input_body`)?.classList.remove("body-input-error");
 };
 
 
 // Show selected tab content
 const showTab = (endpointId: string, wrapper: string, tabName: string): void => {
-    const wrapperEle = document.getElementById(`${endpointId}_${wrapper}_tabs`) as HTMLElement;
-    const content = document.getElementById(`${endpointId}_${wrapper}_content`) as HTMLElement;
+    const wrapperEle = document.getElementById(`${endpointId}_${wrapper}_tabs`);
+    const content = document.getElementById(`${endpointId}_${wrapper}_content`);
 
+    if (!wrapperEle || !content) return;
     toggleActiveTab(wrapperEle, content, `${endpointId}_${tabName}`);
 };
 
 const toggleActiveTab = (wrapperEle: HTMLElement, content: HTMLElement, activeTabId: string): void => {
-    Array.from(wrapperEle.children).forEach(child => child.classList.remove('active'));
-    Array.from(content.children).forEach(child => child.classList.remove('active'));
+    for (const child of wrapperEle.children) {
+        child.classList.remove('active');
+    }
+    for (const child of content.children) {
+        child.classList.remove('active');
+    }
 
     document.getElementById(`${activeTabId}_tab`)?.classList.add('active');
     document.getElementById(`${activeTabId}_content`)?.classList.add('active');
@@ -47,8 +52,10 @@ const toggleActiveTab = (wrapperEle: HTMLElement, content: HTMLElement, activeTa
 
 // Toggle content visibility
 const toggleContent = (id: string): void => {
-    const content = document.getElementById(id) as HTMLElement;
-    content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    const content = document.getElementById(id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
 };
 
 
@@ -57,8 +64,10 @@ const toggleContent = (id: string): void => {
 const typingTimers: Map<string, number> = new Map();
 const doneTypingInterval = 2500;
 
-const setupFormateJsonInterval = (id: string): void => {
-    const ele = document.getElementById(id) as HTMLTextAreaElement;
+const setupFormatJsonInterval = (id: string): void => {
+    const ele = document.getElementById(id) as HTMLTextAreaElement | null;
+    if (!ele) return;
+
     const existingTimer = typingTimers.get(id);
     if (existingTimer !== undefined) {
         clearTimeout(existingTimer);
@@ -90,9 +99,11 @@ const hideToast = (): void => {
 };
 
 const updateToast = (message: string, show: boolean): void => {
-    const toast = document.getElementById('toast') as HTMLElement;
-    const toastText = document.getElementById('toast-text') as HTMLElement;
-    toastText.innerHTML = message;
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-text');
+    if (!toast || !toastText) return;
+
+    toastText.textContent = message;
     toast.classList.toggle('show-toast', show);
 };
 
@@ -117,15 +128,16 @@ const updateUIWithResponse = (
 };
 
 const updateElement = (id: string, content: string): void => {
-    (document.getElementById(id) as HTMLElement).innerHTML = content;
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = content;
 };
 
 const updateTable = (id: string, headers: { [key: string]: string }): void => {
     if (!headers) return
     const rows = Object.keys(headers).map(key => `
         <tr class="data-row">
-          <td class="data-cell whiteBorder"><span name="key"  class="response-header-key">${key}</span></td>
-          <td class="data-cell whiteBorder"><span name="value" class="response-header-value">${headers[key]}</span></td>
+          <td class="data-cell whiteBorder"><span name="key"  class="response-header-key">${escapeHtml(key)}</span></td>
+          <td class="data-cell whiteBorder"><span name="value" class="response-header-value">${escapeHtml(headers[key])}</span></td>
         </tr>
     `).join('');
     updateElement(id, rows);
@@ -139,7 +151,7 @@ function convertFormBodyToJson(formData: FormData, formElement: HTMLFormElement)
         const type = inputElement ? inputElement.type : "unknown";
 
         obj[key] = { type }
-        if (typeof value == "string") {
+        if (typeof value === "string") {
             obj[key].value = value
         }
     });
@@ -147,7 +159,7 @@ function convertFormBodyToJson(formData: FormData, formElement: HTMLFormElement)
     return JSON.stringify(obj);
 }
 
-function isValidHttpUrl(value: string) {
+function isValidHttpUrl(value: string): boolean {
     let url;
 
     try {
@@ -160,28 +172,29 @@ function isValidHttpUrl(value: string) {
 }
 
 
-function hideElement(id: string) {
-    (document.getElementById(id) as HTMLDivElement).classList.add("displayNon");
+function hideElement(id: string): void {
+    document.getElementById(id)?.classList.add("displayNon");
 }
 
-function showElement(id: string) {
-    (document.getElementById(id) as HTMLDivElement).classList.remove("displayNon");
+function showElement(id: string): void {
+    document.getElementById(id)?.classList.remove("displayNon");
 }
 
 function addRow(tableId: string, key?: string, value?: string, description?: string): void {
-    const table = document.getElementById(tableId) as HTMLTableElement;
-    const tableBody = table.querySelector('tbody') as HTMLTableSectionElement;
+    const table = document.getElementById(tableId);
+    const tableBody = table?.querySelector('tbody');
+    if (!tableBody) return;
 
     const newRow = document.createElement('tr');
     newRow.classList.add('data-row');
     newRow.innerHTML = `
-                <td class="data-cell"><input class="param-cell-input border-background-non" value="${key || ""}" placeholder="key" name="key"></td>
+                <td class="data-cell"><input class="param-cell-input border-background-non" value="${escapeHtml(key || "")}" placeholder="key" name="key"></td>
                 <td class="data-cell">
-                    <input class="param-cell-input border-background-non" placeholder="value" name="value" value="${value || ""}">
+                    <input class="param-cell-input border-background-non" placeholder="value" name="value" value="${escapeHtml(value || "")}">
                 </td>
                 <td class="data-cell">
                     <div class="flex-box">
-                        <input class="param-cell-input border-background-non" placeholder="description" name="description" value="${description || ""}">
+                        <input class="param-cell-input border-background-non" placeholder="description" name="description" value="${escapeHtml(description || "")}">
                         <h6 class="delete-text-btn" data-action="deleteRow">delete</h6>
                     </div>
                 </td>
