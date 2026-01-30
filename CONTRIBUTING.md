@@ -1,118 +1,179 @@
-# Contribution Guide for Outport
+# Contributing to Outport
 
-Thank you for considering contributing to [**Outport**](https://github.com/GMShahzaib/outport)! Contributions are vital to improving the library. This guide outlines the steps to effectively contribute, including linking the package with a tester project for local testing.
+Thank you for considering contributing to Outport! Contributions help make the library better for everyone.
 
 ---
 
-## How to Contribute
+## Getting Started
 
-1. **Fork the Repository**  
-   Fork the [Outport repository](https://github.com/GMShahzaib/outport) to your GitHub account.
+### 1. Fork and Clone
 
-2. **Clone the Repository**  
-   Clone the forked repository to your local machine:
+```bash
+# Fork the repository on GitHub, then clone your fork
+git clone https://github.com/YOUR_USERNAME/outport.git
+cd outport
+```
 
-   ```bash
-   git clone https://github.com/GMShahzaib/outport.git
-   cd outport
-   ```
+### 2. Install Dependencies
 
-3. **Install Dependencies**  
-   Install the required dependencies for development:
+```bash
+npm install
+```
 
-   ```bash
-   npm install
-   ```
+### 3. Create a Branch
 
-4. **Create a New Branch**  
-   Create a branch for your feature or bug fix:
+```bash
+git checkout -b feature/your-feature-name
+```
 
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
+---
 
-5. **Link the Package Locally**  
-   Outport is an NPM package, so you need to link it to a tester project for local testing. Use the following steps:
+## Development Workflow
 
-   ### Link Outport Locally
-   Run this command in the Outport repository root directory:
+### Building the Project
 
-   ```bash
-   npm link
-   ```
+After making changes to TypeScript files, build the project:
 
-   ### Link Outport in the Tester Project
-   Go to the root of your tester project (an Express-based app where you want to test Outport):
+```bash
+npm run build
+```
 
-   ```bash
-   npm link outport
-   ```
+This compiles TypeScript, creates CommonJS bundle, and copies assets.
 
-6. **Test Your Changes**  
-   Make changes to the Outport source code, then test it in your linked tester project. Restart your tester project to see the changes reflected.
+### Local Testing with npm link
 
-7. **Unlinking (Optional)**  
-   To unlink the local package, run the following commands:
+To test your changes in a real Express app:
 
-   ```bash
-   npm unlink outport
-   ```
+**In the Outport directory:**
 
-   In the Outport repository:
+```bash
+npm run build
+npm link
+```
 
-   ```bash
-   npm unlink
-   ```
+**In your test project:**
 
-8. **Write and Update Documentation**  
-   Ensure any new features or modifications are documented in the README.md or other relevant files.
+```bash
+npm link outport
+```
 
-9. **Commit Your Changes**  
-   Once you’re happy with your changes, stage and commit them:
+Now your test project uses your local Outport version. Rebuild Outport after each change.
 
-   ```bash
-   git add .
-   git commit -m "Describe the changes in detail"
-   ```
+### Unlinking
 
-10. **Push Your Changes**  
-    Push the changes to your forked repository:
+When done testing:
 
-    ```bash
-    git push origin feature/your-feature-name
-    ```
+```bash
+# In your test project
+npm unlink outport
 
-11. **Open a Pull Request**  
-    Open a pull request (PR) to the [main repository](https://github.com/GMShahzaib/outport), describing your changes and the problem they solve.
+# In the Outport directory
+npm unlink
+```
+
+---
+
+## Project Structure
+
+```
+outport/
+├── src/
+│   ├── index.ts          # Main Outport class and exports
+│   └── public/
+│       ├── index.ts      # Documentation page scripts
+│       ├── index.html    # Documentation page template
+│       ├── index.css     # Styles
+│       ├── utils.ts      # Shared utilities
+│       ├── render-content.ts  # UI rendering
+│       ├── playground/   # Playground page
+│       └── services/     # HTTP client
+├── lib/                  # Built output (generated)
+├── scripts/              # Build scripts
+└── package.json
+```
 
 ---
 
 ## Guidelines
 
-- **Code Style**: Follow the existing structure and formatting.
-- **Documentation**: Include detailed descriptions and examples for any new functionality.
-- **Backward Compatibility**: Ensure your changes do not break existing functionality.
-- **Testing**: Test your changes in the tester project thoroughly.
+### Code Style
+
+- Follow existing code patterns and formatting
+- Use TypeScript strict mode
+- Add proper type annotations
+- Use meaningful variable names
+
+### Commits
+
+- Write clear, descriptive commit messages
+- Keep commits focused on a single change
+- Reference issue numbers when applicable
+
+### Pull Requests
+
+- Provide a clear description of changes
+- Include the problem being solved
+- List any breaking changes
+- Add tests for new functionality when possible
+
+### Documentation
+
+- Update README.md for new features
+- Add JSDoc comments for public APIs
+- Include code examples where helpful
+
+### Backward Compatibility
+
+- Avoid breaking existing functionality
+- Deprecate before removing features
+- Document any migration steps needed
+
+---
+
+## Testing Your Changes
+
+Before submitting a PR, verify:
+
+1. **Build succeeds**: `npm run build`
+2. **No TypeScript errors**: Check compiler output
+3. **Manual testing**: Test in a real Express app
+4. **Documentation**: Update if needed
 
 ---
 
 ## Reporting Issues
 
-If you encounter a bug or have a feature suggestion, please open an issue in the repository with:
+When reporting bugs, include:
 
-- A clear and descriptive title.
-- Detailed steps to reproduce (if reporting a bug).
-- Any relevant logs or screenshots.
+- Clear, descriptive title
+- Steps to reproduce
+- Expected vs actual behavior
+- Node.js and Express versions
+- Relevant code snippets or screenshots
+
+---
+
+## Feature Requests
+
+For new features:
+
+- Describe the use case
+- Explain why existing features don't solve it
+- Provide examples of desired API/behavior
 
 ---
 
 ## Getting Help
 
-If you have any questions, you can reach out:
-
-- **GitHub Repository**: [Outport on GitHub](https://github.com/GMShahzaib/outport)
-- **Email**: Contact the maintainer at `gms.shahzaib@gmail.com`.
+- **GitHub Issues**: [Open an issue](https://github.com/GMShahzaib/outport/issues)
+- **Email**: gms.shahzaib@gmail.com
 
 ---
 
-Thank you for contributing to [**Outport**](https://github.com/GMShahzaib/outport)! Your efforts help make the library more robust and user-friendly. 🎉
+## License
+
+By contributing, you agree that your contributions will be licensed under the ISC License.
+
+---
+
+Thank you for contributing to Outport!

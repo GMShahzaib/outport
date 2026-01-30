@@ -1,6 +1,6 @@
 {
   "name": "outport",
-  "version": "1.1.18",
+  "version": "1.2.0",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "type": "module",
@@ -16,7 +16,8 @@
   },
   "files": [
     "lib/",
-    "README.md"
+    "README.md",
+    "screenshot.png"
   ],
   "scripts": {
     "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" lib/",
@@ -31,7 +32,11 @@
     "api testing",
     "api documentation",
     "express middleware",
-    "swagger alternative"
+    "swagger alternative",
+    "rest api",
+    "api explorer",
+    "postman alternative",
+    "openapi"
   ],
   "contributors": [
     {
