@@ -22,7 +22,7 @@
     <main>
         <section>
             <span id="tooltip" style="visibility: hidden; position: absolute;">Copied</span>
-            <form onsubmit="sendRequest(event)">
+            <form id="playground-form">
                 <div class="playground-url-container">
                     <div class="playground-endpoint">
                         <select id="playground-method-selector" class="playground-method-selector">
@@ -43,14 +43,14 @@
                 <div class="flex-box">
                     <div class="tabs" id="playground_request_header_tabs">
                         <div id="playground_request_parameters_tab" class="tab active"
-                            onclick="showTab('playground', 'request_header', 'request_parameters')">Parameters</div>
+                            data-action="showTab" data-endpoint="playground" data-wrapper="request_header" data-tab="request_parameters">Parameters</div>
                         <div id="playground_request_headers_tab" class="tab"
-                            onclick="showTab('playground', 'request_header', 'request_headers')">Headers</div>
+                            data-action="showTab" data-endpoint="playground" data-wrapper="request_header" data-tab="request_headers">Headers</div>
                         <div id="playground_request_body_tab" class="tab"
-                            onclick="showTab('playground', 'request_header', 'request_body')">Body</div>
+                            data-action="showTab" data-endpoint="playground" data-wrapper="request_header" data-tab="request_body">Body</div>
                     </div>
                     <div><button id="request_copy_btn" class="icon-btn" title="copy to clipboard"
-                            onclick="copyRequest()"><img class="image-icon" src="../assets/copy_icon.png" /></button>
+                            data-action="copyRequest"><img class="image-icon" src="../assets/copy_icon.png" /></button>
                     </div>
                 </div>
 
@@ -74,13 +74,13 @@
                                     <td class="data-cell">
                                         <div class="flex-box">
                                             <input class="param-cell-input border-background-non" placeholder="description" name="description">
-                                            <h6 class="delete-text-btn" onclick="deleteParamRow(this)">delete</h6>
+                                            <h6 class="delete-text-btn" data-action="deleteParamRow">delete</h6>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <h6 class="add-more-text-btn" onclick="addRowWithQueryParamListeners()">Add more...</h6>
+                        <h6 class="add-more-text-btn" data-action="addRowWithQueryParamListeners">Add more...</h6>
                     </div>
 
                     <div id="playground_request_headers_content" class="tab-content">
@@ -102,13 +102,13 @@
                                     <td class="data-cell">
                                         <div class="flex-box">
                                             <input class="param-cell-input border-background-non" placeholder="Description" name="description">
-                                            <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                            <h6 class="delete-text-btn" data-action="deleteRow">delete</h6>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
-                        <h6 class="add-more-text-btn" onclick="addRow('headersTable')">Add more...</h6>
+                        <h6 class="add-more-text-btn" data-action="addHeaderRow">Add more...</h6>
                     </div>
 
                     <div id="playground_request_body_content" class="tab-content">
@@ -120,7 +120,7 @@
                         </div>
                         <div id="request_body_json">
                             <textarea id="playground_json_input_body"
-                                onkeyup="setupFormateJsonInterval('playground_json_input_body')" class="body-input"
+                                data-action="formatJson" data-id="playground_json_input_body" class="body-input"
                                 rows="10" cols="50" placeholder='{"key": "value"}' name='awesome'>{}</textarea>
                         </div>
                         <form id="playground_form_body">
@@ -136,10 +136,10 @@
                                         <tr class="data-row">
                                             <td class="data-cell">
                                                 <div class="flex-box">
-                                                    <input class="param-cell-input border-background-non"
-                                                        placeholder="key" onchange="updateFormValueKey(this)">
+                                                    <input class="param-cell-input border-background-non key-input"
+                                                        placeholder="key" data-action="updateFormValueKey">
                                                     <select class="border-background-non"
-                                                        onchange="changeBodyFormInputType(this)">
+                                                        data-action="changeBodyFormInputType">
                                                         <option value="text">TEXT</option>
                                                         <option value="file">FILE</option>
                                                     </select>
@@ -150,13 +150,13 @@
                                                     <input type="text"
                                                         class="param-cell-input border-background-non value-input"
                                                         placeholder="value" accept="image/*">
-                                                    <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                                                    <h6 class="delete-text-btn" data-action="deleteRow">delete</h6>
                                                 </div>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <h6 class="add-more-text-btn" onclick="addReqBodyRow()">Add more...</h6>
+                                <h6 class="add-more-text-btn" data-action="addReqBodyRow">Add more...</h6>
                             </div>
                         </form>
                     </div>
@@ -175,11 +175,11 @@
                         <div class="response-header-section">
                             <div id="playground_response_header_tabs" class="tabs">
                                 <div id="playground_response_body_tab" class="tab active"
-                                    onclick="showTab('playground','response_header','response_body')">
+                                    data-action="showTab" data-endpoint="playground" data-wrapper="response_header" data-tab="response_body">
                                     <span>Body</span>
                                 </div>
                                 <div id="playground_response_headers_tab" class="tab"
-                                    onclick="showTab('playground','response_header','response_headers')">
+                                    data-action="showTab" data-endpoint="playground" data-wrapper="response_header" data-tab="response_headers">
                                     <span>Headers</span>
                                 </div>
                             </div>
@@ -193,7 +193,7 @@
                                 </div>
 
                                 <div><button id="response_copy_btn" class="icon-btn response-icon-btn"
-                                        title="copy to clipboard" onclick="copyResponse()"><img class="image-icon"
+                                        title="copy to clipboard" data-action="copyResponse"><img class="image-icon"
                                             src="../assets/copy_icon.png" /></button></div>
                             </div>
                         </div>
@@ -222,7 +222,7 @@
         <!-- Toast message component -->
         <div id="toast" class="toast-container">
             <p id="toast-text"></p>
-            <button class="toast-close" onclick="hideToast()">✖</button>
+            <button class="toast-close" data-action="hideToast">✖</button>
         </div>
 
     </main>

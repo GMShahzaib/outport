@@ -67,7 +67,7 @@ const execute = async (
 
     if (!success) {
       showToast(errorMessage || "Something went wrong!");
-    } else if (errorMessage !== "Request Time Out!") {
+    } else {
       updateUIWithResponse(endpointId, time, status as number, respHeaders as { [key: string]: string }, data as string);
     }
   } catch (error) {
@@ -124,7 +124,8 @@ const getRequestHeaders = (endpointId: string): { [key: string]: { value: string
 
   inputs.forEach(input => {
     const key = input.getAttribute('header-data-key') || '';
-    const description = (document.getElementById(`${key}_description`) as HTMLParagraphElement).innerHTML
+    const descriptionEl = document.getElementById(`${key}_description`) as HTMLParagraphElement | null;
+    const description = descriptionEl?.innerHTML || '';
     headers[key] = { value: input.value, description };
   });
 
@@ -171,7 +172,7 @@ const getAddressWithParameters = (endpointId: string, path: string): string => {
   const variables = extractVariablesFromUrl(path);
   variables.forEach((key: string) => {
     const value = (document.getElementById(`${endpointId}_${key}_value`) as HTMLInputElement).value;
-    path = path.replace(`{${key}}`, value);
+    path = path.replace(`{${key}}`, encodeURIComponent(value));
   });
   return path;
 };
@@ -199,7 +200,11 @@ function getRequestBody(method: string, endpointId: string) {
     const jsonInputBody = document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement;
     const body = jsonInputBody?.value;
 
-    if (body && !isValidJson(body)) {
+    if (!body || body.trim() === '') {
+      removeErrorOnBody(endpointId);
+      return { type: bodyType, body: undefined };
+    }
+    if (!isValidJson(body)) {
       showErrorOnBody(endpointId);
       return;
     }

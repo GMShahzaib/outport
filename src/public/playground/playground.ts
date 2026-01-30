@@ -77,7 +77,7 @@ function loadBodyType(bodyType: string): void {
 }
 
 function loadJsonBody(body: string) {
-    jsonBodyInput.innerHTML = body;
+    jsonBodyInput.value = body;
     formatJson(jsonBodyInput);
 }
 function loadFormBody(body: string) {
@@ -129,7 +129,7 @@ function addParamRow(tableId: string, key?: string, value?: string, description?
             <td class="data-cell">
                 <div class="flex-box">
                     <input class="param-cell-input border-background-non" placeholder="description" name="description" value="${description || ""}">
-                    <h6 class="delete-text-btn" onclick="deleteParamRow(this)">delete</h6>
+                    <h6 class="delete-text-btn" data-action="deleteParamRow">delete</h6>
                 </div>
             </td>
             `;
@@ -145,8 +145,8 @@ function addReqBodyRow(key?: string, valueType?: string, value?: string): void {
     newRow.innerHTML = `
         <td class="data-cell">
             <div class="flex-box">
-                <input class="param-cell-input border-background-non key-input" value="${key || ""}" placeholder="key" oninput="updateFormValueKey(this)">
-                <select class="border-background-non" onchange="changeBodyFormInputType(this)" value="${valueType || ""}">
+                <input class="param-cell-input border-background-non key-input" value="${key || ""}" placeholder="key" data-action="updateFormValueKey">
+                <select class="border-background-non" data-action="changeBodyFormInputType" value="${valueType || ""}">
                     <option value="text">TEXT</option>
                     <option value="file">FILE</option>
                 </select>
@@ -154,8 +154,8 @@ function addReqBodyRow(key?: string, valueType?: string, value?: string): void {
         </td>
         <td class="data-cell">
             <div class="flex-box">
-                <input type="${valueType || "text"}" name="${key || ""}" value="${value || ""}" class="param-cell-input border-background-non value-input" placeholder="value" name="value" accept="image/*">
-                <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                <input type="${valueType || "text"}" name="${key || ""}" value="${value || ""}" class="param-cell-input border-background-non value-input" placeholder="value" accept="image/*">
+                <h6 class="delete-text-btn" data-action="deleteRow">delete</h6>
             </div>
         </td>
     `;
@@ -321,7 +321,7 @@ function syncTableWithURL(): void {
             <td class="data-cell">
                 <div class="flex-box">
                     <input class="param-cell-input border-background-non" placeholder="description" value="" name="description">
-                    <h6 class="delete-text-btn" onclick="deleteParamRow(this)">delete</h6>
+                    <h6 class="delete-text-btn" data-action="deleteParamRow">delete</h6>
                 </div>
             </td>`;
     });
@@ -402,7 +402,7 @@ const copyRequest = async () => {
 
         }
 
-        showToast("Request Coped.");
+        showToast("Request Copied.");
     } catch (err) {
         console.error('Failed to copy: ', err);
     }
@@ -433,7 +433,7 @@ const copyResponse = async () => {
             return showToast("copy function works only on secure connections. (localhost or https)");
 
         }
-        showToast("Response Coped.");
+        showToast("Response Copied.");
 
     } catch (err) {
         console.error('Failed to copy: ', err);
@@ -453,3 +453,83 @@ function getResponseHeaders() {
     });
     return headers
 }
+
+// Event delegation for CSP compliance
+function initPlaygroundEventDelegation(): void {
+    document.addEventListener('click', handlePlaygroundClick);
+    document.addEventListener('input', handlePlaygroundInput);
+    document.addEventListener('change', handlePlaygroundChange);
+    document.addEventListener('keyup', handlePlaygroundKeyup);
+
+    // Form submit
+    const form = document.getElementById('playground-form') as HTMLFormElement;
+    if (form) {
+        form.addEventListener('submit', sendRequest);
+    }
+}
+
+function handlePlaygroundClick(e: Event): void {
+    const target = (e.target as HTMLElement).closest('[data-action]') as HTMLElement;
+    if (!target) return;
+
+    const action = target.dataset.action;
+    switch (action) {
+        case 'deleteParamRow':
+            deleteParamRow(target);
+            break;
+        case 'deleteRow':
+            deleteRow(target);
+            break;
+        case 'showTab':
+            showTab(target.dataset.endpoint!, target.dataset.wrapper!, target.dataset.tab!);
+            break;
+        case 'copyRequest':
+            copyRequest();
+            break;
+        case 'copyResponse':
+            copyResponse();
+            break;
+        case 'addRowWithQueryParamListeners':
+            addRowWithQueryParamListeners();
+            break;
+        case 'addHeaderRow':
+            addRow('headersTable');
+            break;
+        case 'addReqBodyRow':
+            addReqBodyRow();
+            break;
+        case 'hideToast':
+            hideToast();
+            break;
+    }
+}
+
+function handlePlaygroundInput(e: Event): void {
+    const target = e.target as HTMLElement;
+    if (target.dataset.action === 'updateFormValueKey') {
+        updateFormValueKey(target as HTMLInputElement);
+    }
+}
+
+function handlePlaygroundChange(e: Event): void {
+    const target = e.target as HTMLElement;
+    if (target.dataset.action === 'changeBodyFormInputType') {
+        changeBodyFormInputType(target as HTMLSelectElement);
+    }
+}
+
+function handlePlaygroundKeyup(e: Event): void {
+    const target = e.target as HTMLElement;
+    if (target.dataset.action === 'formatJson') {
+        setupFormateJsonInterval(target.dataset.id!);
+    }
+}
+
+function changeBodyFormInputType(selectElement: HTMLSelectElement): void {
+    const valueInput = selectElement.closest('.data-row')?.querySelector('.value-input') as HTMLInputElement | null;
+    if (valueInput) {
+        valueInput.type = selectElement.value;
+    }
+}
+
+initPlaygroundEventDelegation();

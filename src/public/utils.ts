@@ -8,6 +8,17 @@ const isValidJson = (str: string): boolean => {
     }
 };
 
+// Escape HTML to prevent XSS
+const escapeHtml = (str: string | undefined | null): string => {
+    if (str == null) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+};
+
 const showErrorOnBody = (endpointId: string): void => {
     (document.getElementById(`${endpointId}_json_input_body`) as HTMLTextAreaElement).classList.add("body-input-error");
 };
@@ -43,13 +54,21 @@ const toggleContent = (id: string): void => {
 
 
 // Setup typing timer for JSON formatting
-let typingTimer: number;
+const typingTimers: Map<string, number> = new Map();
 const doneTypingInterval = 2500;
 
 const setupFormateJsonInterval = (id: string): void => {
     const ele = document.getElementById(id) as HTMLTextAreaElement;
-    clearTimeout(typingTimer);
-    if (ele.value) typingTimer = window.setTimeout(() => formatJson(ele), doneTypingInterval);
+    const existingTimer = typingTimers.get(id);
+    if (existingTimer !== undefined) {
+        clearTimeout(existingTimer);
+    }
+    if (ele.value) {
+        const timer = window.setTimeout(() => formatJson(ele), doneTypingInterval);
+        typingTimers.set(id, timer);
+    } else {
+        typingTimers.delete(id);
+    }
 };
 
 // Format JSON
@@ -152,7 +171,7 @@ function showElement(id: string) {
 function addRow(tableId: string, key?: string, value?: string, description?: string): void {
     const table = document.getElementById(tableId) as HTMLTableElement;
     const tableBody = table.querySelector('tbody') as HTMLTableSectionElement;
-    
+
     const newRow = document.createElement('tr');
     newRow.classList.add('data-row');
     newRow.innerHTML = `
@@ -163,7 +182,7 @@ function addRow(tableId: string, key?: string, value?: string, description?: str
                 <td class="data-cell">
                     <div class="flex-box">
                         <input class="param-cell-input border-background-non" placeholder="description" name="description" value="${description || ""}">
-                        <h6 class="delete-text-btn" onclick="deleteRow(this)">delete</h6>
+                        <h6 class="delete-text-btn" data-action="deleteRow">delete</h6>
                     </div>
                 </td>
                 `;

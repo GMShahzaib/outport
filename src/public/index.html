@@ -19,7 +19,7 @@
                 </div>
 
                 <div id="playground-container" class="displayNon">
-                    <button id="playground-btn" onclick="goToPlaygroundWithoutData()" class="primary-button">Playground</button>
+                    <button id="playground-btn" data-action="goToPlayground" class="primary-button">Playground</button>
                 </div>
             </div>
             <div class="title-container">
@@ -41,18 +41,18 @@
             <div class="flex-box">
                 <div></div>
                 <div>
-                    <button id="globalHeadersBtn" class="primary-button displayNon" onclick="showModal()">Headers</button>
+                    <button id="globalHeadersBtn" class="primary-button displayNon" data-action="showModal">Headers</button>
                 </div>
             </div>
         </div>
         <!-- The Modal -->
-        <div id="myModal" class="modal" onclick="hideModal()">
+        <div id="myModal" class="modal" data-action="hideModal">
             <!-- Modal content -->
 
-            <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-content" data-stop-propagation="true">
                 <div class="flex-box">
                     <h3>Global Headers</h3>
-                    <span class="close" onclick="hideModal()">&times;</span>
+                    <span class="close" data-action="hideModal">&times;</span>
                 </div>
                 <div id="globalHeaders" class="globe-headers-container"></div>
             </div>
@@ -67,7 +67,7 @@
     <!-- Toast message component -->
     <div id="toast" class="toast-container">
         <p id="toast-text"></p>
-        <button class="toast-close" onclick="hideToast()">✖</button>
+        <button class="toast-close" data-action="hideToast">✖</button>
     </div>
 
 

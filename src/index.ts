@@ -81,7 +81,7 @@ class Outport {
       throw new Error("Invalid 'version': must be a non-empty string.");
     }
 
-    if (values.servers && (!Array.isArray(values.servers) || !values.servers.every(s => typeof s === 'string'))) {
+    if (values.servers && (!Array.isArray(values.servers) || values.servers.length === 0 || !values.servers.every(s => typeof s === 'string'))) {
       throw new Error("Invalid 'servers': must be a non-empty array of strings.");
     }
 
@@ -242,7 +242,7 @@ class Outport {
   #cspMiddleware = (req: Request, res: Response, next: NextFunction) => {
     res.setHeader(
       'Content-Security-Policy',
-      "script-src 'self' 'unsafe-inline';"
+      "script-src 'self';"
     );
     next();
   }
