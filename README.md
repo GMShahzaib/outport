@@ -8,7 +8,7 @@ A lightweight API documentation and testing library for Express.js. Define, test
 
 **[GitHub](https://github.com/GMShahzaib/outport)**
 
-![Outport Screenshot](./screenshot.png)
+![Outport Screenshot](https://raw.githubusercontent.com/GMShahzaib/outport/main/screenshot.png)
 
 ---
 

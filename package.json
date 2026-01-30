@@ -16,8 +16,7 @@
   },
   "files": [
     "lib/",
-    "README.md",
-    "screenshot.png"
+    "README.md"
   ],
   "scripts": {
     "copy-files": "copyfiles -u 1 \"src/public/**/*.{html,png,css}\" lib/",
