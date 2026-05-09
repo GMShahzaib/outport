@@ -538,6 +538,9 @@ function handleClick(e: Event): void {
     case 'hideToast':
       hideToast();
       break;
+    case 'toggleTheme':
+      (window as any).toggleTheme?.();
+      break;
   }
 }
 

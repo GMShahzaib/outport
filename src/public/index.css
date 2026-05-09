@@ -1,9 +1,134 @@
 /* main.css */
 
+:root {
+  color-scheme: light;
+
+  --bg-page: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-header: #264653;
+  --bg-collapsible: #f8f9fa;
+  --bg-collapsible-hover: #e2e6ea;
+  --bg-dull-card: #e2e6ea;
+  --bg-input: #ffffff;
+  --bg-code: #f4f4f9;
+  --bg-content-panel: #f4f4f9;
+  --bg-resp: #264653;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.4);
+  --bg-modal: #264653;
+  --bg-version: #e7e7e7;
+
+  --text-primary: #212529;
+  --text-secondary: #454545;
+  --text-muted: #606060;
+  --text-on-header: #ffffff;
+  --text-on-resp: #ffffff;
+  --text-on-resp-muted: #aaaaaa;
+  --text-version: #343a40;
+  --text-code: #333333;
+  --text-modal-close: #aaaaaa;
+  --text-modal-close-hover: #ffec99;
+
+  --border-default: #cccccc;
+  --border-strong: #888888;
+  --border-accent: #c9ab04;
+  --border-on-resp: #ffffff;
+
+  --accent: #c9ab04;
+  --accent-hover: #aa9104;
+  --accent-soft: #ffec99;
+  --danger: #ff0101;
+
+  --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-header: 0 2px 6px rgba(0, 0, 0, 0.1);
+  --shadow-toast: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-page: #0f1216;
+  --bg-card: #1a1f24;
+  --bg-header: #0b1417;
+  --bg-collapsible: #232930;
+  --bg-collapsible-hover: #2c333b;
+  --bg-dull-card: #2f363f;
+  --bg-input: #161a1f;
+  --bg-code: #11151a;
+  --bg-content-panel: #232930;
+  --bg-resp: #11151a;
+  --bg-modal-overlay: rgba(0, 0, 0, 0.65);
+  --bg-modal: #1a1f24;
+  --bg-version: #2c333b;
+
+  --text-primary: #e6e8eb;
+  --text-secondary: #c4c7cc;
+  --text-muted: #9aa0a6;
+  --text-on-header: #f1f3f5;
+  --text-on-resp: #e6e8eb;
+  --text-on-resp-muted: #8a8f96;
+  --text-version: #e6e8eb;
+  --text-code: #d8dadd;
+  --text-modal-close: #9aa0a6;
+  --text-modal-close-hover: #ffec99;
+
+  --border-default: #3a4048;
+  --border-strong: #4a5159;
+  --border-accent: #574a1a;
+  --border-on-resp: #3a4048;
+
+  --accent: #b39a2a;
+  --accent-hover: #c9ab33;
+  --accent-soft: #ffec99;
+  --danger: #ff5b5b;
+
+  --shadow-card: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-header: 0 2px 6px rgba(0, 0, 0, 0.45);
+  --shadow-toast: 0 4px 6px rgba(0, 0, 0, 0.6);
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+/* Animate the color-related properties that flip between light and dark so
+   theme toggling feels uniform across pages. .toast-container is excluded
+   because its existing opacity/transform transition drives show/hide. */
+body,
+header,
+.header-content,
+main,
+section,
+.collapsible-main,
+.collapsible,
+.dull-card,
+.request-content,
+.response-content,
+.respBody,
+.response-headers,
+.playground-endpoint,
+.body-input,
+.modal,
+.modal-content,
+.version,
+.url-param-input,
+.input-field,
+.execute-button,
+.example-response,
+.body-type-select,
+.playground-method-selector,
+.playground-url-input,
+.border-background-non,
+.param-cell-input,
+.response-status-code,
+.endpoint-path,
+.endpoint-summary,
+input,
+select,
+textarea {
+  transition: background-color 0.3s ease, color 0.3s ease,
+              border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .mt-1 {
@@ -21,8 +146,8 @@
 
 body {
   font-family: 'Roboto', sans-serif;
-  background-color: #f8f9fa;
-  color: #212529;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,17 +155,11 @@ body {
 }
 
 header {
-  background-color: #264653;
-  /* Dark background similar to the example */
-  color: white;
-  /* White text for contrast */
-
+  background-color: var(--bg-header);
+  color: var(--text-on-header);
   padding-bottom: 20px;
-
   width: 100%;
-  /* Full width */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  /* Subtle shadow for depth */
+  box-shadow: var(--shadow-header);
 }
 
 header h1 {
@@ -88,46 +207,31 @@ header p {
 }
 
 .primary-button {
-  background-color: #c9ab04;
-  /* Green background */
+  background-color: var(--accent);
   border: none;
-  /* Remove border */
   color: white;
-  /* White text */
   padding: 10px 20px;
-  /* Some padding */
   text-align: center;
-  /* Center the text */
   text-decoration: none;
-  /* Remove underline */
   display: inline-block;
-  /* Inline block for proper sizing */
   font-size: 16px;
-  /* Set the font size */
   margin: 10px 0px;
-  /* Add some margin */
   cursor: pointer;
-  /* Pointer cursor on hover */
   border-radius: 5px;
-  /* Rounded corners */
 }
 
 .primary-button:hover {
-  background-color: #aa9104;
-  /* Darker green on hover */
+  background-color: var(--accent-hover);
 }
 
 .version {
   display: inline-block;
-  background-color: #e7e7e7;
-  /* Light gray background for version tag */
-  color: #343a40;
-  /* Dark text color */
+  background-color: var(--bg-version);
+  color: var(--text-version);
   border-radius: 5px;
   padding: 2px 8px;
   margin-left: 10px;
   font-size: 0.85em;
-  /* Smaller font size */
 }
 
 .base-path {
@@ -152,7 +256,7 @@ margin-left: 10px;
 .header-content {
   width: 1200px;
   margin: auto;
-  background-color: #264653;
+  background-color: var(--bg-header);
   padding: 20px 20px 0px 20px;
 }
 
@@ -177,9 +281,9 @@ header .base-url-selector:focus {
 
 main {
   margin: 30px auto;
-  background: white;
+  background: var(--bg-card);
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
   border-radius: 8px;
   width: 100%;
   width: 1200px;
@@ -187,13 +291,12 @@ main {
 
 .collapsible-main {
   padding: 0px 10px;
-  border: 1px solid #ccc;
-  background-color: #f8f9fa;
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-collapsible);
   margin-top: 15px;
   font-size: 1.1em;
   font-weight: bold;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
 }
 
 .clickable {
@@ -201,7 +304,7 @@ main {
 }
 
 .collapsible-main:hover {
-  background-color: #e2e6ea;
+  background-color: var(--bg-collapsible-hover);
 }
 
 .collapsible-main .collection-name {
@@ -215,13 +318,12 @@ main {
 
 .collapsible {
   padding: 0px 5px;
-  border: 1px solid #ccc;
-  background-color: #f8f9fa;
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-collapsible);
   margin-top: 5px;
   font-size: 1.1em;
   font-weight: bold;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
 }
 
 .endpoint {
@@ -255,7 +357,7 @@ main {
 }
 
 .put {
-  background-color: #ffe066;
+  background-color: var(--accent);
 }
 
 .delete {
@@ -268,7 +370,7 @@ main {
 
 .endpoint-path {
   margin-left: 10px;
-  color: #454545;
+  color: var(--text-secondary);
   font-family: monospace;
   font-size: 16px;
 }
@@ -277,7 +379,7 @@ main {
   margin-left: 10px;
   font-size: 14px;
   font-weight: normal;
-  color: #606060;
+  color: var(--text-muted);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -316,7 +418,7 @@ main {
 }
 
 .tab.active {
-  border-bottom: 2px solid #c9ab04;
+  border-bottom: 2px solid var(--accent);
 }
 
 .tab-content {
@@ -331,7 +433,8 @@ main {
 
 .request-content,
 .response-content {
-  background-color: #f4f4f9;
+  background-color: var(--bg-content-panel);
+  color: var(--text-code);
   padding: 10px;
   border-radius: 5px;
   margin-top: 10px;
@@ -340,11 +443,12 @@ main {
 .body-input {
   margin-top: 10px;
   width: 100%;
-  background-color: #f4f4f9;
+  background-color: var(--bg-code);
+  color: var(--text-code);
   resize: vertical;
   padding: 10px;
-  border-color: #c9ab04;
-  outline-color: #c9ab04;
+  border-color: var(--border-accent);
+  outline-color: var(--border-accent);
 }
 
 .body-form {
@@ -357,19 +461,21 @@ main {
 }
 
 .body-input-error {
-  border-color: red;
+  border-color: var(--danger);
   border-radius: 5px;
 }
 
 .execute-button:hover {
-  background-color: #e0e0e0;
+  background-color: var(--bg-collapsible-hover);
 }
 
 .execute-button {
-  border: 2px solid #c9ab04;
+  border: 2px solid var(--border-accent);
   border-radius: 5px;
   padding: 5px 15px;
   cursor: pointer;
+  background-color: transparent;
+  color: var(--text-primary);
 }
 
 
@@ -379,11 +485,11 @@ main {
 .respBody,
 .response-headers {
   font-family: 'Courier New', Courier, monospace;
-  background-color: #f4f4f9;
+  background-color: var(--bg-code);
   border-radius: 8px;
   padding: 15px;
   margin: 10px 0;
-  color: #333;
+  color: var(--text-code);
   font-size: 14px;
 }
 
@@ -402,12 +508,10 @@ main {
 .respBody,
 .response-headers,
 .respHeaders {
-  background-color: #264653;
-  /* Light yellow for response body and headers */
-  color: #ffffff;
+  background-color: var(--bg-resp);
+  color: var(--text-on-resp);
   font-size: 14px;
-  border-left: 5px solid #c9ab04;
-  /* Light orange side bar */
+  border-left: 5px solid var(--border-accent);
   padding-left: 10px;
 }
 
@@ -442,7 +546,7 @@ pre {
 }
 
 .response-status-code {
-  border: 1px solid #c9ab04;
+  border: 1px solid var(--border-accent);
   border-radius: 5px;
   padding: 5px 10px 5px 10px;
   font-size: 12px;
@@ -464,11 +568,11 @@ pre {
   transform: translateX(-50%);
   min-width: 300px;
   max-width: 700px;
-  background-color: #c9ab04;
+  background-color: var(--accent);
   color: white;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-toast);
   opacity: 0;
   transition: opacity 0.3s ease, transform 0.3s ease;
   z-index: 9999;
@@ -502,7 +606,7 @@ pre {
   padding-left: 10px;
   text-align: left;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .data-cell {
@@ -513,7 +617,8 @@ pre {
 }
 
 .dull-card {
-  background-color: #e2e6ea;
+  background-color: var(--bg-dull-card);
+  color: var(--text-primary);
   padding: 10px;
   border-radius: 5px;
   margin-top: 5px;
@@ -522,13 +627,15 @@ pre {
 .response-header-key,
 .response-header-value {
   margin-left: 10px;
-  color: #aaa;
+  color: var(--text-on-resp-muted);
 }
 
 .url-param-input {
-  outline-color: #c9ab04;
-  border: 1px solid #c9ab04;
+  outline-color: var(--border-accent);
+  border: 1px solid var(--border-accent);
   padding: 5px;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
 }
 
 .param-cell-input {
@@ -536,17 +643,23 @@ pre {
   padding-left: 10px;
   outline: none;
   border: none;
+  background-color: transparent;
+  color: var(--text-primary);
+}
+
+.param-cell-input::placeholder {
+  color: var(--text-muted);
 }
 
 .table,
 .header-cell,
 .data-cell {
-  border: 1px solid #c9ab04;
+  border: 1px solid var(--border-accent);
   border-collapse: collapse;
 }
 
 .whiteBorder {
-  border: 1px solid #fff !important;
+  border: 1px solid var(--border-on-resp) !important;
 }
 
 
@@ -569,17 +682,18 @@ pre {
   /* Full height */
   overflow: auto;
   /* Enable scroll if needed */
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: var(--bg-modal-overlay);
   /* Black with opacity */
 }
 
 /* Modal content box */
 .modal-content {
-  background-color: #264653;
+  background-color: var(--bg-modal);
+  color: var(--text-on-resp);
   margin: 15% auto;
   /* 15% from the top and centered */
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid var(--border-strong);
   max-width: 1000px;
   /* Could be more or less, depending on screen size */
   border-radius: 10px;
@@ -589,7 +703,7 @@ pre {
 
 /* Close button */
 .close {
-  color: #aaa;
+  color: var(--text-modal-close);
   float: right;
   font-size: 28px;
   font-weight: bold;
@@ -597,7 +711,7 @@ pre {
 
 .close:hover,
 .close:focus {
-  color: #ffec99;
+  color: var(--text-modal-close-hover);
   text-decoration: none;
   cursor: pointer;
 }
@@ -625,7 +739,7 @@ pre {
 .header-key {
   font-weight: bold;
   margin-bottom: 5px;
-  color: #fff;
+  color: var(--text-on-resp);
 }
 
 /* Container for the input and description */
@@ -638,17 +752,17 @@ pre {
 /* Input field styling */
 .input-field {
   padding: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-default);
   border-radius: 4px;
-  background-color: #fff;
-  color: #333;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
 }
 
 /* Description styling */
 .header-description {
   margin: 0;
   font-size: 12px;
-  color: #bbb;
+  color: var(--text-on-resp-muted);
 }
 
 
@@ -669,15 +783,17 @@ pre {
   display: flex;
   flex-direction: row;
   padding: 0 10px 0px 10px;
-  border: 1px solid #c9ab04;
+  border: 1px solid var(--border-accent);
   border-radius: 5px;
   margin-right: 5px;
+  background-color: var(--bg-input);
 }
 
 .playground-method-selector {
   border: none;
   outline: none;
   background-color: transparent;
+  color: var(--text-primary);
   padding: 10px 0 10px 0;
   min-width: 80px
 }
@@ -687,6 +803,8 @@ pre {
   flex-grow: 1;
   border: none;
   outline: none;
+  background-color: transparent;
+  color: var(--text-primary);
   padding: 10px 0 10px 0;
   margin-left: 5px;
 }
@@ -696,6 +814,7 @@ pre {
   border: none;
   outline: none;
   background-color: transparent;
+  color: var(--text-primary);
 }
 
 .add-more-text-btn {
@@ -706,7 +825,7 @@ pre {
   font-size: x-small;
 
   &:hover {
-    color: #c9ab04;
+    color: var(--accent);
   }
 }
 
@@ -716,16 +835,17 @@ pre {
   font-size: x-small;
 
   &:hover {
-    color: #ff0101;
+    color: var(--danger);
   }
 }
 
 
 .body-type-select {
-  border: 1px solid #c9ab04;
+  border: 1px solid var(--border-accent);
   border-radius: 5px;
   outline: none;
-  background: none;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   min-width: 80px;
   padding: 5px;
 }
@@ -735,11 +855,12 @@ pre {
   justify-content: center;
   align-items: center;
   min-height: 300px;
-  color: #606060;
+  color: var(--text-muted);
 }
 
 .example-response {
-  background-color: #f4f4f9;
+  background-color: var(--bg-content-panel);
+  color: var(--text-code);
   padding: 5px;
   border-radius: 5px;
   margin-top: 5px;
@@ -767,8 +888,8 @@ pre {
   aspect-ratio: 1;
   border-radius: 50%;
   background:
-    radial-gradient(farthest-side, #c9ab04 94%, #0000) top/8px 8px no-repeat,
-    conic-gradient(#0000 30%, #c9ab04);
+    radial-gradient(farthest-side, var(--accent) 94%, #0000) top/8px 8px no-repeat,
+    conic-gradient(#0000 30%, var(--accent));
   -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 8px), #000 0);
   animation: l13 1s infinite linear;
   margin: auto;
@@ -785,12 +906,20 @@ pre {
   width: 20px;
   height: 20px;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
 }
 
 .image-icon{
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+[data-theme="dark"] .image-icon {
+  filter: invert(1) brightness(0.95);
 }
 
 .endpoint-header{
@@ -801,3 +930,72 @@ pre {
 .response-icon-btn{
   margin-left: 10px;
 }
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* theme toggle */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--text-on-header);
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.theme-toggle .icon-sun {
+  display: none;
+}
+.theme-toggle .icon-moon {
+  display: block;
+}
+[data-theme="dark"] .theme-toggle .icon-sun {
+  display: block;
+}
+[data-theme="dark"] .theme-toggle .icon-moon {
+  display: none;
+}
+
+/* darken the GET/POST/etc. method pills slightly so white text stays legible
+   in dark mode without changing their hue */
+[data-theme="dark"] .get {
+  background-color: #4f9c66;
+}
+[data-theme="dark"] .post {
+  background-color: #4880d6;
+}
+[data-theme="dark"] .delete {
+  background-color: #d06a73;
+}
+[data-theme="dark"] .patch {
+  background-color: #d68f4d;
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  color-scheme: dark;
+}
+

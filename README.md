@@ -17,6 +17,7 @@ A lightweight API documentation and testing library for Express.js. Define, test
 - Interactive API documentation UI
 - Built-in API testing (like Postman)
 - Playground for custom requests
+- Light and dark theme with one-click toggle (follows OS preference by default)
 - Path parameters, query params, headers, and body support
 - JSON and Form/Multipart body types
 - Multiple server environments
